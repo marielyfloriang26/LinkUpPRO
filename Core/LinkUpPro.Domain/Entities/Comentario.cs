@@ -1,0 +1,20 @@
+using System;
+using System.Collections.Generic;
+
+namespace LinkUpPro.Domain.Entities;
+
+public class Comentario
+{
+    public int Id { get; set; }
+    public int PublicacionId { get; set; }
+    public int UsuarioId { get; set; }
+    public string Contenido { get; set; } = null!;
+    public int? ComentarioPadreId { get; set; }
+    public DateTime FechaCreacion { get; set; }
+
+    public Publicacion Publicacion { get; set; } = null!;
+    public Usuario Usuario { get; set; } = null!;
+    public Comentario? ComentarioPadre { get; set; }
+    public ICollection<Comentario> Respuestas { get; set; } = new List<Comentario>();
+    public ICollection<Reaccion> Reacciones { get; set; } = new List<Reaccion>();
+}

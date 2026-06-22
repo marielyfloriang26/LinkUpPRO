@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="LinkUpPro.Presentation/LinkUpPro.Presentation.csproj" />
+  <Project Path="Core/LinkUpPro.Domain/LinkUpPro.Domain.csproj" />
+  <Project Path="Core/LinkUpPro.Application/LinkUpPro.Application.csproj" />
+  <Project Path="Infrastructure/LinkUpPro.Infrastructure.Persistence/LinkUpPro.Infrastructure.Persistence.csproj" />
+  <Project Path="Infrastructure/LinkUpPro.Infrastructure.Shared/LinkUpPro.Infrastructure.Shared.csproj" />
+</Solution>
