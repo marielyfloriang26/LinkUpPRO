@@ -1,4 +1,9 @@
+using LinkUpPro.Application.Interfaces.Repositories;
+using LinkUpPro.Application.Interfaces.Services;
+using LinkUpPro.Application.Services;
 using LinkUpPro.Infrastructure.Persistence;
+using LinkUpPro.Infrastructure.Persistence.Repositories;
+using AutoMapper;
 
 namespace LinkUpPro.Presentation
 {
@@ -13,6 +18,14 @@ namespace LinkUpPro.Presentation
             
             // Add Infrastructure Persistence layer
             builder.Services.AddPersistenceInfrastructure(builder.Configuration);
+
+            builder.Services.AddTransient<IPublicacionRepository, PublicacionRepository>();
+            builder.Services.AddTransient<IPublicacionService, PublicacionService>();
+
+            builder.Services.AddAutoMapper(cfg => 
+            {
+                cfg.AddProfile<LinkUpPro.Application.Mappings.PublicacionMapping>();
+            });
 
             var app = builder.Build();
 

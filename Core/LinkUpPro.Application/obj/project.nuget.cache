@@ -1,8 +1,27 @@
 {
   "version": 2,
-  "dgSpecHash": "J2nZW6DESwc=",
+  "dgSpecHash": "ckCZphf0yp4=",
   "success": true,
-  "projectFilePath": "C:\\Users\\orlan\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj",
-  "expectedPackageFiles": [],
-  "logs": []
+  "projectFilePath": "C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Mariely Florian\\.nuget\\packages\\automapper\\13.0.1\\automapper.13.0.1.nupkg.sha512",
+    "C:\\Users\\Mariely Florian\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\6.0.0\\microsoft.extensions.dependencyinjection.abstractions.6.0.0.nupkg.sha512",
+    "C:\\Users\\Mariely Florian\\.nuget\\packages\\microsoft.extensions.options\\6.0.0\\microsoft.extensions.options.6.0.0.nupkg.sha512",
+    "C:\\Users\\Mariely Florian\\.nuget\\packages\\microsoft.extensions.primitives\\6.0.0\\microsoft.extensions.primitives.6.0.0.nupkg.sha512",
+    "C:\\Users\\Mariely Florian\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "Package 'AutoMapper' 13.0.1 has a known high severity vulnerability, https://github.com/advisories/GHSA-rvv3-g6hj-g44x",
+      "projectPath": "C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj",
+      "libraryId": "AutoMapper",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    }
+  ]
 }

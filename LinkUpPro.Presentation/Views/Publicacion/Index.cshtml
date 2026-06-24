@@ -1,0 +1,843 @@
+@model List<LinkUpPro.Application.ViewModels.Publicacion.PublicacionViewModel>
+
+@{
+    ViewData["Title"] = "Feed";
+}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<div class="lup-layout">
+
+    <!-- SIDEBAR IZQUIERDO (perfil rápido) -->
+    <aside class="lup-sidebar lup-sidebar--left">
+        <div class="lup-profile-card">
+            <div class="lup-profile-card__cover"></div>
+            <div class="lup-profile-card__body">
+                <img src="@(User.FindFirst("FotoPerfilUrl")?.Value ?? "https://cdn-icons-png.flaticon.com/512/149/149071.png")"
+                     alt="Tu foto" class="lup-profile-card__avatar">
+                <p class="lup-profile-card__name">@User.Identity?.Name</p>
+                <p class="lup-profile-card__handle">Miembro de LinkUpPro</p>
+            </div>
+            <div class="lup-profile-card__stats">
+                <div class="lup-stat">
+                    <span class="lup-stat__num">—</span>
+                    <span class="lup-stat__label">Publicaciones</span>
+                </div>
+                <div class="lup-stat lup-stat--accent">
+                    <span class="lup-stat__num">—</span>
+                    <span class="lup-stat__label">Conexiones</span>
+                </div>
+            </div>
+        </div>
+
+        <nav class="lup-quick-nav">
+            <a href="#" class="lup-quick-nav__item lup-quick-nav__item--active">
+                <i class="bi bi-house-door-fill"></i> Inicio
+            </a>
+            <a href="#" class="lup-quick-nav__item">
+                <i class="bi bi-people-fill"></i> Red
+            </a>
+            <a href="#" class="lup-quick-nav__item">
+                <i class="bi bi-bell-fill"></i> Notificaciones
+            </a>
+            <a href="#" class="lup-quick-nav__item">
+                <i class="bi bi-bookmark-fill"></i> Guardados
+            </a>
+        </nav>
+    </aside>
+
+    <!-- FEED CENTRAL -->
+    <main class="lup-feed">
+
+        <!-- CREAR PUBLICACIÓN -->
+        <div class="lup-composer">
+            <div class="lup-composer__top">
+                <img src="@(User.FindFirst("FotoPerfilUrl")?.Value ?? "https://cdn-icons-png.flaticon.com/512/149/149071.png")"
+                     alt="Tu foto" class="lup-avatar lup-avatar--md">
+                <button class="lup-composer__trigger" onclick="document.getElementById('composerForm').classList.toggle('is-open')">
+                    ¿Qué tienes en mente, @User.Identity?.Name?.Split(' ')[0]?
+                </button>
+            </div>
+
+            <div class="lup-composer__form" id="composerForm">
+                <form asp-controller="Publicacion" asp-action="Crear" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <textarea name="ContenidoTexto" class="lup-composer__textarea"
+                              rows="4" placeholder="Comparte algo con tu red..." required></textarea>
+
+                    <div class="lup-composer__meta">
+                        <div class="lup-field-group">
+                            <label class="lup-field-label">
+                                <i class="bi bi-youtube text-danger"></i> Video de YouTube
+                            </label>
+                            <input type="url" name="YouTubeVideoUrl" class="lup-input lup-input--sm"
+                                   placeholder="https://www.youtube.com/watch?v=...">
+                        </div>
+                        <div class="lup-field-group">
+                            <label class="lup-field-label">
+                                <i class="bi bi-shield-lock"></i> Visibilidad
+                            </label>
+                            <select name="Privacidad" class="lup-select lup-select--sm">
+                                <option value="Publico">🌎 Público</option>
+                                <option value="Privado">🔒 Solo yo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="lup-composer__actions">
+                        <label class="lup-btn lup-btn--ghost lup-btn--sm">
+                            <i class="bi bi-image-fill" style="color: #10B981;"></i>
+                            <span>Foto</span>
+                            <input type="file" name="ImagenArchivo" class="d-none" accept=".jpg,.jpeg,.png,.webp">
+                        </label>
+                        <label class="lup-btn lup-btn--ghost lup-btn--sm">
+                            <i class="bi bi-film" style="color: #8B5CF6;"></i>
+                            <span>Clip</span>
+                        </label>
+                        <div class="lup-composer__actions-right">
+                            <button type="button" class="lup-btn lup-btn--ghost lup-btn--sm"
+                                    onclick="document.getElementById('composerForm').classList.remove('is-open')">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="lup-btn lup-btn--primary lup-btn--sm">
+                                <i class="bi bi-send-fill"></i> Publicar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Accesos rápidos cuando el form está cerrado -->
+            <div class="lup-composer__shortcuts">
+                <label class="lup-shortcut">
+                    <i class="bi bi-image-fill" style="color: #10B981;"></i> Foto
+                    <input type="file" class="d-none" accept="image/*"
+                           onchange="document.getElementById('composerForm').classList.add('is-open')">
+                </label>
+                <label class="lup-shortcut">
+                    <i class="bi bi-youtube" style="color: #EF4444;"></i> Video
+                </label>
+                <label class="lup-shortcut">
+                    <i class="bi bi-emoji-smile" style="color: #F59E0B;"></i> Sentimiento
+                </label>
+            </div>
+        </div>
+
+        <!-- SEPARADOR DE FEED -->
+        <div class="lup-feed-divider">
+            <span>Publicaciones recientes</span>
+        </div>
+
+        <!-- ESTADO VACÍO -->
+        @if (Model == null || !Model.Any())
+        {
+            <div class="lup-empty">
+                <div class="lup-empty__icon">
+                    <i class="bi bi-rss"></i>
+                </div>
+                <h4 class="lup-empty__title">Tu feed está esperando</h4>
+                <p class="lup-empty__text">Conecta con personas de tu industria o crea tu primera publicación.</p>
+                <button class="lup-btn lup-btn--primary lup-btn--sm"
+                        onclick="document.getElementById('composerForm').classList.add('is-open'); window.scrollTo({top:0,behavior:'smooth'})">
+                    Crear publicación
+                </button>
+            </div>
+        }
+        else
+        {
+            foreach (var post in Model)
+            {
+                var isOwner = post.AutorNombreCompleto == User.Identity?.Name;
+                <article class="lup-post @(isOwner ? "lup-post--own" : "")">
+
+                    <!-- CABECERA -->
+                    <div class="lup-post__header">
+                        <a href="#" class="lup-post__author-link">
+                            <img src="@(string.IsNullOrEmpty(post.AutorFotoPerfilUrl) ? "https://cdn-icons-png.flaticon.com/512/149/149071.png" : post.AutorFotoPerfilUrl)"
+                                 alt="@post.AutorNombreCompleto" class="lup-avatar lup-avatar--md">
+                        </a>
+                        <div class="lup-post__author-info">
+                            <a href="#" class="lup-post__author-name">@post.AutorNombreCompleto</a>
+                            <div class="lup-post__meta">
+                                <span>@post.FechaCreacion.ToLocalTime().ToString("dd MMM · HH:mm")</span>
+                                <span class="lup-post__privacy">@(post.Privacidad == "Publico" ? "🌎" : "🔒")</span>
+                            </div>
+                        </div>
+
+                        @if (isOwner)
+                        {
+                            <div class="dropdown ms-auto">
+                                <button class="lup-icon-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-three-dots"></i>
+                                </button>
+                                <ul class="lup-dropdown">
+                                    <li>
+                                        <a href="#" class="lup-dropdown__item">
+                                            <i class="bi bi-pencil-fill"></i> Editar
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <form asp-controller="Publicacion" asp-action="Eliminar" method="post"
+                                              onsubmit="return confirm('¿Eliminar esta publicación?');">
+                                            <input type="hidden" name="id" value="@post.Id" />
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="lup-dropdown__item lup-dropdown__item--danger">
+                                                <i class="bi bi-trash3-fill"></i> Eliminar
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="dropdown ms-auto">
+                                <button class="lup-icon-btn" type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots"></i>
+                                </button>
+                                <ul class="lup-dropdown">
+                                    <li><a href="#" class="lup-dropdown__item"><i class="bi bi-flag-fill"></i> Reportar</a></li>
+                                    <li><a href="#" class="lup-dropdown__item"><i class="bi bi-eye-slash-fill"></i> No me interesa</a></li>
+                                </ul>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- CONTENIDO -->
+                    <div class="lup-post__body">
+                        <p class="lup-post__text">@post.ContenidoTexto</p>
+
+                        @if (!string.IsNullOrEmpty(post.ImagenUrl))
+                        {
+                            <div class="lup-post__media">
+                                <img src="@post.ImagenUrl" alt="Imagen del post" class="lup-post__img">
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(post.YouTubeVideoUrl))
+                        {
+                            var videoId = post.YouTubeVideoUrl.Contains("v=")
+                                ? post.YouTubeVideoUrl.Split("v=")[1].Split("&")[0]
+                                : post.YouTubeVideoUrl.Split("/").Last();
+                            <div class="lup-post__video">
+                                <div class="ratio ratio-16x9">
+                                    <iframe src="https://www.youtube.com/embed/@videoId"
+                                            title="Video" allowfullscreen loading="lazy"></iframe>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- CONTADOR DE REACCIONES -->
+                    <div class="lup-post__stats">
+                        <div class="lup-post__reaction-pills">
+                            @if (post.CantidadMeGusta > 0)
+                            {
+                                <span class="lup-pill lup-pill--like">
+                                    <i class="bi bi-hand-thumbs-up-fill"></i> @post.CantidadMeGusta
+                                </span>
+                            }
+                            @if (post.CantidadNoMeGusta > 0)
+                            {
+                                <span class="lup-pill lup-pill--dislike">
+                                    <i class="bi bi-hand-thumbs-down-fill"></i> @post.CantidadNoMeGusta
+                                </span>
+                            }
+                        </div>
+                        <button class="lup-post__comment-count"
+                                onclick="toggleComments('@post.Id')">
+                            <i class="bi bi-chat-left-text"></i>
+                            @post.Comentarios.Count comentario@(post.Comentarios.Count != 1 ? "s" : "")
+                        </button>
+                    </div>
+
+                    <!-- BARRA DE ACCIONES -->
+                    <div class="lup-post__actions">
+                        <button class="lup-action-btn" onclick="this.classList.toggle('lup-action-btn--liked')">
+                            <i class="bi bi-hand-thumbs-up"></i>
+                            <span>Me gusta</span>
+                        </button>
+                        <button class="lup-action-btn" onclick="this.classList.toggle('lup-action-btn--disliked')">
+                            <i class="bi bi-hand-thumbs-down"></i>
+                            <span>No me gusta</span>
+                        </button>
+                        <button class="lup-action-btn" onclick="toggleComments('@post.Id')">
+                            <i class="bi bi-chat-left"></i>
+                            <span>Comentar</span>
+                        </button>
+                        <button class="lup-action-btn">
+                            <i class="bi bi-share"></i>
+                            <span>Compartir</span>
+                        </button>
+                    </div>
+
+                    <!-- SECCIÓN DE COMENTARIOS -->
+                    <div class="lup-comments" id="comments-@post.Id">
+                        @if (post.Comentarios != null && post.Comentarios.Any())
+                        {
+                            <div class="lup-comments__list">
+                                @foreach (var comentario in post.Comentarios.Where(c => c.ComentarioPadreId == null))
+                                {
+                                    <div class="lup-comment">
+                                        <img src="@(string.IsNullOrEmpty(comentario.AutorFotoPerfil) ? "https://cdn-icons-png.flaticon.com/512/149/149071.png" : comentario.AutorFotoPerfil)"
+                                             alt="@comentario.AutorNombre" class="lup-avatar lup-avatar--sm">
+                                        <div class="lup-comment__bubble">
+                                            <div class="lup-comment__header">
+                                                <span class="lup-comment__author">@comentario.AutorNombre</span>
+                                                <span class="lup-comment__time">@comentario.FechaCreacion.ToLocalTime().ToString("HH:mm")</span>
+                                            </div>
+                                            <p class="lup-comment__text">@comentario.Contenido</p>
+                                            <div class="lup-comment__actions">
+                                                <button class="lup-comment__action">Me gusta</button>
+                                                <button class="lup-comment__action">Responder</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+
+                        <!-- INPUT DE COMENTARIO -->
+                        <div class="lup-comment-input">
+                            <img src="@(User.FindFirst("FotoPerfilUrl")?.Value ?? "https://cdn-icons-png.flaticon.com/512/149/149071.png")"
+                                 alt="Tu foto" class="lup-avatar lup-avatar--sm">
+                            <div class="lup-comment-input__field">
+                                <input type="text" placeholder="Escribe un comentario..."
+                                       class="lup-comment-input__text"
+                                       onfocus="this.closest('.lup-comment-input__field').classList.add('is-focused')"
+                                       onblur="this.closest('.lup-comment-input__field').classList.remove('is-focused')">
+                                <button class="lup-comment-input__send" type="button">
+                                    <i class="bi bi-send-fill"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </article>
+            }
+        }
+
+    </main>
+
+    <!-- SIDEBAR DERECHO (sugerencias) -->
+    <aside class="lup-sidebar lup-sidebar--right">
+        <div class="lup-widget">
+            <h6 class="lup-widget__title">Personas que quizás conozcas</h6>
+            @for (int i = 0; i < 3; i++)
+            {
+                <div class="lup-suggestion">
+                    <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                         alt="Sugerencia" class="lup-avatar lup-avatar--sm">
+                    <div class="lup-suggestion__info">
+                        <p class="lup-suggestion__name">Usuario sugerido</p>
+                        <p class="lup-suggestion__role">Profesional · LinkUpPro</p>
+                    </div>
+                    <button class="lup-btn lup-btn--outline lup-btn--xs">
+                        <i class="bi bi-person-plus-fill"></i> Conectar
+                    </button>
+                </div>
+            }
+        </div>
+
+        <div class="lup-widget lup-widget--muted">
+            <p class="lup-widget__footer-links">
+                <a href="#">Privacidad</a> · <a href="#">Términos</a> · <a href="#">Ayuda</a>
+                <br>
+                <span>© 2025 LinkUpPro</span>
+            </p>
+        </div>
+    </aside>
+
+</div>
+
+<style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+        --lup-bg:          #F0F2F5;
+        --lup-surface:     #FFFFFF;
+        --lup-border:      #E4E6EB;
+        --lup-text-1:      #1C1E21;
+        --lup-text-2:      #65676B;
+        --lup-text-3:      #8A8D91;
+        --lup-accent:      #5B4CFF;
+        --lup-accent-soft: #EEF0FF;
+        --lup-like:        #1877F2;
+        --lup-dislike:     #E74C3C;
+        --lup-green:       #10B981;
+        --lup-radius-sm:   8px;
+        --lup-radius-md:   12px;
+        --lup-radius-lg:   16px;
+        --lup-shadow:      0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
+        --lup-shadow-md:   0 4px 12px rgba(0,0,0,0.10);
+        --font:            'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    body { background: var(--lup-bg); font-family: var(--font); color: var(--lup-text-1); }
+
+    /* ── LAYOUT ─────────────────────────────────────────── */
+    .lup-layout {
+        display: grid;
+        grid-template-columns: 240px 1fr 260px;
+        gap: 20px;
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 24px 16px;
+        align-items: start;
+    }
+    @@media (max-width: 1024px) {
+        .lup-layout { grid-template-columns: 200px 1fr; }
+        .lup-sidebar--right { display: none; }
+    }
+    @@media (max-width: 680px) {
+        .lup-layout { grid-template-columns: 1fr; padding: 12px; }
+        .lup-sidebar--left { display: none; }
+    }
+
+    /* ── SIDEBAR IZQUIERDO ─────────────────────────────── */
+    .lup-sidebar { position: sticky; top: 80px; }
+
+    .lup-profile-card {
+        background: var(--lup-surface);
+        border-radius: var(--lup-radius-lg);
+        box-shadow: var(--lup-shadow);
+        overflow: hidden;
+        margin-bottom: 12px;
+    }
+    .lup-profile-card__cover {
+        height: 56px;
+        background: linear-gradient(135deg, var(--lup-accent) 0%, #9B8FFF 100%);
+    }
+    .lup-profile-card__body {
+        padding: 0 16px 12px;
+        text-align: center;
+        margin-top: -20px;
+    }
+    .lup-profile-card__avatar {
+        width: 52px; height: 52px;
+        border-radius: 50%;
+        border: 3px solid var(--lup-surface);
+        object-fit: cover;
+        display: block;
+        margin: 0 auto 8px;
+    }
+    .lup-profile-card__name {
+        font-size: 0.875rem; font-weight: 700;
+        color: var(--lup-text-1); margin: 0 0 2px;
+    }
+    .lup-profile-card__handle {
+        font-size: 0.725rem; color: var(--lup-text-3); margin: 0;
+    }
+    .lup-profile-card__stats {
+        display: flex;
+        border-top: 1px solid var(--lup-border);
+        padding: 10px 16px;
+        gap: 8px;
+    }
+    .lup-stat { flex: 1; text-align: center; }
+    .lup-stat__num {
+        display: block; font-size: 0.875rem; font-weight: 700;
+        color: var(--lup-text-1);
+    }
+    .lup-stat--accent .lup-stat__num { color: var(--lup-accent); }
+    .lup-stat__label { font-size: 0.65rem; color: var(--lup-text-3); }
+
+    .lup-quick-nav {
+        background: var(--lup-surface);
+        border-radius: var(--lup-radius-md);
+        box-shadow: var(--lup-shadow);
+        overflow: hidden;
+        padding: 6px 0;
+    }
+    .lup-quick-nav__item {
+        display: flex; align-items: center; gap: 10px;
+        padding: 10px 16px;
+        font-size: 0.875rem; font-weight: 500;
+        color: var(--lup-text-2);
+        text-decoration: none;
+        border-radius: 0;
+        transition: background 0.15s, color 0.15s;
+    }
+    .lup-quick-nav__item i { font-size: 1rem; width: 20px; text-align: center; }
+    .lup-quick-nav__item:hover { background: var(--lup-bg); color: var(--lup-accent); }
+    .lup-quick-nav__item--active { color: var(--lup-accent); background: var(--lup-accent-soft); }
+
+    /* ── COMPOSER ──────────────────────────────────────── */
+    .lup-composer {
+        background: var(--lup-surface);
+        border-radius: var(--lup-radius-lg);
+        box-shadow: var(--lup-shadow);
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+    .lup-composer__top {
+        display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+    }
+    .lup-composer__trigger {
+        flex: 1;
+        text-align: left;
+        background: var(--lup-bg);
+        border: 1px solid var(--lup-border);
+        border-radius: 24px;
+        padding: 10px 16px;
+        font-size: 0.9rem; color: var(--lup-text-2);
+        cursor: pointer; transition: border-color 0.15s, background 0.15s;
+        font-family: var(--font);
+    }
+    .lup-composer__trigger:hover {
+        border-color: var(--lup-accent); background: var(--lup-accent-soft);
+    }
+
+    .lup-composer__form {
+        display: none; border-top: 1px solid var(--lup-border); padding-top: 14px;
+        animation: slideDown 0.2s ease;
+    }
+    .lup-composer__form.is-open { display: block; }
+    @@keyframes slideDown {
+        from { opacity: 0; transform: translateY(-6px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .lup-composer__textarea {
+        width: 100%; border: none; outline: none; resize: none;
+        font-family: var(--font); font-size: 0.9rem; color: var(--lup-text-1);
+        background: transparent; padding: 4px 0; line-height: 1.6;
+        min-height: 80px;
+    }
+    .lup-composer__meta {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0;
+        padding: 12px; background: var(--lup-bg); border-radius: var(--lup-radius-sm);
+    }
+    .lup-composer__actions {
+        display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+        padding-top: 10px; border-top: 1px solid var(--lup-border);
+    }
+    .lup-composer__actions-right { margin-left: auto; display: flex; gap: 6px; }
+
+    .lup-composer__shortcuts {
+        display: flex; gap: 4px; flex-wrap: wrap;
+    }
+    .lup-shortcut {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 8px 14px; border-radius: 8px;
+        font-size: 0.825rem; font-weight: 600; color: var(--lup-text-2);
+        cursor: pointer; transition: background 0.15s;
+    }
+    .lup-shortcut:hover { background: var(--lup-bg); }
+    .lup-shortcut i { font-size: 1rem; }
+
+    /* ── FORM FIELDS ───────────────────────────────────── */
+    .lup-field-group { display: flex; flex-direction: column; gap: 4px; }
+    .lup-field-label {
+        font-size: 0.725rem; font-weight: 600; color: var(--lup-text-2);
+        display: flex; align-items: center; gap: 4px;
+    }
+    .lup-input, .lup-select {
+        border: 1px solid var(--lup-border); border-radius: var(--lup-radius-sm);
+        padding: 7px 10px; font-family: var(--font); font-size: 0.825rem;
+        color: var(--lup-text-1); background: var(--lup-surface);
+        transition: border-color 0.15s;
+        width: 100%;
+    }
+    .lup-input:focus, .lup-select:focus {
+        outline: none; border-color: var(--lup-accent);
+        box-shadow: 0 0 0 3px rgba(91,76,255,0.12);
+    }
+
+    /* ── BUTTONS ───────────────────────────────────────── */
+    .lup-btn {
+        display: inline-flex; align-items: center; gap: 6px;
+        border-radius: 24px; font-family: var(--font); font-weight: 600;
+        cursor: pointer; transition: all 0.15s; border: none; white-space: nowrap;
+    }
+    .lup-btn--primary {
+        background: var(--lup-accent); color: #fff; padding: 8px 18px;
+    }
+    .lup-btn--primary:hover { background: #4438d4; transform: translateY(-1px); }
+    .lup-btn--ghost {
+        background: var(--lup-bg); color: var(--lup-text-2); border: 1px solid var(--lup-border);
+        padding: 7px 14px;
+    }
+    .lup-btn--ghost:hover { background: var(--lup-border); }
+    .lup-btn--outline {
+        background: transparent; color: var(--lup-accent); border: 1.5px solid var(--lup-accent);
+        padding: 5px 12px; border-radius: 20px;
+    }
+    .lup-btn--outline:hover { background: var(--lup-accent-soft); }
+    .lup-btn--sm { font-size: 0.8rem; padding: 6px 14px; }
+    .lup-btn--xs { font-size: 0.75rem; padding: 4px 10px; }
+
+    .lup-icon-btn {
+        background: none; border: none; cursor: pointer;
+        width: 32px; height: 32px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        color: var(--lup-text-2); font-size: 1rem;
+        transition: background 0.15s;
+    }
+    .lup-icon-btn:hover { background: var(--lup-bg); }
+
+    /* ── AVATAR ────────────────────────────────────────── */
+    .lup-avatar { border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+    .lup-avatar--md { width: 44px; height: 44px; }
+    .lup-avatar--sm { width: 36px; height: 36px; }
+
+    /* ── FEED DIVIDER ──────────────────────────────────── */
+    .lup-feed-divider {
+        display: flex; align-items: center; gap: 10px;
+        color: var(--lup-text-3); font-size: 0.75rem; font-weight: 600;
+        text-transform: uppercase; letter-spacing: 0.05em;
+        margin-bottom: 16px;
+    }
+    .lup-feed-divider::before, .lup-feed-divider::after {
+        content: ''; flex: 1; height: 1px; background: var(--lup-border);
+    }
+
+    /* ── POST CARD ─────────────────────────────────────── */
+    .lup-post {
+        background: var(--lup-surface);
+        border-radius: var(--lup-radius-lg);
+        box-shadow: var(--lup-shadow);
+        margin-bottom: 16px;
+        overflow: hidden;
+        transition: box-shadow 0.2s;
+        border-left: 3px solid transparent;
+    }
+    .lup-post:hover { box-shadow: var(--lup-shadow-md); }
+    .lup-post--own { border-left-color: var(--lup-accent); }
+
+    .lup-post__header {
+        display: flex; align-items: flex-start; gap: 10px;
+        padding: 16px 16px 0;
+    }
+    .lup-post__author-link { flex-shrink: 0; }
+    .lup-post__author-info { flex: 1; min-width: 0; }
+    .lup-post__author-name {
+        display: block; font-size: 0.9rem; font-weight: 700;
+        color: var(--lup-text-1); text-decoration: none;
+        line-height: 1.3;
+    }
+    .lup-post__author-name:hover { text-decoration: underline; }
+    .lup-post__meta {
+        display: flex; align-items: center; gap: 4px;
+        font-size: 0.75rem; color: var(--lup-text-3); margin-top: 2px;
+    }
+    .lup-post__privacy { font-size: 0.7rem; }
+
+    .lup-post__body { padding: 12px 16px; }
+    .lup-post__text {
+        font-size: 0.925rem; line-height: 1.65; color: var(--lup-text-1);
+        margin: 0 0 12px; white-space: pre-wrap; word-break: break-word;
+    }
+    .lup-post__media {
+        border-radius: var(--lup-radius-sm); overflow: hidden;
+        border: 1px solid var(--lup-border); margin-bottom: 10px;
+    }
+    .lup-post__img {
+        width: 100%; display: block;
+        max-height: 480px; object-fit: cover;
+    }
+    .lup-post__video {
+        border-radius: var(--lup-radius-sm); overflow: hidden;
+        border: 1px solid var(--lup-border);
+    }
+
+    /* ── STATS BAR ─────────────────────────────────────── */
+    .lup-post__stats {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 4px 16px 8px;
+    }
+    .lup-post__reaction-pills { display: flex; gap: 6px; }
+    .lup-pill {
+        display: inline-flex; align-items: center; gap: 4px;
+        font-size: 0.78rem; font-weight: 600; padding: 3px 10px;
+        border-radius: 20px;
+    }
+    .lup-pill--like { background: #EBF3FF; color: var(--lup-like); }
+    .lup-pill--dislike { background: #FEF0F0; color: var(--lup-dislike); }
+    .lup-post__comment-count {
+        background: none; border: none; cursor: pointer;
+        font-size: 0.8rem; color: var(--lup-text-2); font-weight: 500;
+        display: flex; align-items: center; gap: 5px;
+        padding: 0; transition: color 0.15s;
+        font-family: var(--font);
+    }
+    .lup-post__comment-count:hover { color: var(--lup-accent); }
+
+    /* ── ACTION BAR ────────────────────────────────────── */
+    .lup-post__actions {
+        display: flex; align-items: center;
+        border-top: 1px solid var(--lup-border);
+        border-bottom: 1px solid var(--lup-border);
+        padding: 2px 6px;
+    }
+    .lup-action-btn {
+        flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+        background: none; border: none; cursor: pointer; font-family: var(--font);
+        font-size: 0.825rem; font-weight: 600; color: var(--lup-text-2);
+        padding: 10px 4px; border-radius: var(--lup-radius-sm);
+        transition: background 0.15s, color 0.15s;
+    }
+    .lup-action-btn i { font-size: 1.05rem; }
+    .lup-action-btn:hover { background: var(--lup-bg); color: var(--lup-accent); }
+    .lup-action-btn--liked { color: var(--lup-like) !important; }
+    .lup-action-btn--liked i::before { content: "\f47f"; } /* bi-hand-thumbs-up-fill */
+    .lup-action-btn--disliked { color: var(--lup-dislike) !important; }
+
+    /* ── COMMENTS ──────────────────────────────────────── */
+    .lup-comments {
+        display: none;
+        padding: 12px 16px 16px;
+        background: var(--lup-bg);
+        animation: slideDown 0.2s ease;
+    }
+    .lup-comments.is-open { display: block; }
+
+    .lup-comments__list {
+        max-height: 320px; overflow-y: auto;
+        padding-right: 4px; margin-bottom: 12px;
+        scroll-behavior: smooth;
+    }
+    .lup-comments__list::-webkit-scrollbar { width: 4px; }
+    .lup-comments__list::-webkit-scrollbar-track { background: transparent; }
+    .lup-comments__list::-webkit-scrollbar-thumb { background: var(--lup-border); border-radius: 4px; }
+
+    .lup-comment {
+        display: flex; gap: 8px; margin-bottom: 10px;
+    }
+    .lup-comment__bubble {
+        background: var(--lup-surface);
+        border-radius: 0 12px 12px 12px;
+        padding: 8px 12px;
+        flex: 1;
+        box-shadow: var(--lup-shadow);
+    }
+    .lup-comment__header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 3px;
+    }
+    .lup-comment__author {
+        font-size: 0.8rem; font-weight: 700; color: var(--lup-text-1);
+    }
+    .lup-comment__time { font-size: 0.7rem; color: var(--lup-text-3); }
+    .lup-comment__text {
+        font-size: 0.85rem; color: var(--lup-text-2);
+        margin: 0 0 4px; word-break: break-word;
+    }
+    .lup-comment__actions { display: flex; gap: 10px; }
+    .lup-comment__action {
+        background: none; border: none; cursor: pointer; font-family: var(--font);
+        font-size: 0.72rem; font-weight: 700; color: var(--lup-text-3);
+        padding: 0; transition: color 0.15s;
+    }
+    .lup-comment__action:hover { color: var(--lup-accent); }
+
+    .lup-comment-input {
+        display: flex; align-items: center; gap: 8px;
+    }
+    .lup-comment-input__field {
+        flex: 1; display: flex; align-items: center;
+        background: var(--lup-surface);
+        border: 1.5px solid var(--lup-border);
+        border-radius: 24px;
+        padding: 2px 2px 2px 14px;
+        transition: border-color 0.15s, box-shadow 0.15s;
+        overflow: hidden;
+    }
+    .lup-comment-input__field.is-focused {
+        border-color: var(--lup-accent);
+        box-shadow: 0 0 0 3px rgba(91,76,255,0.10);
+    }
+    .lup-comment-input__text {
+        flex: 1; border: none; outline: none; background: transparent;
+        font-family: var(--font); font-size: 0.875rem; color: var(--lup-text-1);
+        padding: 6px 0;
+    }
+    .lup-comment-input__send {
+        width: 34px; height: 34px; border-radius: 50%;
+        background: var(--lup-accent); color: #fff; border: none;
+        cursor: pointer; display: flex; align-items: center; justify-content: center;
+        font-size: 0.8rem; flex-shrink: 0;
+        transition: background 0.15s, transform 0.15s;
+    }
+    .lup-comment-input__send:hover { background: #4438d4; transform: scale(1.05); }
+
+    /* ── DROPDOWN ──────────────────────────────────────── */
+    .lup-dropdown {
+        list-style: none; margin: 0; padding: 6px 0;
+        background: var(--lup-surface);
+        border: 1px solid var(--lup-border);
+        border-radius: var(--lup-radius-md);
+        box-shadow: var(--lup-shadow-md);
+        min-width: 180px;
+    }
+    .lup-dropdown__item {
+        display: flex; align-items: center; gap: 8px;
+        padding: 9px 16px; font-size: 0.85rem; font-weight: 500;
+        color: var(--lup-text-1); cursor: pointer;
+        background: none; border: none; width: 100%; text-align: left;
+        font-family: var(--font); text-decoration: none;
+        transition: background 0.12s;
+    }
+    .lup-dropdown__item:hover { background: var(--lup-bg); }
+    .lup-dropdown__item--danger { color: var(--lup-dislike); }
+    .lup-dropdown__item--danger:hover { background: #FEF0F0; }
+
+    /* ── EMPTY STATE ───────────────────────────────────── */
+    .lup-empty {
+        text-align: center; padding: 48px 24px;
+        background: var(--lup-surface); border-radius: var(--lup-radius-lg);
+        box-shadow: var(--lup-shadow);
+    }
+    .lup-empty__icon {
+        width: 64px; height: 64px; background: var(--lup-accent-soft);
+        border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        font-size: 1.75rem; color: var(--lup-accent); margin: 0 auto 16px;
+    }
+    .lup-empty__title { font-size: 1.1rem; font-weight: 700; margin: 0 0 6px; }
+    .lup-empty__text { font-size: 0.9rem; color: var(--lup-text-2); margin: 0 0 20px; }
+
+    /* ── SIDEBAR DERECHO ───────────────────────────────── */
+    .lup-widget {
+        background: var(--lup-surface);
+        border-radius: var(--lup-radius-md);
+        box-shadow: var(--lup-shadow);
+        padding: 16px;
+        margin-bottom: 12px;
+    }
+    .lup-widget--muted { background: transparent; box-shadow: none; padding: 8px 0; }
+    .lup-widget__title {
+        font-size: 0.825rem; font-weight: 700; color: var(--lup-text-2);
+        text-transform: uppercase; letter-spacing: 0.04em;
+        margin: 0 0 14px;
+    }
+    .lup-widget__footer-links {
+        font-size: 0.72rem; color: var(--lup-text-3); line-height: 2; margin: 0;
+    }
+    .lup-widget__footer-links a {
+        color: var(--lup-text-3); text-decoration: none;
+    }
+    .lup-widget__footer-links a:hover { text-decoration: underline; }
+
+    .lup-suggestion {
+        display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+    }
+    .lup-suggestion:last-child { margin-bottom: 0; }
+    .lup-suggestion__info { flex: 1; min-width: 0; }
+    .lup-suggestion__name {
+        font-size: 0.83rem; font-weight: 600; color: var(--lup-text-1);
+        margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .lup-suggestion__role {
+        font-size: 0.72rem; color: var(--lup-text-3); margin: 0;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+</style>
+
+<script>
+    function toggleComments(postId) {
+        const el = document.getElementById('comments-' + postId);
+        if (el) el.classList.toggle('is-open');
+    }
+</script>
