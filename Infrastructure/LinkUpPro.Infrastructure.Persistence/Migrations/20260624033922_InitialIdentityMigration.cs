@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LinkUpPro.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialIdentityMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,15 +19,23 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nombre = table.Column<string>(type: "VARCHAR(50)", nullable: false),
                     Apellido = table.Column<string>(type: "VARCHAR(50)", nullable: false),
-                    Correo = table.Column<string>(type: "VARCHAR(100)", nullable: false),
-                    NombreUsuario = table.Column<string>(type: "VARCHAR(30)", nullable: false),
-                    PasswordHash = table.Column<string>(type: "VARCHAR(255)", nullable: false),
                     FotoPerfilUrl = table.Column<string>(type: "VARCHAR(255)", nullable: true),
                     EsActivo = table.Column<bool>(type: "BIT", nullable: false, defaultValue: false),
-                    CodigoVerificacion = table.Column<string>(type: "VARCHAR(100)", nullable: true),
-                    IntentosFallidos = table.Column<int>(type: "INT", nullable: false, defaultValue: 0),
-                    BloqueoHasta = table.Column<DateTime>(type: "DATETIME", nullable: true),
-                    FechaRegistro = table.Column<DateTime>(type: "DATETIME", nullable: false, defaultValueSql: "GETUTCDATE()")
+                    FechaRegistro = table.Column<DateTime>(type: "DATETIME", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -366,18 +374,6 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                 name: "IX_SolicitudesAmistad_ReceptorId",
                 table: "SolicitudesAmistad",
                 column: "ReceptorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Usuarios_Correo",
-                table: "Usuarios",
-                column: "Correo",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Usuarios_NombreUsuario",
-                table: "Usuarios",
-                column: "NombreUsuario",
-                unique: true);
         }
 
         /// <inheritdoc />

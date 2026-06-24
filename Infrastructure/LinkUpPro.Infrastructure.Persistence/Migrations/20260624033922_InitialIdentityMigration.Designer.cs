@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LinkUpPro.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260621224518_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260624033922_InitialIdentityMigration")]
+    partial class InitialIdentityMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -323,19 +323,21 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
                     b.Property<string>("Apellido")
                         .IsRequired()
                         .HasColumnType("VARCHAR(50)");
 
-                    b.Property<DateTime?>("BloqueoHasta")
-                        .HasColumnType("DATETIME");
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CodigoVerificacion")
-                        .HasColumnType("VARCHAR(100)");
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Correo")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(100)");
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("EsActivo")
                         .ValueGeneratedOnAdd()
@@ -350,30 +352,41 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                     b.Property<string>("FotoPerfilUrl")
                         .HasColumnType("VARCHAR(255)");
 
-                    b.Property<int>("IntentosFallidos")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INT")
-                        .HasDefaultValue(0);
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("VARCHAR(50)");
 
-                    b.Property<string>("NombreUsuario")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(30)");
+                    b.Property<string>("NormalizedEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(255)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Correo")
-                        .IsUnique();
-
-                    b.HasIndex("NombreUsuario")
-                        .IsUnique();
 
                     b.ToTable("Usuarios", (string)null);
                 });
