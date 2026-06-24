@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "J2nZW6DESwc=",
+  "dgSpecHash": "NvcM5IGF320=",
   "success": true,
-  "projectFilePath": "C:\\Users\\orlan\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\jerem\\OneDrive\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\jerem\\.nuget\\packages\\microsoft.netcore.app.ref\\9.0.13\\microsoft.netcore.app.ref.9.0.13.nupkg.sha512",
+    "C:\\Users\\jerem\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\9.0.13\\microsoft.windowsdesktop.app.ref.9.0.13.nupkg.sha512",
+    "C:\\Users\\jerem\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\9.0.13\\microsoft.aspnetcore.app.ref.9.0.13.nupkg.sha512"
+  ],
   "logs": []
 }
