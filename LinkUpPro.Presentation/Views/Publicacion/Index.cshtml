@@ -1,5 +1,6 @@
 @model List<LinkUpPro.Application.ViewModels.Publicacion.PublicacionViewModel>
 
+
 @{
     ViewData["Title"] = "Feed";
 }
@@ -7,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+@await Html.PartialAsync("FiltrosBusqueda")
 
 <div class="lup-layout">
 
@@ -33,97 +36,57 @@
         </div>
 
         <nav class="lup-quick-nav">
-            <a href="#" class="lup-quick-nav__item lup-quick-nav__item--active">
-                <i class="bi bi-house-door-fill"></i> Inicio
+            <a asp-controller="Publicacion" asp-action="Index" class="lup-quick-nav__item lup-quick-nav__item--active">
+                <i class="bi bi-house-door-fill"></i> Home
             </a>
-            <a href="#" class="lup-quick-nav__item">
-                <i class="bi bi-people-fill"></i> Red
+            
+            <a asp-controller="Amigos" asp-action="Index" class="lup-quick-nav__item">
+                <i class="bi bi-people-fill"></i> Amigos
             </a>
-            <a href="#" class="lup-quick-nav__item">
+            
+            <a asp-controller="Amigos" asp-action="Solicitudes" class="lup-quick-nav__item position-relative">
+                <i class="bi bi-person-plus-fill"></i> Solicitudes
+                @if (ViewBag.CantidadSolicitudes > 0)
+                {
+                    <span class="badge rounded-pill bg-danger text-xs align-middle ms-1" style="font-size: 0.65rem;">
+                        @ViewBag.CantidadSolicitudes
+                    </span>
+                }
+            </a>
+
+            <a asp-controller="Notificacion" asp-action="Index" class="lup-quick-nav__item">
                 <i class="bi bi-bell-fill"></i> Notificaciones
+                @if (ViewBag.CantidadNotificaciones > 0)
+                {
+                    <span class="badge rounded-pill bg-primary text-xs align-middle ms-1" style="font-size: 0.65rem;">
+                        @ViewBag.CantidadNotificaciones
+                    </span>
+                }
             </a>
-            <a href="#" class="lup-quick-nav__item">
-                <i class="bi bi-bookmark-fill"></i> Guardados
+
+            <a asp-controller="Battleship" asp-action="Index" class="lup-quick-nav__item">
+                <i class="bi bi-controller"></i> Battleship
             </a>
+
+            <a asp-controller="Perfil" asp-action="Index" class="lup-quick-nav__item">
+                <i class="bi bi-person-circle"></i> Mi Perfil
+            </a>
+
+            <form asp-controller="Account" asp-action="Logout" method="post" class="w-100 border-top mt-1 pt-1">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="lup-quick-nav__item text-danger fw-bold border-0 bg-transparent w-100 text-start" style="cursor: pointer; gap: 10px; padding: 10px 16px;">
+                    <i class="bi bi-box-arrow-right text-danger"></i> Cerrar Sesión
+                </button>
+            </form>
         </nav>
     </aside>
 
+    
     <!-- FEED CENTRAL -->
     <main class="lup-feed">
 
         <!-- CREAR PUBLICACIÓN -->
-        <div class="lup-composer">
-            <div class="lup-composer__top">
-                <img src="@(User.FindFirst("FotoPerfilUrl")?.Value ?? "https://cdn-icons-png.flaticon.com/512/149/149071.png")"
-                     alt="Tu foto" class="lup-avatar lup-avatar--md">
-                <button class="lup-composer__trigger" onclick="document.getElementById('composerForm').classList.toggle('is-open')">
-                    ¿Qué tienes en mente, @User.Identity?.Name?.Split(' ')[0]?
-                </button>
-            </div>
-
-            <div class="lup-composer__form" id="composerForm">
-                <form asp-controller="Publicacion" asp-action="Crear" method="post" enctype="multipart/form-data">
-                    @Html.AntiForgeryToken()
-                    <textarea name="ContenidoTexto" class="lup-composer__textarea"
-                              rows="4" placeholder="Comparte algo con tu red..." required></textarea>
-
-                    <div class="lup-composer__meta">
-                        <div class="lup-field-group">
-                            <label class="lup-field-label">
-                                <i class="bi bi-youtube text-danger"></i> Video de YouTube
-                            </label>
-                            <input type="url" name="YouTubeVideoUrl" class="lup-input lup-input--sm"
-                                   placeholder="https://www.youtube.com/watch?v=...">
-                        </div>
-                        <div class="lup-field-group">
-                            <label class="lup-field-label">
-                                <i class="bi bi-shield-lock"></i> Visibilidad
-                            </label>
-                            <select name="Privacidad" class="lup-select lup-select--sm">
-                                <option value="Publico">🌎 Público</option>
-                                <option value="Privado">🔒 Solo yo</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="lup-composer__actions">
-                        <label class="lup-btn lup-btn--ghost lup-btn--sm">
-                            <i class="bi bi-image-fill" style="color: #10B981;"></i>
-                            <span>Foto</span>
-                            <input type="file" name="ImagenArchivo" class="d-none" accept=".jpg,.jpeg,.png,.webp">
-                        </label>
-                        <label class="lup-btn lup-btn--ghost lup-btn--sm">
-                            <i class="bi bi-film" style="color: #8B5CF6;"></i>
-                            <span>Clip</span>
-                        </label>
-                        <div class="lup-composer__actions-right">
-                            <button type="button" class="lup-btn lup-btn--ghost lup-btn--sm"
-                                    onclick="document.getElementById('composerForm').classList.remove('is-open')">
-                                Cancelar
-                            </button>
-                            <button type="submit" class="lup-btn lup-btn--primary lup-btn--sm">
-                                <i class="bi bi-send-fill"></i> Publicar
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Accesos rápidos cuando el form está cerrado -->
-            <div class="lup-composer__shortcuts">
-                <label class="lup-shortcut">
-                    <i class="bi bi-image-fill" style="color: #10B981;"></i> Foto
-                    <input type="file" class="d-none" accept="image/*"
-                           onchange="document.getElementById('composerForm').classList.add('is-open')">
-                </label>
-                <label class="lup-shortcut">
-                    <i class="bi bi-youtube" style="color: #EF4444;"></i> Video
-                </label>
-                <label class="lup-shortcut">
-                    <i class="bi bi-emoji-smile" style="color: #F59E0B;"></i> Sentimiento
-                </label>
-            </div>
-        </div>
+        @await Html.PartialAsync("CrearPublicacion", new LinkUpPro.Application.ViewModels.Publicacion.PublicacionViewModel())
 
         <!-- SEPARADOR DE FEED -->
         <div class="lup-feed-divider">
@@ -159,12 +122,19 @@
                                  alt="@post.AutorNombreCompleto" class="lup-avatar lup-avatar--md">
                         </a>
                         <div class="lup-post__author-info">
-                            <a href="#" class="lup-post__author-name">@post.AutorNombreCompleto</a>
-                            <div class="lup-post__meta">
-                                <span>@post.FechaCreacion.ToLocalTime().ToString("dd MMM · HH:mm")</span>
-                                <span class="lup-post__privacy">@(post.Privacidad == "Publico" ? "🌎" : "🔒")</span>
+                        <a href="#" class="lup-post__author-name">@post.AutorNombreCompleto</a>
+                        <div class="lup-post__meta">
+                            <span>@post.FechaCreacion.ToLocalTime().ToString("dd MMM · HH:mm")</span>
+                            <span class="lup-post__privacy">@(post.Privacidad == "Publico" ? "🌎" : "🔒")</span>
+                            
+                            @if (post.FechaModificacion.HasValue)
+                            {
+                                <span class="badge bg-light text-muted border ms-1 fw-normal" style="font-size: 0.65rem; padding: 1px 5px; vertical-align: middle;">
+                                    <i class="bi bi-pencil-fill" style="font-size: 0.55rem;"></i> Editada
+                                </span>
+                            }
                             </div>
-                        </div>
+                    </div>
 
                         @if (isOwner)
                         {

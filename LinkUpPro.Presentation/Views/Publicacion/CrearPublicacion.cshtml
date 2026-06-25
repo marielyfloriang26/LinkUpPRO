@@ -1,0 +1,75 @@
+@model LinkUpPro.Application.ViewModels.Publicacion.GuardarPublicacionViewModel
+
+<div class="lup-composer">
+            <div class="lup-composer__top">
+                <img src="@(User.FindFirst("FotoPerfilUrl")?.Value ?? "https://cdn-icons-png.flaticon.com/512/149/149071.png")"
+                     alt="Tu foto" class="lup-avatar lup-avatar--md">
+                <button class="lup-composer__trigger" onclick="document.getElementById('composerForm').classList.toggle('is-open')">
+                    ¿Qué tienes en mente, @User.Identity?.Name?.Split(' ')[0]?
+                </button>
+            </div>
+
+            <div class="lup-composer__form" id="composerForm">
+                <form asp-controller="Publicacion" asp-action="Crear" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <textarea name="ContenidoTexto" class="lup-composer__textarea"
+                              rows="4" placeholder="Comparte algo con tu red..." required></textarea>
+
+                    <div class="lup-composer__meta">
+                        <div class="lup-field-group">
+                            <label class="lup-field-label">
+                                <i class="bi bi-youtube text-danger"></i> Video de YouTube
+                            </label>
+                            <input type="url" name="YouTubeVideoUrl" class="lup-input lup-input--sm"
+                                   placeholder="https://www.youtube.com/watch?v=...">
+                        </div>
+                        <div class="lup-field-group">
+                            <label class="lup-field-label">
+                                <i class="bi bi-shield-lock"></i> Visibilidad
+                            </label>
+                            <select name="Privacidad" class="lup-select lup-select--sm">
+                                <option value="Publico">🌎 Público</option>
+                                <option value="SoloAmigos">👥 Solo Amigos</option>
+                                <option value="Privado">🔒 Solo yo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="lup-composer__actions">
+                        <label class="lup-btn lup-btn--ghost lup-btn--sm">
+                            <i class="bi bi-image-fill" style="color: #10B981;"></i>
+                            <span>Foto</span>
+                            <input type="file" name="ImagenArchivo" class="d-none" accept=".jpg,.jpeg,.png,.webp">
+                        </label>
+                        <label class="lup-btn lup-btn--ghost lup-btn--sm">
+                            <i class="bi bi-film" style="color: #8B5CF6;"></i>
+                            <span>Clip</span>
+                        </label>
+                        <div class="lup-composer__actions-right">
+                            <button type="button" class="lup-btn lup-btn--ghost lup-btn--sm"
+                                    onclick="document.getElementById('composerForm').classList.remove('is-open')">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="lup-btn lup-btn--primary lup-btn--sm">
+                                <i class="bi bi-send-fill"></i> Publicar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Accesos rapidos cuando el form esta cerrado -->
+            <div class="lup-composer__shortcuts">
+                <label class="lup-shortcut">
+                    <i class="bi bi-image-fill" style="color: #10B981;"></i> Foto
+                    <input type="file" class="d-none" accept="image/*"
+                           onchange="document.getElementById('composerForm').classList.add('is-open')">
+                </label>
+                <label class="lup-shortcut">
+                    <i class="bi bi-youtube" style="color: #EF4444;"></i> Video
+                </label>
+                <label class="lup-shortcut">
+                    <i class="bi bi-emoji-smile" style="color: #F59E0B;"></i> Sentimiento
+                </label>
+            </div>
+        </div>

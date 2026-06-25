@@ -12,6 +12,7 @@ public class Publicacion
     public string? YouTubeVideoUrl { get; set; }
     public string Privacidad { get; set; } = "Publico";
     public DateTime FechaCreacion { get; set; }
+    public DateTime? FechaModificacion {get; set;}
 
     public Usuario Usuario { get; set; } = null!;
     public ICollection<Comentario> Comentarios { get; set; } = new List<Comentario>();

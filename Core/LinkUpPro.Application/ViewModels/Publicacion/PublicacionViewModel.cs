@@ -18,6 +18,14 @@ public class PublicacionViewModel
     
     public string? ReaccionUsuarioAutenticado { get; set; } 
 
+    // Propiedades para buscador y filtros
+    public string? TextoBusqueda { get; set; }
+    public string? TipoContenido { get; set; } = "Todos"; // Opciones: Todos, Imagen, Video
+    public DateTime? FechaDesde { get; set; }
+    public DateTime? FechaHasta { get; set; }
+    public string? EstadoEdicion { get; set; } = "Todas"; // Opciones: Todas, Editadas, NoEditadas
+    public DateTime? FechaModificacion { get; set; }
+
     // Lista de comentarios ya listos para renderizar
     public List<ComentarioViewModel> Comentarios { get; set; } = new();
 }

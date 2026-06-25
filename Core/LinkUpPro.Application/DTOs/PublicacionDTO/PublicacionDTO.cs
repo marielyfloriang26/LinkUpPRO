@@ -10,4 +10,5 @@ public class PublicacionDto
     public string? YouTubeVideoUrl { get; set; }
     public string Privacidad { get; set; } = "Publico";
     public DateTime FechaCreacion { get; set; }
+    public DateTime? FechaModificacion { get; set; }
 }

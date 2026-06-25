@@ -19,14 +19,73 @@ public class PublicacionService : IPublicacionService
     }
 
     
-    public async Task<List<PublicacionDto>> ObtenerTodasAsync()
+    public async Task<List<PublicacionDto>> ObtenerTodasAsync(string? textoBusqueda = null, 
+        string? tipoContenido = null, 
+        string? estadoEdicion = null, 
+        DateTime? fechaDesde = null, 
+        DateTime? fechaHasta = null)
     {
         var publicacionesEntidad = await _publicacionRepository.GetTodasConDetallesAsync();
 
-        // Mapea la lista de entidades a la lista de publicaciondto usando AutoMapper
-        var listaDtos = _mapper.Map<List<PublicacionDto>>(publicacionesEntidad);
+        // TEMPORAL EL ID!!!!! Solo deben consultarse publicaciones pertenecientes al usuario autenticado 
+        var query = publicacionesEntidad.Where(p => p.UsuarioId == 1);
 
-        return listaDtos;
+        // La busqueda por texto no distingue mayusculas/minusculas e ignora espacios al inicio y final
+        if (!string.IsNullOrWhiteSpace(textoBusqueda))
+        {
+            var textoLimpio = textoBusqueda.Trim().ToLower();
+            query = query.Where(p => p.ContenidoTexto != null && p.ContenidoTexto.ToLower().Contains(textoLimpio));
+        }
+
+        // Filtro por Tipo de Contenido 
+        if (!string.IsNullOrEmpty(tipoContenido) && tipoContenido != "Todos")
+        {
+            if (tipoContenido == "Imagen")
+            {
+                query = query.Where(p => !string.IsNullOrEmpty(p.ImagenUrl));
+            }
+            else if (tipoContenido == "Video")
+            {
+                query = query.Where(p => !string.IsNullOrEmpty(p.YouTubeVideoUrl));
+            }
+        }
+
+        // Filtro por Estado de edicion 
+        if (!string.IsNullOrEmpty(estadoEdicion) && estadoEdicion != "Todas")
+        {
+            if (estadoEdicion == "Editadas")
+            {
+                query = query.Where(p => p.FechaModificacion.HasValue);
+            }
+            else if (estadoEdicion == "NoEditadas")
+            {
+                query = query.Where(p => !p.FechaModificacion.HasValue);
+            }
+            
+        }
+
+        // Filtros de fechas, fecha desde incluye las publicaciones realizadas a partir de esa fecha
+        if (fechaDesde.HasValue)
+        {
+            query = query.Where(p => p.FechaCreacion.Date >= fechaDesde.Value.Date);
+        }
+
+        // Fecha hasta debe incluir las publicaciones realizadas hasta el final de esa fecha
+        if (fechaHasta.HasValue)
+        {
+            query = query.Where(p => p.FechaCreacion.Date <= fechaHasta.Value.Date);
+        }
+
+        // Las publicaciones deben organizarse desde la mas reciente hasta la mas antigua utilizando fecha y hora
+        var listaOrdenada = query.OrderByDescending(p => p.FechaCreacion).ToList();
+
+        // Mapeo final al dto usando AutoMapper
+        return _mapper.Map<List<PublicacionDto>>(listaOrdenada);
+
+        // Mapea la lista de entidades a la lista de publicaciondto usando AutoMapper
+      /*  var listaDtos = _mapper.Map<List<PublicacionDto>>(publicacionesEntidad);
+
+        return listaDtos; */
     }
 
    
@@ -48,13 +107,13 @@ public class PublicacionService : IPublicacionService
         var publicacionExistente = await _publicacionRepository.GetByIdAsync(dto.Id);
 
         if (publicacionExistente != null)
-        {
-            
+        {  
             // Pasa los cambios del dto a la entidad recuperada
             publicacionExistente.ContenidoTexto = dto.ContenidoTexto;
             publicacionExistente.ImagenUrl = dto.ImagenUrl;
             publicacionExistente.YouTubeVideoUrl = dto.YouTubeVideoUrl;
             publicacionExistente.Privacidad = dto.Privacidad;
+            publicacionExistente.FechaModificacion = DateTime.UtcNow;
 
             await _publicacionRepository.UpdateAsync(publicacionExistente);
         }

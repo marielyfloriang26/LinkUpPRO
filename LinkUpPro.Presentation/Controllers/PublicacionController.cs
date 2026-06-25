@@ -21,12 +21,26 @@ public class PublicacionController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string? textoBusqueda, string? tipoContenido, string? estadoEdicion, DateTime? fechaDesde, DateTime? fechaHasta)
     {
-        var listaDtos = await _publicacionService.ObtenerTodasAsync();
+        if (fechaDesde.HasValue && fechaHasta.HasValue && fechaDesde > fechaHasta)
+        {
+            ViewBag.ErrorFechas = "La fecha inicial no puede ser posterior a la fecha final.";
+
+            // Retorna una lista vacia o previa para cumplir la restriccion visual inmediatamente
+            return View(new List<PublicacionViewModel>());
+        }
+        var listaDtos = await _publicacionService.ObtenerTodasAsync(textoBusqueda, tipoContenido, estadoEdicion, fechaDesde, fechaHasta);
 
         var listaVm = _mapper.Map<List<PublicacionViewModel>>(listaDtos);
 
+        //se mantiene el estado en el ViewBag para que los inputs de la vista parcial conserven lo escrito al recargar
+        ViewBag.TextoBusqueda = textoBusqueda;
+        ViewBag.TipoContenido = tipoContenido ?? "Todos";
+        ViewBag.EstadoEdicion = estadoEdicion ?? "Todas";
+        ViewBag.FechaDesde = fechaDesde?.ToString("yyyy-MM-dd");
+        ViewBag.FechaHasta = fechaHasta?.ToString("yyyy-MM-dd");
+       
         return View(listaVm);
     }
 
