@@ -1,9 +1,8 @@
-using System;
-using System.Threading.Tasks;
-using LinkUpPro.Application.Interfaces.Services.Interfaces;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
 using Microsoft.Extensions.Configuration;
-
-namespace LinkUpPro.Infrastructure.Shared.Services;
+using LinkUpPro.Application.Interfaces.Services.Interfaces;
 
 public class EmailService : IEmailService
 {
@@ -14,19 +13,23 @@ public class EmailService : IEmailService
         _config = config;
     }
 
-    public Task SendAsync(string to, string subject, string body)
+    public async Task SendAsync(string to, string subject, string body)
     {
-        var emailFrom = _config["EmailSettings:From"] ?? "proyectoevote@gmail.com";
+        var email = new MimeMessage();
+        email.From.Add(MailboxAddress.Parse(_config["EmailSettings:From"]));
+        email.To.Add(MailboxAddress.Parse(to));
+        email.Subject = subject;
+        email.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = body };
+
+        using var smtp = new SmtpClient();
         
-        // Simulación en consola requerida para desarrollo local y revisión del maestro
-        Console.WriteLine("\n==================================================================");
-        Console.WriteLine($"[CORREO SIMULADO] Enviado desde: {emailFrom}");
-        Console.WriteLine($"Para: {to}");
-        Console.WriteLine($"Asunto: {subject}");
-        Console.WriteLine("------------------------------------------------------------------");
-        Console.WriteLine($"Cuerpo del mensaje:\n{body}");
-        Console.WriteLine("==================================================================\n");
+        // Conexión al servidor (Ejemplo con Gmail)
+        await smtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
         
-        return Task.CompletedTask;
+        // IMPORTANTE: Aquí usas tu correo y tu "Contraseña de Aplicación"
+        await smtp.AuthenticateAsync(_config["EmailSettings:Username"], _config["EmailSettings:Password"]);
+        
+        await smtp.SendAsync(email);
+        await smtp.DisconnectAsync(true);
     }
 }
