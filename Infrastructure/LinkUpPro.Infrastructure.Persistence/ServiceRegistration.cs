@@ -22,27 +22,5 @@ public static class ServiceRegistration
 
         services.AddTransient(typeof(IRepositoryAsync<>), typeof(RepositoryAsync<>));
 
-        services.AddIdentity<Usuario, IdentityRole<int>>(options =>
-        {
-            // Reglas de contraseña
-            options.Password.RequiredLength = 8;
-            options.Password.RequireDigit = true;
-            options.Password.RequireLowercase = true;
-            options.Password.RequireUppercase = true;
-            options.Password.RequireNonAlphanumeric = true;
-
-            // Bloqueo temporal por intentos fallidos (Requerimiento del documento)
-            options.Lockout.AllowedForNewUsers = true;
-            options.Lockout.MaxFailedAccessAttempts = 5; // Bloqueo tras 5 intentos
-            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15); // Duración del bloqueo
-            
-            // Requerimiento de correo único
-            options.User.RequireUniqueEmail = true;
-        })
-        .AddEntityFrameworkStores<ApplicationDbContext>()
-        .AddDefaultTokenProviders();
-
-        // 3. Registro de Repositorios
-        services.AddTransient(typeof(IRepositoryAsync<>), typeof(RepositoryAsync<>));
     }
 }

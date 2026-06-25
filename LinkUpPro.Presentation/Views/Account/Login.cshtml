@@ -1,0 +1,60 @@
+@model LinkUpPro.Application.Account.ViewModels.LoginViewModel
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3>Iniciar Sesión - LinkUpPro</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Login" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Nombre de usuario</label>
+                            <input asp-for="NombreUsuario" class="form-control" />
+                            <span asp-validation-for="NombreUsuario" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Contraseña</label>
+                            <div class="input-group">
+                                <input asp-for="Contraseña" type="password" id="passLogin" class="form-control" />
+                                <button class="btn btn-outline-secondary" type="button" onclick="toggleView('passLogin', this)">👁️</button>
+                            </div>
+                            <span asp-validation-for="Contraseña" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input asp-for="MantenerSesionIniciada" class="form-check-input" type="checkbox" />
+                            <label class="form-check-label" asp-for="MantenerSesionIniciada">Mantener sesión iniciada</label>
+                            <br /><small class="text-muted text-wrap d-block">Seleccione esta opción únicamente si está utilizando un dispositivo personal.</small>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mb-3">Iniciar sesión</button>
+                    </form>
+                    
+                    <div class="text-center">
+                        <a asp-action="Register" class="d-block mb-1">Registrarse</a>
+                        <a asp-action="ForgotPassword" class="d-block mb-1">Restablecer contraseña</a>
+                        <a asp-action="ResendActivation" class="d-block">Reenviar correo de activación</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleView(id, btn) {
+    let input = document.getElementById(id);
+    if(input.type === "password") {
+        input.type = "text";
+        btn.textContent = "🔒";
+    } else {
+        input.type = "password";
+        btn.textContent = "👁️";
+    }
+}
+</script>

@@ -12,7 +12,22 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Usuarios",
+                name: "AspNetRoles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUsers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -22,10 +37,10 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                     FotoPerfilUrl = table.Column<string>(type: "VARCHAR(255)", nullable: true),
                     EsActivo = table.Column<bool>(type: "BIT", nullable: false, defaultValue: false),
                     FechaRegistro = table.Column<DateTime>(type: "DATETIME", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -39,7 +54,28 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Usuarios", x => x.Id);
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetRoleClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -56,17 +92,102 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_Amistades", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Amistades_Usuarios_UsuarioId1",
+                        name: "FK_Amistades_AspNetUsers_UsuarioId1",
                         column: x => x.UsuarioId1,
-                        principalTable: "Usuarios",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Amistades_Usuarios_UsuarioId2",
+                        name: "FK_Amistades_AspNetUsers_UsuarioId2",
                         column: x => x.UsuarioId2,
-                        principalTable: "Usuarios",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserLogins",
+                columns: table => new
+                {
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserRoles",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserTokens",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -84,9 +205,9 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_Notificaciones", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Notificaciones_Usuarios_UsuarioId",
+                        name: "FK_Notificaciones_AspNetUsers_UsuarioId",
                         column: x => x.UsuarioId,
-                        principalTable: "Usuarios",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -109,27 +230,27 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_PartidasBattleship", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PartidasBattleship_Usuarios_GanadorId",
+                        name: "FK_PartidasBattleship_AspNetUsers_GanadorId",
                         column: x => x.GanadorId,
-                        principalTable: "Usuarios",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_PartidasBattleship_Usuarios_Jugador1Id",
+                        name: "FK_PartidasBattleship_AspNetUsers_Jugador1Id",
                         column: x => x.Jugador1Id,
-                        principalTable: "Usuarios",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_PartidasBattleship_Usuarios_Jugador2Id",
+                        name: "FK_PartidasBattleship_AspNetUsers_Jugador2Id",
                         column: x => x.Jugador2Id,
-                        principalTable: "Usuarios",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_PartidasBattleship_Usuarios_TurnoUsuarioId",
+                        name: "FK_PartidasBattleship_AspNetUsers_TurnoUsuarioId",
                         column: x => x.TurnoUsuarioId,
-                        principalTable: "Usuarios",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -151,9 +272,9 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_Publicaciones", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Publicaciones_Usuarios_UsuarioId",
+                        name: "FK_Publicaciones_AspNetUsers_UsuarioId",
                         column: x => x.UsuarioId,
-                        principalTable: "Usuarios",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -173,15 +294,15 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_SolicitudesAmistad", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SolicitudesAmistad_Usuarios_EmisorId",
+                        name: "FK_SolicitudesAmistad_AspNetUsers_EmisorId",
                         column: x => x.EmisorId,
-                        principalTable: "Usuarios",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_SolicitudesAmistad_Usuarios_ReceptorId",
+                        name: "FK_SolicitudesAmistad_AspNetUsers_ReceptorId",
                         column: x => x.ReceptorId,
-                        principalTable: "Usuarios",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -203,17 +324,17 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_CasillasTablero", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_CasillasTablero_AspNetUsers_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_CasillasTablero_PartidasBattleship_PartidaId",
                         column: x => x.PartidaId,
                         principalTable: "PartidasBattleship",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CasillasTablero_Usuarios_UsuarioId",
-                        column: x => x.UsuarioId,
-                        principalTable: "Usuarios",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -232,6 +353,12 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_Comentarios", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Comentarios_AspNetUsers_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Comentarios_Comentarios_ComentarioPadreId",
                         column: x => x.ComentarioPadreId,
                         principalTable: "Comentarios",
@@ -241,12 +368,6 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                         name: "FK_Comentarios_Publicaciones_PublicacionId",
                         column: x => x.PublicacionId,
                         principalTable: "Publicaciones",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Comentarios_Usuarios_UsuarioId",
-                        column: x => x.UsuarioId,
-                        principalTable: "Usuarios",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -266,6 +387,12 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_Reacciones", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Reacciones_AspNetUsers_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Reacciones_Comentarios_ComentarioId",
                         column: x => x.ComentarioId,
                         principalTable: "Comentarios",
@@ -275,12 +402,6 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                         name: "FK_Reacciones_Publicaciones_PublicacionId",
                         column: x => x.PublicacionId,
                         principalTable: "Publicaciones",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Reacciones_Usuarios_UsuarioId",
-                        column: x => x.UsuarioId,
-                        principalTable: "Usuarios",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -294,6 +415,45 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                 name: "IX_Amistades_UsuarioId2",
                 table: "Amistades",
                 column: "UsuarioId2");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetRoleClaims_RoleId",
+                table: "AspNetRoleClaims",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "RoleNameIndex",
+                table: "AspNetRoles",
+                column: "NormalizedName",
+                unique: true,
+                filter: "[NormalizedName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserClaims_UserId",
+                table: "AspNetUserClaims",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserLogins_UserId",
+                table: "AspNetUserLogins",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserRoles_RoleId",
+                table: "AspNetUserRoles",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "EmailIndex",
+                table: "AspNetUsers",
+                column: "NormalizedEmail");
+
+            migrationBuilder.CreateIndex(
+                name: "UserNameIndex",
+                table: "AspNetUsers",
+                column: "NormalizedUserName",
+                unique: true,
+                filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CasillasTablero_PartidaId",
@@ -383,6 +543,21 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                 name: "Amistades");
 
             migrationBuilder.DropTable(
+                name: "AspNetRoleClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserLogins");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserRoles");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
                 name: "CasillasTablero");
 
             migrationBuilder.DropTable(
@@ -395,6 +570,9 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                 name: "SolicitudesAmistad");
 
             migrationBuilder.DropTable(
+                name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
                 name: "PartidasBattleship");
 
             migrationBuilder.DropTable(
@@ -404,7 +582,7 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                 name: "Publicaciones");
 
             migrationBuilder.DropTable(
-                name: "Usuarios");
+                name: "AspNetUsers");
         }
     }
 }

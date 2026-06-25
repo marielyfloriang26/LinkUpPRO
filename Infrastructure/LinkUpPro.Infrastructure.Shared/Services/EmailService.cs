@@ -16,7 +16,7 @@ public class EmailService : IEmailService
 
     public Task SendAsync(string to, string subject, string body)
     {
-        var emailFrom = _config["EmailSettings:From"] ?? "noreply@linkuppro.com";
+        var emailFrom = _config["EmailSettings:From"] ?? "proyectoevote@gmail.com";
         
         // Simulación en consola requerida para desarrollo local y revisión del maestro
         Console.WriteLine("\n==================================================================");

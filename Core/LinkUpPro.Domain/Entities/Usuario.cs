@@ -12,7 +12,7 @@ public class Usuario : IdentityUser<int>
     public string Nombre { get; set; } = null!;
     public string Apellido { get; set; } = null!;
     public string? FotoPerfilUrl { get; set; }
-    public bool EsActivo { get; set; } // Estado personalizado para el flujo de la red social
+    public bool EsActivo { get; set; }// Estado personalizado para el flujo de la red social
     public DateTime FechaRegistro { get; set; }
 
     // Navigation properties

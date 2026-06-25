@@ -1,41 +1,68 @@
-using LinkUpPro.Infrastructure.Persistence;
+using LinkUpPro.Application.Interfaces.Services;
+using LinkUpPro.Application.Interfaces.Services.Interfaces;
+using LinkUpPro.Domain.Entities;
+using LinkUpPro.Infrastructure.Persistence.Contexts;
+using LinkUpPro.Infrastructure.Persistence.Services;
+using LinkUpPro.Infrastructure.Shared.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System;
 
-namespace LinkUpPro.Presentation
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddIdentity<Usuario, IdentityRole<int>>(options =>
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 8;
+    options.User.RequireUniqueEmail = true;
 
-            // Add services to the container.
-            builder.Services.AddControllersWithViews();
-            
-            // Add Infrastructure Persistence layer
-            builder.Services.AddPersistenceInfrastructure(builder.Configuration);
+    // Regla estricta: 5 intentos = 15 minutos bloqueado
+    options.Lockout.AllowedForNewUsers = true;
+    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+})
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
 
-            var app = builder.Build();
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.LogoutPath = "/Account/Logout";
+    
+    // 30 minutos de inactividad por defecto
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    options.SlidingExpiration = true; 
+});
 
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IUploadFileService, UploadFileService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 
-            app.UseHttpsRedirection();
-            app.UseRouting();
+builder.Services.AddControllersWithViews();
 
-            app.UseAuthorization();
+var app = builder.Build();
 
-            app.MapStaticAssets();
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}")
-                .WithStaticAssets();
-
-            app.Run();
-        }
-    }
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
 }
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Account}/{action=Login}/{id?}");
+
+app.Run();
