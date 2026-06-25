@@ -1784,10 +1784,7 @@
         },
         "runtime": {
           "bin/placeholder/LinkUpPro.Infrastructure.Persistence.dll": {}
-        },
-        "frameworkReferences": [
-          "Microsoft.AspNetCore.App"
-        ]
+        }
       },
       "LinkUpPro.Infrastructure.Shared/1.0.0": {
         "type": "project",

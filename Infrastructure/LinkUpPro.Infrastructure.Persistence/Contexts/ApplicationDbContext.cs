@@ -1,9 +1,11 @@
 using LinkUpPro.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace LinkUpPro.Infrastructure.Persistence.Contexts;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : IdentityDbContext<Usuario, IdentityRole<int>, int>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {

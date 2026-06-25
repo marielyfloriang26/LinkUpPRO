@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "+5BItx6oHJM=",
+  "dgSpecHash": "J9hwIAn6pZA=",
   "success": true,
   "projectFilePath": "C:\\Users\\jerem\\OneDrive\\Documents\\GitHub\\LinkUpPro\\Infrastructure\\LinkUpPro.Infrastructure.Persistence\\LinkUpPro.Infrastructure.Persistence.csproj",
   "expectedPackageFiles": [
@@ -90,8 +90,7 @@
     "C:\\Users\\jerem\\.nuget\\packages\\system.windows.extensions\\6.0.0\\system.windows.extensions.6.0.0.nupkg.sha512",
     "C:\\Users\\jerem\\.nuget\\packages\\microsoft.netcore.app.ref\\9.0.13\\microsoft.netcore.app.ref.9.0.13.nupkg.sha512",
     "C:\\Users\\jerem\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\9.0.13\\microsoft.windowsdesktop.app.ref.9.0.13.nupkg.sha512",
-    "C:\\Users\\jerem\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\9.0.13\\microsoft.aspnetcore.app.ref.9.0.13.nupkg.sha512",
-    "C:\\Users\\jerem\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\9.0.13\\microsoft.netcore.app.host.win-x64.9.0.13.nupkg.sha512"
+    "C:\\Users\\jerem\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\9.0.13\\microsoft.aspnetcore.app.ref.9.0.13.nupkg.sha512"
   ],
   "logs": []
 }
