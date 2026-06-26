@@ -98,7 +98,10 @@
         },
         "runtime": {
           "bin/placeholder/LinkUpPro.Application.dll": {}
-        }
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
       },
       "LinkUpPro.Domain/1.0.0": {
         "type": "project",

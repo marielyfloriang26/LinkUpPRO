@@ -8,7 +8,7 @@ public class PublicacionDto
     public string ContenidoTexto { get; set; } = null!;
     public string? ImagenUrl { get; set; }
     public string? YouTubeVideoUrl { get; set; }
-    public string Privacidad { get; set; } = "Publico";
+    public string Privacidad { get; set; } = "SoloAmigos";
     public DateTime FechaCreacion { get; set; }
     public DateTime? FechaModificacion { get; set; }
 }

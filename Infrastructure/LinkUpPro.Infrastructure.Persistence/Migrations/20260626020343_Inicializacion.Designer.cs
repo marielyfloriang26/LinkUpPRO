@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LinkUpPro.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260624202113_Inicializacion")]
+    [Migration("20260626020343_Inicializacion")]
     partial class Inicializacion
     {
         /// <inheritdoc />

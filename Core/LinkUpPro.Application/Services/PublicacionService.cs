@@ -91,13 +91,64 @@ public class PublicacionService : IPublicacionService
    
     public async Task CrearAsync(CrearPublicacionDto dto)
     {
-        // Mapea el dto de entrada a la entidad de dominioa
+        // El contenido no debe estar vacio ni ser puros espacios
+        if (string.IsNullOrWhiteSpace(dto.ContenidoTexto))
+        {
+            throw new Exception("Debe ingresar el contenido de la publicación.");
+        }
+
+        if (dto.ContenidoTexto.Length > 1000)
+        {
+            throw new Exception("La publicación no puede exceder los 1000 caracteres.");
+        }
+
+        // Extraccion y conversion a Embed
+        if (!string.IsNullOrEmpty(dto.YouTubeVideoUrl))
+        {
+            var videoId = ExtraerYouTubeId(dto.YouTubeVideoUrl);
+            if (string.IsNullOrEmpty(videoId))
+            {
+                throw new Exception("Debe ingresar un enlace válido de YouTube.");
+            }
+            
+            // Convierte la url normal a url embebida 
+            dto.YouTubeVideoUrl = $"https://www.youtube.com/embed/{videoId}";
+            dto.ImagenUrl = null; // No se permiten ambos juntos
+        }
+
+        // Mapea el dto de entrada a la entidad de dominio
         var nuevaPublicacion = _mapper.Map<Publicacion>(dto);
-        
-        
         nuevaPublicacion.FechaCreacion = DateTime.UtcNow;
 
         await _publicacionRepository.AddAsync(nuevaPublicacion);
+    }
+
+    private string? ExtraerYouTubeId(string url)
+    {
+        if (string.IsNullOrWhiteSpace(url)) return null;
+
+        try
+        {
+            var uri = new Uri(url);
+            var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+            if (query.TryGetValue("v", out var videoId))
+            {
+                return videoId;
+            }
+            if (uri.Host == "youtu.be")
+            {
+                return uri.AbsolutePath.TrimStart('/');
+            }
+            if (uri.AbsolutePath.Contains("/shorts/"))
+            {
+                return uri.AbsolutePath.Split("/shorts/").Last().Split('?').First();
+            }
+        }
+        catch
+        {
+            return null;
+        }
+        return null;
     }
 
    

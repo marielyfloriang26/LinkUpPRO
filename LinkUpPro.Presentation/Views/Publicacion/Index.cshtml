@@ -12,7 +12,7 @@
 @await Html.PartialAsync("FiltrosBusqueda")
 
 <div class="lup-layout">
-
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <!-- SIDEBAR IZQUIERDO-->
     <aside class="lup-sidebar lup-sidebar--left">
         <div class="lup-profile-card">
@@ -84,9 +84,13 @@
     
     <!-- FEED CENTRAL -->
     <main class="lup-feed">
-
+        
+        @{
+    // Guarda si hay publicaciones para que el componente de abajo lo sepa
+    ViewData["HayPublicaciones"] = Model != null && Model.Any();
+}
         <!-- CREAR PUBLICACIÓN -->
-        @await Html.PartialAsync("CrearPublicacion", new LinkUpPro.Application.ViewModels.Publicacion.PublicacionViewModel())
+        @await Html.PartialAsync("CrearPublicacion", new LinkUpPro.Application.ViewModels.Publicacion.GuardarPublicacionViewModel())
 
         <!-- SEPARADOR DE FEED -->
         <div class="lup-feed-divider">
@@ -136,6 +140,13 @@
                             </div>
                     </div>
 
+                    @if (TempData["MensajeExito"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle-fill"></i> @TempData["MensajeExito"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
                         @if (isOwner)
                         {
                             <div class="dropdown ms-auto">
