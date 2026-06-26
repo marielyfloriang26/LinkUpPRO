@@ -1,22 +1,13 @@
-using System;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 
 namespace LinkUpPro.Domain.Entities;
 
-public class Usuario
+public class Usuario : IdentityUser<int>
 {
-    public int Id { get; set; }
     public string Nombre { get; set; } = null!;
     public string Apellido { get; set; } = null!;
-    public string Correo { get; set; } = null!;
-    public string NombreUsuario { get; set; } = null!;
-    public string PasswordHash { get; set; } = null!;
     public string? FotoPerfilUrl { get; set; }
-    public bool EsActivo { get; set; }
-    public string? CodigoVerificacion { get; set; }
-    public int IntentosFallidos { get; set; }
-    public DateTime? BloqueoHasta { get; set; }
-    public DateTime FechaRegistro { get; set; }
+    public DateTime FechaRegistro { get; set; } = DateTime.UtcNow;
 
     // Navigation properties
     public ICollection<Publicacion> Publicaciones { get; set; } = new List<Publicacion>();
