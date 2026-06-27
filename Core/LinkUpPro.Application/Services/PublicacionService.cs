@@ -164,6 +164,7 @@ public class PublicacionService : IPublicacionService
             publicacionExistente.ImagenUrl = dto.ImagenUrl;
             publicacionExistente.YouTubeVideoUrl = dto.YouTubeVideoUrl;
             publicacionExistente.Privacidad = dto.Privacidad;
+            publicacionExistente.PermiteComentarios = dto.PermiteComentarios;
             publicacionExistente.FechaModificacion = DateTime.UtcNow;
 
             await _publicacionRepository.UpdateAsync(publicacionExistente);

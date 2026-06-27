@@ -230,6 +230,9 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                     b.Property<string>("ImagenUrl")
                         .HasColumnType("VARCHAR(255)");
 
+                    b.Property<bool>("PermiteComentarios")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Privacidad")
                         .IsRequired()
                         .ValueGeneratedOnAdd()

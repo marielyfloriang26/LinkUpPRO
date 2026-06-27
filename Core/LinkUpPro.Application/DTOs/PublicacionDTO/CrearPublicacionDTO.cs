@@ -7,4 +7,5 @@ public class CrearPublicacionDto
     public string? ImagenUrl { get; set; }
     public string? YouTubeVideoUrl { get; set; }
     public string Privacidad { get; set; } = "SoloAmigos";
+    public bool PermiteComentarios { get; set; }
 }

@@ -26,6 +26,7 @@ public class PublicacionViewModel
     public string? EstadoEdicion { get; set; } = "Todas"; // Opciones: Todas, Editadas, NoEditadas
     public DateTime? FechaModificacion { get; set; }
 
+    public bool PermiteComentarios { get; set; } = true;
     // Lista de comentarios ya listos para renderizar
     public List<ComentarioViewModel> Comentarios { get; set; } = new();
 }

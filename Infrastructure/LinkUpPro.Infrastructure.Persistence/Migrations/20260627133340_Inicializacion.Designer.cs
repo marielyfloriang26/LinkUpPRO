@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LinkUpPro.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260626020343_Inicializacion")]
+    [Migration("20260627133340_Inicializacion")]
     partial class Inicializacion
     {
         /// <inheritdoc />
@@ -232,6 +232,9 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("ImagenUrl")
                         .HasColumnType("VARCHAR(255)");
+
+                    b.Property<bool>("PermiteComentarios")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Privacidad")
                         .IsRequired()

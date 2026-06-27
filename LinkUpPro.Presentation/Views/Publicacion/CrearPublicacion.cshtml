@@ -79,9 +79,9 @@
 
                         <div class="lup-composer__actions-right">
                             <div class="form-check d-inline-block me-2">
-                                <input class="form-check-input" type="checkbox" name="PermitirComentarios" value="true" id="chkComentarios" checked>
-                        <label class="form-check-label small text-muted" for="chkComentarios">Permitir Comentarios</label>
-                    </div>
+                            <input class="form-check-input" type="checkbox" asp-for="PermiteComentarios" id="chkComentarios">
+                            <label class="form-check-label small text-muted" for="chkComentarios">Permitir Comentarios</label>
+                        </div>
 
                             <button type="button" class="lup-btn lup-btn--ghost lup-btn--sm"
                                     onclick="document.getElementById('composerForm').classList.remove('is-open')">
@@ -200,10 +200,10 @@
                 var selectFormato = document.getElementById("tipoContenidoSelect");
                 
                 if (selectFormato && tipoContenidoEnviado) {
-                    // Seteamos el selector de la vista con el formato correcto (Imagen o Video)
+                    
                     selectFormato.value = tipoContenidoEnviado;
                     
-                    // Ejecutamos tu función nativa para que oculte/muestre los campos correspondientes
+                    
                     conmutarTipoContenido();
                 }
                         }

@@ -235,7 +235,7 @@
                     </div>
 
                     <!-- BARRA DE ACCIONES -->
-                    <div class="lup-post__actions">
+                   <div class="lup-post__actions">
                         <button class="lup-action-btn" onclick="this.classList.toggle('lup-action-btn--liked')">
                             <i class="bi bi-hand-thumbs-up"></i>
                             <span>Me gusta</span>
@@ -244,18 +244,25 @@
                             <i class="bi bi-hand-thumbs-down"></i>
                             <span>No me gusta</span>
                         </button>
-                        <button class="lup-action-btn" onclick="toggleComments('@post.Id')">
-                            <i class="bi bi-chat-left"></i>
-                            <span>Comentar</span>
-                        </button>
+                        
+                        
+                        @if (post.PermiteComentarios)
+                        {
+                            <button class="lup-action-btn" onclick="toggleComments('@post.Id')">
+                                <i class="bi bi-chat-left"></i>
+                                <span>Comentar</span>
+                            </button>
+                        }
+                        
                         <button class="lup-action-btn">
                             <i class="bi bi-share"></i>
                             <span>Compartir</span>
                         </button>
                     </div>
 
-                    <!-- SECCIÓN DE COMENTARIOS -->
                     <div class="lup-comments" id="comments-@post.Id">
+                        
+                        @* REQUERIMIENTO: Los comentarios y respuestas existentes deben continuar visibles siempre *@
                         @if (post.Comentarios != null && post.Comentarios.Any())
                         {
                             <div class="lup-comments__list">
@@ -270,9 +277,15 @@
                                                 <span class="lup-comment__time">@comentario.FechaCreacion.ToLocalTime().ToString("HH:mm")</span>
                                             </div>
                                             <p class="lup-comment__text">@comentario.Contenido</p>
+                                            
                                             <div class="lup-comment__actions">
                                                 <button class="lup-comment__action">Me gusta</button>
-                                                <button class="lup-comment__action">Responder</button>
+                                                
+                                               
+                                                @if (post.PermiteComentarios)
+                                                {
+                                                    <button class="lup-comment__action">Responder</button>
+                                                }
                                             </div>
                                         </div>
                                     </div>
@@ -280,20 +293,34 @@
                             </div>
                         }
 
-                        <!-- INPUT DE COMENTARIO -->
-                        <div class="lup-comment-input">
-                            <img src="@(User.FindFirst("FotoPerfilUrl")?.Value ?? "https://cdn-icons-png.flaticon.com/512/149/149071.png")"
-                                 alt="Tu foto" class="lup-avatar lup-avatar--sm">
-                            <div class="lup-comment-input__field">
-                                <input type="text" placeholder="Escribe un comentario..."
-                                       class="lup-comment-input__text"
-                                       onfocus="this.closest('.lup-comment-input__field').classList.add('is-focused')"
-                                       onblur="this.closest('.lup-comment-input__field').classList.remove('is-focused')">
-                                <button class="lup-comment-input__send" type="button">
-                                    <i class="bi bi-send-fill"></i>
-                                </button>
+                        
+                        @if (post.PermiteComentarios)
+                        {
+                            <form asp-controller="Comentario" asp-action="Crear" method="post" class="lup-comment-input">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="PublicacionId" value="@post.Id" />
+
+                                <img src="@(User.FindFirst("FotoPerfilUrl")?.Value ?? "https://cdn-icons-png.flaticon.com/512/149/149071.png")"
+                                     alt="Tu foto" class="lup-avatar lup-avatar--sm">
+                                <div class="lup-comment-input__field">
+                                    <input type="text" 
+                                           name="Contenido" 
+                                           placeholder="Escribe un comentario..." 
+                                           class="lup-comment-input__text"
+                                           required>
+                                    <button class="lup-comment-input__send" type="submit">
+                                        <i class="bi bi-send-fill"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        }
+                        else
+                        {
+                            <div class="alert alert-danger text-danger border border-danger-subtle text-center my-2" style="font-size: 0.85rem; border-radius: 8px; background-color: #f8d7da; padding: 10px; width: 100%;">
+                                <i class="bi bi-chat-left-x-fill me-1"></i> 
+                                Los comentarios están desactivados para esta publicación.
                             </div>
-                        </div>
+                        }
                     </div>
 
                 </article>
@@ -332,6 +359,7 @@
     </aside>
 
 </div>
+
 
 <style>
     *, *::before, *::after { box-sizing: border-box; }
@@ -821,4 +849,28 @@
         const el = document.getElementById('comments-' + postId);
         if (el) el.classList.toggle('is-open');
     }
+
+    document.querySelectorAll('.lup-comment-input').forEach(form => {
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault(); // Evita que te redirija a otra página
+        
+        const formData = new FormData(this);
+        
+        try {
+            const response = await fetch(this.action, {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (response.ok) {
+                // Refresca el feed suavemente o recarga la página actual
+                window.location.reload(); 
+            } else {
+                alert("No se pudo guardar el comentario. Verifica las validaciones.");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    });
+});
 </script>

@@ -104,6 +104,7 @@ public class PublicacionController : Controller
 
         // Simulación: Aquí debería capturar el ID del usuario autenticado mediante Identity
         // Ejemplo: crearDto.UsuarioId = Convert.ToInt32(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+        
         crearDto.UsuarioId = 1; // !!!!!!!!!!!!!!
         // TEMPORAL Temporal para pruebas hasta que tu compañero monte el Login
 
