@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LinkUpPro.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260626041002_InitialIdentity")]
+    [Migration("20260627041444_InitialIdentity")]
     partial class InitialIdentity
     {
         /// <inheritdoc />

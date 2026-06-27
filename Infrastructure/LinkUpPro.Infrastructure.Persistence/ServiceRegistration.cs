@@ -20,6 +20,7 @@ public static class ServiceRegistration
 
         services.AddIdentity<Usuario, IdentityRole<int>>(options =>
         {
+            options.User.RequireUniqueEmail = true;
             options.SignIn.RequireConfirmedEmail = true; // Obligatorio para activar cuenta
             options.Password.RequiredLength = 8;
             options.Password.RequireDigit = true;

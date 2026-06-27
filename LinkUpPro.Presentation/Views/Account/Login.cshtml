@@ -10,6 +10,7 @@
             <div class="mb-3">
                 <label>Nombre de Usuario</label>
                 <input asp-for="NombreUsuario" class="form-control" />
+                <span asp-validation-for="NombreUsuario" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
@@ -18,6 +19,7 @@
                     <input asp-for="Password" type="password" id="loginPass" class="form-control" />
                     <button type="button" class="btn btn-outline-secondary" onclick="togglePass('loginPass')">👁️</button>
                 </div>
+                <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
             <div class="mb-3 form-check">
@@ -43,3 +45,7 @@
         input.type = (input.type === "password") ? "text" : "password";
     }
 </script>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

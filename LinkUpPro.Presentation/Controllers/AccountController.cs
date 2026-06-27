@@ -115,7 +115,7 @@ public class AccountController : Controller
                 $"Hola {vm.Nombre}, por favor activa tu cuenta haciendo clic en el siguiente enlace: <a href='{callbackUrl}'>Activar Cuenta</a>");
 
             TempData["Success"] = "Su cuenta fue creada correctamente. Hemos enviado un enlace de activación a su correo.";
-            return RedirectToAction("Login");
+            return RedirectToAction("RegisterConfirmation");
         }
 
         // 5. Mostrar errores de Identity (como nombre de usuario duplicado)
@@ -126,6 +126,15 @@ public class AccountController : Controller
 
         return View(vm);
     }
+
+    [HttpGet]
+    [AllowAnonymous]
+    public IActionResult RegisterConfirmation()
+    {
+        return View();
+    }
+
+
 
     [HttpGet]
     [AllowAnonymous]
@@ -198,12 +207,49 @@ public class AccountController : Controller
         return RedirectToAction("Login");
     }
 
+    [HttpGet]
+    [AllowAnonymous]
+    public IActionResult ResendEmail()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [AllowAnonymous]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResendEmail(string email)
+    {
+        // 1. Buscar el usuario por email
+        var user = await _userManager.FindByEmailAsync(email);
+        
+        if (user == null)
+        {
+            // Por seguridad, no decimos si el email existe o no, solo damos un mensaje genérico
+            return View("ResendEmailConfirmation");
+        }
+
+        // 2. Generar el token de confirmación
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token = token }, protocol: HttpContext.Request.Scheme);
+
+        // 3. Enviar el correo (asegúrate de reutilizar tu servicio de email)
+        await _emailService.SendAsync(user.Email, "Reenvío de Activación - LinkUp Pro", $"Haz clic aquí para activar tu cuenta: {callbackUrl}");
+
+        return View("ResendEmailConfirmation");
+    }
+
+
+
+
+
+
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
     {
         await _signInManager.SignOutAsync();
-        return RedirectToAction("Login");
+        return RedirectToAction("Login", "Account");
     }
 
     /*[HttpGet]

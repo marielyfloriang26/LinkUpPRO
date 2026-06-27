@@ -1,0 +1,12 @@
+@{ ViewData["Title"] = "Reenviar correo"; }
+
+<div class="container mt-5">
+    <h2>Reenviar correo de activación</h2>
+    <form asp-action="ResendEmail" method="post">
+        <div class="form-group">
+            <label>Correo Electrónico</label>
+            <input type="email" name="email" class="form-control" required />
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Enviar nuevo correo</button>
+    </form>
+</div>
