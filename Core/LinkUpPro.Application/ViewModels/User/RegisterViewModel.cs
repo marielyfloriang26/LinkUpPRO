@@ -6,10 +6,12 @@ namespace LinkUpPro.Application.ViewModels.User;
 public class RegisterViewModel
 {
     [Required(ErrorMessage = "El nombre es requerido")]
+    [RegularExpression(@"^(?!^\s+$).+$", ErrorMessage = "El nombre no debe contener únicamente espacios.")]
     [StringLength(50)]
     public string Nombre { get; set; } = null!;
 
     [Required(ErrorMessage = "El apellido es requerido")]
+    [RegularExpression(@"^(?!^\s+$).+$", ErrorMessage = "El apellido no debe contener únicamente espacios.")]
     [StringLength(50)]
     public string Apellido { get; set; } = null!;
 
@@ -35,5 +37,6 @@ public class RegisterViewModel
     public string ConfirmPassword { get; set; } = null!;
 
     [Required(ErrorMessage = "Debe seleccionar una foto de perfil")]
+    [FileExtensions(Extensions = "jpg,jpeg,png,gif", ErrorMessage = "Por favor, seleccione una imagen válida (jpg, png, gif).")]
     public IFormFile FotoPerfil { get; set; } = null!;
 }

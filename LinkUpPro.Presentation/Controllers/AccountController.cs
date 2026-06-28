@@ -121,7 +121,18 @@ public class AccountController : Controller
         // 5. Mostrar errores de Identity (como nombre de usuario duplicado)
         foreach (var error in result.Errors)
         {
-            ModelState.AddModelError("", error.Description);
+            if (error.Code == "DuplicateUserName")
+            {
+                ModelState.AddModelError("NombreUsuario", "Este nombre de usuario ya se encuentra registrado.");
+            }
+            else if (error.Code == "DuplicateEmail")
+            {
+                ModelState.AddModelError("Correo", "Este correo electrónico ya se encuentra registrado.");
+            }
+            else
+            {
+                ModelState.AddModelError("", error.Description);
+            }
         }
 
         return View(vm);
@@ -237,11 +248,6 @@ public class AccountController : Controller
 
         return View("ResendEmailConfirmation");
     }
-
-
-
-
-
 
 
     [HttpPost]
