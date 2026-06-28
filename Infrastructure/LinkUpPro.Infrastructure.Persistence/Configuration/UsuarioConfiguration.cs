@@ -16,6 +16,7 @@ public class UsuarioConfiguration : IEntityTypeConfiguration<Usuario>
         builder.Property(u => u.Apellido).HasColumnType("VARCHAR(50)").IsRequired();
         builder.Property(u => u.FotoPerfilUrl).HasColumnType("VARCHAR(255)");
         builder.Property(u => u.FechaRegistro).HasColumnType("DATETIME").HasDefaultValueSql("GETUTCDATE()");
+        builder.Property(u => u.UltimoReenvioCorreo).HasColumnType("DATETIME").IsRequired(false);
 
         // NOTA IMPORTANTE:
         // No mapees manualmente Email, UserName, PasswordHash o AccessFailedCount.

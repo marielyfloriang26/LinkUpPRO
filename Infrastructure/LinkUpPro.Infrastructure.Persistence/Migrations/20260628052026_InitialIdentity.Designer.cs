@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LinkUpPro.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260627041444_InitialIdentity")]
+    [Migration("20260628052026_InitialIdentity")]
     partial class InitialIdentity
     {
         /// <inheritdoc />
@@ -381,6 +381,9 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UltimoReenvioCorreo")
+                        .HasColumnType("DATETIME");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)

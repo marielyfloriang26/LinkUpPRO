@@ -37,6 +37,5 @@ public class RegisterViewModel
     public string ConfirmPassword { get; set; } = null!;
 
     [Required(ErrorMessage = "Debe seleccionar una foto de perfil")]
-    [FileExtensions(Extensions = "jpg,jpeg,png,gif", ErrorMessage = "Por favor, seleccione una imagen válida (jpg, png, gif).")]
     public IFormFile FotoPerfil { get; set; } = null!;
 }

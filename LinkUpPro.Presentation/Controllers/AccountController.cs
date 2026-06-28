@@ -115,7 +115,7 @@ public class AccountController : Controller
                 $"Hola {vm.Nombre}, por favor activa tu cuenta haciendo clic en el siguiente enlace: <a href='{callbackUrl}'>Activar Cuenta</a>");
 
             TempData["Success"] = "Su cuenta fue creada correctamente. Hemos enviado un enlace de activación a su correo.";
-            return RedirectToAction("RegisterConfirmation");
+            return RedirectToAction("Login");
         }
 
         // 5. Mostrar errores de Identity (como nombre de usuario duplicado)
@@ -204,8 +204,16 @@ public class AccountController : Controller
     [AllowAnonymous]
     public async Task<IActionResult> ConfirmEmail(string userId, string token)
     {
+        if (userId == null || token == null) return RedirectToAction("Login");
+
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null) return NotFound();
+
+        if (await _userManager.IsEmailConfirmedAsync(user))
+        {
+            TempData["Error"] = "El enlace de activación ya no es válido o la cuenta ya fue activada.";
+            return RedirectToAction("Login");
+        }
 
         var result = await _userManager.ConfirmEmailAsync(user, token);
         if (result.Succeeded)
@@ -225,7 +233,57 @@ public class AccountController : Controller
         return View();
     }
 
+
     [HttpPost]
+    [AllowAnonymous]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResendEmail(string nombreUsuario)
+    {
+        if (string.IsNullOrWhiteSpace(nombreUsuario))
+        {
+            ModelState.AddModelError("", "El nombre de usuario es requerido.");
+            return View();
+        }
+
+        var user = await _userManager.FindByNameAsync(nombreUsuario);
+        string mensajeExito = "Si la cuenta existe y todavía no ha sido activada, recibirá un nuevo enlace de activación.";
+
+        if (user != null)
+        {
+            // 1. Verificar si ya está activa
+            if (await _userManager.IsEmailConfirmedAsync(user))
+            {
+                TempData["Success"] = mensajeExito;
+                return RedirectToAction("Login");
+            }
+
+            // 2. Verificar la restricción de los 5 minutos
+            if (user.UltimoReenvioCorreo.HasValue && (DateTime.Now - user.UltimoReenvioCorreo.Value).TotalMinutes < 5)
+            {
+                TempData["Error"] = "Por favor, espere 5 minutos antes de solicitar un nuevo correo.";
+                return RedirectToAction("Login");
+            }
+
+            // 3. Generar token y enviar
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var callbackUrl = Url.Action("ConfirmEmail", "Account", 
+                new { userId = user.Id, token = token }, protocol: HttpContext.Request.Scheme);
+
+            await _emailService.SendAsync(user.Email, "Reenvío de Activación - LinkUp Pro", 
+                $"Hola, aquí tienes tu nuevo enlace: <a href='{callbackUrl}'>Activar Cuenta</a>");
+
+            // 4. Registrar la hora del envío
+            user.UltimoReenvioCorreo = DateTime.Now;
+            await _userManager.UpdateAsync(user);
+        }
+
+        TempData["Success"] = mensajeExito;
+        return RedirectToAction("Login");
+    }
+
+
+
+    /*[HttpPost]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ResendEmail(string email)
@@ -247,7 +305,7 @@ public class AccountController : Controller
         await _emailService.SendAsync(user.Email, "Reenvío de Activación - LinkUp Pro", $"Haz clic aquí para activar tu cuenta: {callbackUrl}");
 
         return View("ResendEmailConfirmation");
-    }
+    }*/
 
 
     [HttpPost]

@@ -8,6 +8,7 @@ public class Usuario : IdentityUser<int>
     public string Apellido { get; set; } = null!;
     public string? FotoPerfilUrl { get; set; }
     public DateTime FechaRegistro { get; set; } = DateTime.UtcNow;
+    public DateTime? UltimoReenvioCorreo { get; set; }
 
     // Navigation properties
     public ICollection<Publicacion> Publicaciones { get; set; } = new List<Publicacion>();

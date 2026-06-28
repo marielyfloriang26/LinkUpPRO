@@ -36,6 +36,7 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                     Apellido = table.Column<string>(type: "VARCHAR(50)", nullable: false),
                     FotoPerfilUrl = table.Column<string>(type: "VARCHAR(255)", nullable: true),
                     FechaRegistro = table.Column<DateTime>(type: "DATETIME", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    UltimoReenvioCorreo = table.Column<DateTime>(type: "DATETIME", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
