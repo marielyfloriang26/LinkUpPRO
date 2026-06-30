@@ -10,6 +10,7 @@ public class ComentarioViewModel
     public string? AutorFotoPerfil { get; set; }
     public string Contenido { get; set; } = null!;
     public int? ComentarioPadreId { get; set; }
+    public DateTime? FechaModificacion { get; set; }
     public DateTime FechaCreacion { get; set; }
 
     // Soporte para respuestas anidadas 

@@ -1,0 +1,66 @@
+<aside class="lup-sidebar lup-sidebar--left">
+        <div class="lup-profile-card">
+            <div class="lup-profile-card__cover"></div>
+            <div class="lup-profile-card__body">
+                <img src="@(User.FindFirst("FotoPerfilUrl")?.Value ?? "https://cdn-icons-png.flaticon.com/512/149/149071.png")"
+                     alt="Tu foto" class="lup-profile-card__avatar">
+                <p class="lup-profile-card__name">@User.Identity?.Name</p>
+                <p class="lup-profile-card__handle">Miembro de LinkUpPro</p>
+            </div>
+            <div class="lup-profile-card__stats">
+                <div class="lup-stat">
+                    <span class="lup-stat__num">—</span>
+                    <span class="lup-stat__label">Publicaciones</span>
+                </div>
+                <div class="lup-stat lup-stat--accent">
+                    <span class="lup-stat__num">—</span>
+                    <span class="lup-stat__label">Conexiones</span>
+                </div>
+            </div>
+        </div>
+
+        <nav class="lup-quick-nav">
+            <a asp-controller="Publicacion" asp-action="Index" class="lup-quick-nav__item lup-quick-nav__item--active">
+                <i class="bi bi-house-door-fill"></i> Home
+            </a>
+            
+            <a asp-controller="Amigos" asp-action="Index" class="lup-quick-nav__item">
+                <i class="bi bi-people-fill"></i> Amigos
+            </a>
+            
+            <a asp-controller="Amigos" asp-action="Solicitudes" class="lup-quick-nav__item position-relative">
+                <i class="bi bi-person-plus-fill"></i> Solicitudes
+                @if (ViewBag.CantidadSolicitudes > 0)
+                {
+                    <span class="badge rounded-pill bg-danger text-xs align-middle ms-1" style="font-size: 0.65rem;">
+                        @ViewBag.CantidadSolicitudes
+                    </span>
+                }
+            </a>
+
+            <a asp-controller="Notificacion" asp-action="Index" class="lup-quick-nav__item">
+                <i class="bi bi-bell-fill"></i> Notificaciones
+                @if (ViewBag.CantidadNotificaciones > 0)
+                {
+                    <span class="badge rounded-pill bg-primary text-xs align-middle ms-1" style="font-size: 0.65rem;">
+                        @ViewBag.CantidadNotificaciones
+                    </span>
+                }
+            </a>
+
+            <a asp-controller="Battleship" asp-action="Index" class="lup-quick-nav__item">
+                <i class="bi bi-controller"></i> Battleship
+            </a>
+
+            <a asp-controller="Perfil" asp-action="Index" class="lup-quick-nav__item">
+                <i class="bi bi-person-circle"></i> Mi Perfil
+            </a>
+
+            <form asp-controller="Account" asp-action="Logout" method="post" class="w-100 border-top mt-1 pt-1">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="lup-quick-nav__item text-danger fw-bold border-0 bg-transparent w-100 text-start" style="cursor: pointer; gap: 10px; padding: 10px 16px;">
+                    <i class="bi bi-box-arrow-right text-danger"></i> Cerrar Sesión
+                </button>
+            </form>
+        </nav>
+    </aside>

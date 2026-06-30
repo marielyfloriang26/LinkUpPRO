@@ -25,6 +25,7 @@ namespace LinkUpPro.Presentation
             builder.Services.AddTransient<IPublicacionService, PublicacionService>();
             builder.Services.AddTransient<IFileService, FileService>();
             builder.Services.AddTransient<IComentarioService, ComentarioService>();
+            builder.Services.AddTransient<IReaccionService, ReaccionService>();
 
             builder.Services.AddAutoMapper(cfg => 
             {

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LinkUpPro.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260630032338_Inicializacion")]
+    [Migration("20260630214433_Inicializacion")]
     partial class Inicializacion
     {
         /// <inheritdoc />
@@ -111,6 +111,9 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("DATETIME")
                         .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<DateTime?>("FechaModificacion")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PublicacionId")
                         .HasColumnType("int");

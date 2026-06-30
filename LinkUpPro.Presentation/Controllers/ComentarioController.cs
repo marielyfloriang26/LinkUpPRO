@@ -36,4 +36,42 @@ public class ComentarioController : Controller
             return BadRequest(ex.Message);
         }
     }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Editar(int id, string contenido, int PublicacionId)
+    {
+        // !!!!! Simulación: Autor logueado ID 1
+        int usuarioId = 1;
+
+        try
+        {
+            await _comentarioService.EditarAsync(id, contenido, usuarioId);
+            return Redirect($"/Publicacion/Index#comments-{PublicacionId}");
+        }
+        catch (Exception ex)
+        {
+            TempData["MensajeError"] = ex.Message;
+            return Redirect($"/Publicacion/Index#comments-{PublicacionId}");
+        }
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Eliminar(int id, int PublicacionId)
+    {
+        // !!!Simulación: Autor logueado ID 1
+        int usuarioId = 1;
+
+        try
+        {
+            await _comentarioService.EliminarAsync(id, usuarioId);
+            return Redirect($"/Publicacion/Index#comments-{PublicacionId}");
+        }
+        catch (Exception ex)
+        {
+            TempData["MensajeError"] = ex.Message;
+            return Redirect($"/Publicacion/Index#comments-{PublicacionId}");
+        }
+    }
 }

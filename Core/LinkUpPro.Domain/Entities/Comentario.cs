@@ -14,6 +14,7 @@ public class Comentario
 
     public Publicacion Publicacion { get; set; } = null!;
     public Usuario Usuario { get; set; } = null!;
+    public DateTime? FechaModificacion { get; set; }
     public Comentario? ComentarioPadre { get; set; }
     public ICollection<Comentario> Respuestas { get; set; } = new List<Comentario>();
     public ICollection<Reaccion> Reacciones { get; set; } = new List<Reaccion>();

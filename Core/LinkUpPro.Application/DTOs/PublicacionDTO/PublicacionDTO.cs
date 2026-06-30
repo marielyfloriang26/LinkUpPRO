@@ -18,5 +18,6 @@ public class PublicacionDto
     public string? AutorFotoPerfilUrl { get; set; }
     public int CantidadMeGusta { get; set; }
     public int CantidadNoMeGusta { get; set; }
+    public string? ReaccionUsuarioAutenticado { get; set; }
     public List<ComentarioDTO.ComentarioDto> Comentarios { get; set; } = new();
 }

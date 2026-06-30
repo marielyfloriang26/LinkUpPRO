@@ -1,0 +1,78 @@
+@model LinkUpPro.Application.ViewModels.Publicacion.PublicacionViewModel
+
+<div class="lup-post__stats">
+    <div class="lup-post__reaction-pills">
+        @if (Model.CantidadMeGusta > 0)
+        {
+            <span class="lup-pill lup-pill--like">
+                <i class="bi bi-hand-thumbs-up-fill"></i> @Model.CantidadMeGusta
+            </span>
+        }
+        @if (Model.CantidadNoMeGusta > 0)
+        {
+            <span class="lup-pill lup-pill--dislike">
+                <i class="bi bi-hand-thumbs-down-fill"></i> @Model.CantidadNoMeGusta
+            </span>
+        }
+    </div>
+    <button class="lup-post__comment-count" onclick="toggleComments('@Model.Id')">
+        <i class="bi bi-chat-left-text"></i>
+        @Model.Comentarios.Count comentario@(Model.Comentarios.Count != 1 ? "s" : "")
+    </button>
+</div>
+
+<!-- BARRA DE ACCIONES -->
+<div class="lup-post__actions">
+    <!-- Formulario Me gusta  -->
+    <form asp-controller="Reaccion" asp-action="Reaccionar" method="post" class="d-inline flex-fill">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="publicacionId" value="@Model.Id" />
+        <input type="hidden" name="tipoReaccion" value="Like" />
+        <button type="submit" class="lup-action-btn w-100 @(Model.ReaccionUsuarioAutenticado == "Like" ? "lup-action-btn--liked" : "")">
+            <i class="bi @(Model.ReaccionUsuarioAutenticado == "Like" ? "bi-hand-thumbs-up-fill text-primary" : "bi-hand-thumbs-up")"></i>
+            <span>Me gusta</span>
+        </button>
+    </form>
+
+    <!-- Formulario No me gusta  -->
+    <form asp-controller="Reaccion" asp-action="Reaccionar" method="post" class="d-inline flex-fill">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="publicacionId" value="@Model.Id" />
+        <input type="hidden" name="tipoReaccion" value="Dislike" />
+        <button type="submit" class="lup-action-btn w-100 @(Model.ReaccionUsuarioAutenticado == "Dislike" ? "lup-action-btn--disliked text-danger" : "")">
+            <i class="bi @(Model.ReaccionUsuarioAutenticado == "Dislike" ? "bi-hand-thumbs-down-fill" : "bi-hand-thumbs-down")"></i>
+            <span>No me gusta</span>
+        </button>
+    </form>
+    
+    @if (Model.PermiteComentarios)
+    {
+        <button class="lup-action-btn flex-fill" onclick="toggleComments('@Model.Id')">
+            <i class="bi bi-chat-left"></i>
+            <span>Comentar</span>
+        </button>
+    }
+    
+    <button class="lup-action-btn flex-fill">
+        <i class="bi bi-share"></i>
+        <span>Compartir</span>
+    </button>
+</div>
+
+<!-- Banner de ReacciOn Actual  -->
+@if (!string.IsNullOrEmpty(Model.ReaccionUsuarioAutenticado))
+{
+    <div class="px-3 py-2 border-bottom d-flex justify-content-between align-items-center bg-light" style="font-size: 0.8rem; border-radius: 4px;">
+        <span class="text-muted fw-semibold">
+            <i class="bi bi-info-circle-fill text-primary"></i> 
+            Tu reacción actual: @(Model.ReaccionUsuarioAutenticado == "Like" ? "Me gusta" : "No me gusta")
+        </span>
+        <form asp-controller="Reaccion" asp-action="EliminarReaccion" method="post" class="d-inline">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="publicacionId" value="@Model.Id" />
+            <button type="submit" class="btn btn-link btn-sm p-0 text-danger fw-bold text-decoration-none" style="font-size: 0.8rem;">
+                <i class="bi bi-x-circle-fill"></i> Eliminar reacción
+            </button>
+        </form>
+    </div>
+}

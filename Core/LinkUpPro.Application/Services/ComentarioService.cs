@@ -68,4 +68,58 @@ public class ComentarioService : IComentarioService
 
         await _comentarioRepository.AddAsync(nuevoComentario);
     }
+
+    public async Task EditarAsync(int id, string contenido, int usuarioId)
+{
+    var comentario = await _comentarioRepository.GetByIdAsync(id);
+    if (comentario == null) throw new Exception("El comentario no existe.");
+    
+    // Valida que sea el autor
+    if (comentario.UsuarioId != usuarioId)
+    {
+        throw new Exception("No posee permisos para editar este contenido.");
+    }
+
+    // Valida contenido
+    if (string.IsNullOrWhiteSpace(contenido))
+    {
+        throw new Exception("El contenido del comentario es requerido.");
+    }
+    if (contenido.Length > 500)
+    {
+        throw new Exception("El comentario no debe exceder los 500 caracteres.");
+    }
+
+    comentario.Contenido = contenido;
+    comentario.FechaModificacion = DateTime.UtcNow;
+
+    await _comentarioRepository.UpdateAsync(comentario);
+}
+
+public async Task EliminarAsync(int id, int usuarioId)
+{
+    var comentario = await _comentarioRepository.GetByIdAsync(id);
+    if (comentario == null) throw new Exception("El comentario no existe.");
+
+    if (comentario.UsuarioId != usuarioId)
+    {
+        throw new Exception("No posee permisos para eliminar este contenido.");
+    }
+
+    // Comprueba si tiene respuestas anidadas activas
+    var todosLosComentarios = await _comentarioRepository.GetAllAsync();
+    var tieneRespuestas = todosLosComentarios.Any(c => c.ComentarioPadreId == id && c.Contenido != "Este comentario fue eliminado.");
+
+    if (tieneRespuestas)
+    {
+        // Si tiene respuestas, conserva su posicion pero reemplaza el contenido
+        comentario.Contenido = "Este comentario fue eliminado.";
+        await _comentarioRepository.UpdateAsync(comentario);
+    }
+    else
+    {
+        // Si no tiene respuestas, lo borra fisicamente
+        await _comentarioRepository.DeleteAsync(comentario);
+    }
+}
 }

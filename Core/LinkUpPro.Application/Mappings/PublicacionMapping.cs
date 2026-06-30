@@ -24,7 +24,8 @@ public class PublicacionMapping : Profile
             .ForMember(dest => dest.AutorFotoPerfilUrl, opt => opt.MapFrom(src => src.Usuario.FotoPerfilUrl))
             .ForMember(dest => dest.CantidadMeGusta, opt => opt.MapFrom(src => src.Reacciones.Count(r => r.TipoReaccion == "Like")))
             .ForMember(dest => dest.CantidadNoMeGusta, opt => opt.MapFrom(src => src.Reacciones.Count(r => r.TipoReaccion == "Dislike")))
-            .ForMember(dest => dest.Comentarios, opt => opt.MapFrom(src => src.Comentarios));
+            .ForMember(dest => dest.Comentarios, opt => opt.MapFrom(src => src.Comentarios))
+            .ForMember(dest => dest.ReaccionUsuarioAutenticado, opt => opt.MapFrom(src => src.Reacciones.FirstOrDefault(r => r.UsuarioId == 1).TipoReaccion));
 
         CreateMap<PublicacionDto, PublicacionViewModel>().ReverseMap();
         CreateMap<PublicacionDto, GuardarPublicacionViewModel>().ReverseMap();
@@ -35,5 +36,8 @@ public class PublicacionMapping : Profile
             .ForMember(dest => dest.AutorNombre, opt => opt.MapFrom(src => $"{src.Usuario.Nombre} {src.Usuario.Apellido}"))
             .ForMember(dest => dest.AutorFotoPerfil, opt => opt.MapFrom(src => src.Usuario.FotoPerfilUrl));
         CreateMap<ComentarioDto, ComentarioViewModel>().ReverseMap();
+
+        CreateMap<Publicacion, CrearPublicacionDto>().ReverseMap();
+        CreateMap<Publicacion, ModificarPublicacionDto>().ReverseMap();
     }
 }

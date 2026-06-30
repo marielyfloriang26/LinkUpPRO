@@ -221,7 +221,8 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                     UsuarioId = table.Column<int>(type: "int", nullable: false),
                     Contenido = table.Column<string>(type: "TEXT", nullable: false),
                     ComentarioPadreId = table.Column<int>(type: "int", nullable: true),
-                    FechaCreacion = table.Column<DateTime>(type: "DATETIME", nullable: false, defaultValueSql: "GETUTCDATE()")
+                    FechaCreacion = table.Column<DateTime>(type: "DATETIME", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    FechaModificacion = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
