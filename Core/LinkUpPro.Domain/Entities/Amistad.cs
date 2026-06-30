@@ -8,7 +8,9 @@ public class Amistad
     public int UsuarioId1 { get; set; }
     public int UsuarioId2 { get; set; }
     public DateTime FechaAmistad { get; set; }
+    public string Estado { get; set; } = "Activa";
 
     public Usuario Usuario1 { get; set; } = null!;
     public Usuario Usuario2 { get; set; } = null!;
 }
+

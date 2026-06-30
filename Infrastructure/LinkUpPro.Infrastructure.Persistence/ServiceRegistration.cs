@@ -17,5 +17,8 @@ public static class ServiceRegistration
                 b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 
         services.AddTransient(typeof(IRepositoryAsync<>), typeof(RepositoryAsync<>));
+        services.AddTransient<IAmistadRepository, AmistadRepository>();
+        services.AddTransient<ISolicitudAmistadRepository, SolicitudAmistadRepository>();
     }
 }
+

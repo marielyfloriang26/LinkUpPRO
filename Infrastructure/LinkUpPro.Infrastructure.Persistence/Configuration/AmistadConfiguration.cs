@@ -12,6 +12,7 @@ public class AmistadConfiguration : IEntityTypeConfiguration<Amistad>
         builder.HasKey(a => a.Id);
 
         builder.Property(a => a.FechaAmistad).HasColumnType("DATETIME").HasDefaultValueSql("GETUTCDATE()");
+        builder.Property(a => a.Estado).HasMaxLength(50).HasDefaultValue("Activa");
 
         builder.HasOne(a => a.Usuario1)
             .WithMany(u => u.AmistadesIniciadas)
@@ -24,3 +25,4 @@ public class AmistadConfiguration : IEntityTypeConfiguration<Amistad>
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
+
