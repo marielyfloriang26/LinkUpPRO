@@ -28,31 +28,40 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    @using Microsoft.AspNetCore.Identity
+                    @using LinkUpPro.Domain.Entities
+                    @inject SignInManager<Usuario> SignInManager
+
                     <ul class="navbar-nav flex-grow-1 align-items-center">
-                        <li class="nav-item ms-lg-3">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">
-                                <i class="bi bi-house-door me-1"></i>Inicio
-                            </a>
-                        </li>
-                        <li class="nav-item ms-lg-2">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Amigos" asp-action="Index">
-                                <i class="bi bi-people me-1"></i>Amigos
-                            </a>
-                        </li>
-                        <li class="nav-item ms-lg-2">
-                            <a class="nav-link text-dark position-relative" asp-area="" asp-controller="Solicitudes" asp-action="Index">
-                                <i class="bi bi-person-plus me-1"></i>Solicitudes
-                                <!-- Hardcoded counter for demonstration as requested -->
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65em;">
-                                    3
-                                    <span class="visually-hidden">solicitudes pendientes</span>
-                                </span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                        <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Publicacion" asp-action="Index">Publicaciones</a>
-                    </li>
-                        </li>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <li class="nav-item ms-lg-3">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">
+                                    <i class="bi bi-house-door me-1"></i>Inicio
+                                </a>
+                            </li>
+                            <li class="nav-item ms-lg-2">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Amigos" asp-action="Index">
+                                    <i class="bi bi-people me-1"></i>Amigos
+                                </a>
+                            </li>
+                            <li class="nav-item ms-lg-2">
+                                <a class="nav-link text-dark position-relative" asp-area="" asp-controller="Solicitudes" asp-action="Index">
+                                    <i class="bi bi-person-plus me-1"></i>Solicitudes
+                                    <!-- Hardcoded counter for demonstration as requested -->
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65em;">
+                                        3
+                                        <span class="visually-hidden">solicitudes pendientes</span>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Publicacion" asp-action="Index">Publicaciones</a>
+                            </li>
+                        }
+                    </ul>
+                    <ul class="navbar-nav">
+                        <partial name="_LoginPartial" />
                     </ul>
                 </div>
             </div>
@@ -60,6 +69,23 @@
     </header>
     <div class="container">
         <main role="main" class="pb-5">
+            <div class="container mt-3">
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        @TempData["Success"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        @TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+            </div>
             @RenderBody()
         </main>
     </div>
