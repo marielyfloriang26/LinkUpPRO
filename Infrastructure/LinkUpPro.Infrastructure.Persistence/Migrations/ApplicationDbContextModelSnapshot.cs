@@ -224,8 +224,14 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                         .HasColumnType("DATETIME")
                         .HasDefaultValueSql("GETUTCDATE()");
 
+                    b.Property<DateTime?>("FechaModificacion")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("ImagenUrl")
                         .HasColumnType("VARCHAR(255)");
+
+                    b.Property<bool>("PermiteComentarios")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Privacidad")
                         .IsRequired()

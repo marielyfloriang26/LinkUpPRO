@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LinkUpPro.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Inicializacion : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -137,7 +137,9 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                     ImagenUrl = table.Column<string>(type: "VARCHAR(255)", nullable: true),
                     YouTubeVideoUrl = table.Column<string>(type: "VARCHAR(255)", nullable: true),
                     Privacidad = table.Column<string>(type: "VARCHAR(15)", nullable: false, defaultValue: "Publico"),
-                    FechaCreacion = table.Column<DateTime>(type: "DATETIME", nullable: false, defaultValueSql: "GETUTCDATE()")
+                    FechaCreacion = table.Column<DateTime>(type: "DATETIME", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    FechaModificacion = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PermiteComentarios = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

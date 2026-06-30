@@ -1,0 +1,254 @@
+
+
+            <style>
+    /* Variables (fallback si se usa fuera del Index) */
+    :root {
+        --lup-bg:          #F0F2F5;
+        --lup-surface:     #FFFFFF;
+        --lup-border:      #E4E6EB;
+        --lup-text-1:      #1C1E21;
+        --lup-text-2:      #65676B;
+        --lup-text-3:      #8A8D91;
+        --lup-accent:      #5B4CFF;
+        --lup-accent-soft: #EEF0FF;
+        --lup-dislike:     #E74C3C;
+        --font:            'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    /* BARRA CONTENEDORA */
+    .fsb-wrap {
+        background: rgba(255,255,255,0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid rgba(228,230,235,0.8);
+        box-shadow: 0 4px 24px rgba(91,76,255,0.07);
+        padding: 14px 0;
+        margin-bottom: 24px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+    .fsb-inner {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 0 16px;
+        display: flex;
+        align-items: center;
+        gap: 4px;/*8px;*/
+        flex-wrap: wrap; /*nowrap*/
+    }
+
+    /* ICONO DECORATIVO */
+    .fsb-icon {
+        width: 34px; /* 40px*/; height: 34px;/*40px;*/
+        background: var(--lup-accent-soft);
+        border-radius: 14px;
+        display: flex; align-items: center; justify-content: center;
+        color: var(--lup-accent); font-size: 1.05rem;
+        flex-shrink: 0; margin-right: 0px; /*2px;*/
+    }
+
+    /* DIVISOR VERTICAL */
+    .fsb-divider {
+        width: 1px; height: 26px;
+        background: var(--lup-border);
+        flex-shrink: 0; margin: 0 2px;
+    }
+
+    /* CAMPO DE TEXTO */
+    .fsb-field {
+        position: relative;
+        flex: 2; min-width: 180px;
+        display: flex; align-items: center;
+    }
+    .fsb-field__icon {
+        position: absolute; left: 14px;
+        color: var(--lup-text-3); font-size: 0.85rem;
+        pointer-events: none;
+    }
+    .fsb-input {
+        width: 100%; height: 36px; /*42px; */
+        padding: 0 18px 0 38px;
+        border: 1.5px solid var(--lup-border);
+        border-radius: 999px;
+        font-family: var(--font); font-size: 0.875rem;
+        color: var(--lup-text-1); background: var(--lup-bg);
+        transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+    }
+    .fsb-input::placeholder { color: var(--lup-text-3); }
+    .fsb-input:focus {
+        outline: none; border-color: var(--lup-accent);
+        background: #fff;
+        box-shadow: 0 0 0 3.5px rgba(91,76,255,0.12);
+    }
+
+    /* SELECT */
+    .fsb-select {
+        height: 36px; /*42px;*/
+        padding: 0 34px 0 16px;
+        border: 1.5px solid var(--lup-border);
+        border-radius: 999px;
+        font-family: var(--font); font-size: 0.875rem;
+        color: var(--lup-text-1); background: var(--lup-bg);
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 16 16'%3E%3Cpath fill='%238A8D91' d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 13px center;
+        cursor: pointer; flex: 1; min-width: 130px;/*146px;*/
+        transition: border-color 0.18s, box-shadow 0.18s;
+    }
+    .fsb-select:focus {
+        outline: none; border-color: var(--lup-accent);
+        box-shadow: 0 0 0 3.5px rgba(91,76,255,0.12);
+    }
+
+    /* FECHAS */
+    .fsb-dates {
+        display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+    }
+    .fsb-dates__label {
+        font-size: 0.7rem; font-weight: 700;
+        color: var(--lup-text-3);
+        text-transform: uppercase; letter-spacing: 0.05em;
+        white-space: nowrap;
+    }
+    .fsb-dates__sep { color: var(--lup-text-3); font-size: 0.9rem; }
+    .fsb-date {
+        height: 36px;/*42px;*/
+        padding: 0 16px;
+        border: 1.5px solid var(--lup-border);
+        border-radius: 999px;
+        font-family: var(--font); font-size: 0.83rem;
+        color: var(--lup-text-1); background: var(--lup-bg);
+        width: 130px;/*148px;*/
+        transition: border-color 0.18s, box-shadow 0.18s;
+    }
+    .fsb-date:focus {
+        outline: none; border-color: var(--lup-accent);
+        box-shadow: 0 0 0 3.5px rgba(91,76,255,0.12);
+    }
+
+    /* BOTONES */
+    .fsb-actions {
+        display: flex; align-items: center; gap: 6px;
+        margin-left: auto; flex-shrink: 0;
+    }
+    .fsb-btn {
+        height: 36px/*42px; */
+        display: inline-flex; align-items: center; gap: 7px;
+        padding: 0 14px;/*0 22px;*/
+        font-size: 0.8rem;
+        gap: 5px;
+        border-radius: 999px;
+        font-family: var(--font); font-size: 0.85rem; font-weight: 600;
+        cursor: pointer; border: none;
+        transition: all 0.18s;
+        white-space: nowrap; text-decoration: none;
+    }
+    .fsb-btn i { font-size: 0.85rem; }
+    .fsb-btn--ghost {
+        background: transparent;
+        color: var(--lup-text-2);
+        border: 1.5px solid var(--lup-border);
+    }
+    .fsb-btn--ghost:hover {
+        background: var(--lup-bg);
+        border-color: #bbbec6;
+        color: var(--lup-text-1);
+    }
+    .fsb-btn--primary {
+        background: linear-gradient(135deg, #7B6EFF 0%, #5B4CFF 55%, #4438d4 100%);
+        color: #fff;
+        box-shadow: 0 4px 16px rgba(91,76,255,0.32);
+    }
+    .fsb-btn--primary:hover {
+        box-shadow: 0 6px 22px rgba(91,76,255,0.45);
+        transform: translateY(-1px);
+    }
+    .fsb-btn--primary:active { transform: none; box-shadow: none; }
+
+    /* ERROR */
+    .fsb-error {
+        width: 100%;
+        display: flex; align-items: center; gap: 6px;
+        font-size: 0.78rem; font-weight: 500;
+        color: var(--lup-dislike); padding: 4px 2px 0;
+    }
+
+    /* RESPONSIVE */
+    @@media (max-width: 960px) {
+        .fsb-icon, .fsb-divider { display: none; }
+    }
+    @@media (max-width: 700px) {
+        .fsb-field { flex: 1 1 100%; }
+        .fsb-select { flex: 1 1 calc(50% - 4px); min-width: unset; }
+        .fsb-dates { width: 100%; }
+        .fsb-date { flex: 1; width: auto; }
+        .fsb-actions { width: 100%; justify-content: flex-end; }
+    }
+</style>
+
+<div class="fsb-wrap">
+    <form asp-controller="Publicacion" asp-action="Index" method="get">
+        <div class="fsb-inner">
+
+            <div class="fsb-icon">
+                <i class="bi bi-funnel-fill"></i>
+            </div>
+
+            <div class="fsb-field">
+                <i class="bi bi-search fsb-field__icon"></i>
+                <input type="text"
+                       name="textoBusqueda"
+                       value="@ViewBag.TextoBusqueda"
+                       class="fsb-input"
+                       placeholder="Buscar publicaciones...">
+            </div>
+
+            <div class="fsb-divider"></div>
+
+            <select name="tipoContenido" class="fsb-select">
+                <option value="Todos"      selected="@(ViewBag.TipoContenido == "Todos" || ViewBag.TipoContenido == null)">Todo el contenido</option>
+                <option value="Imagen"     selected="@(ViewBag.TipoContenido == "Imagen")">Imagen</option>
+                <option value="Video"      selected="@(ViewBag.TipoContenido == "Video")">Video de Youtube</option>
+            </select>
+
+            <select name="estadoEdicion" class="fsb-select">
+                <option value="Todas"      selected="@(ViewBag.EstadoEdicion == "Todas" || ViewBag.EstadoEdicion == null)">Todas</option>
+                <option value="Editadas"   selected="@(ViewBag.EstadoEdicion == "Editadas")">Editadas</option>
+                <option value="NoEditadas" selected="@(ViewBag.EstadoEdicion == "NoEditadas")">No editadas</option>
+            </select>
+
+            <div class="fsb-divider"></div>
+
+            <div class="fsb-dates">
+                <span class="fsb-dates__label">Desde</span>
+                <input type="date" name="fechaDesde" value="@ViewBag.FechaDesde" class="fsb-date">
+                <span class="fsb-dates__sep">&#8594;</span>
+                <span class="fsb-dates__label">Hasta</span>
+                <input type="date" name="fechaHasta" value="@ViewBag.FechaHasta" class="fsb-date">
+            </div>
+
+            <div class="fsb-actions">
+                <a asp-controller="Publicacion" asp-action="Index" class="fsb-btn fsb-btn--ghost">
+                    <i class="bi bi-x-circle"></i> Limpiar
+                </a>
+                <button type="submit" class="fsb-btn fsb-btn--primary">
+                    <i class="bi bi-search"></i> Buscar
+                </button>
+            </div>
+
+            @if (ViewBag.ErrorFechas != null)
+            {
+                <div class="fsb-error">
+                    <i class="bi bi-exclamation-circle-fill"></i> @ViewBag.ErrorFechas
+                </div>
+
+            }
+
+        </div>
+    </form>
+</div>
+  
+    
+
