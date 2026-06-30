@@ -97,7 +97,7 @@ public class PublicacionService : IPublicacionService
         var amistades = await _amistadRepository.GetAmistadesByUsuarioIdAsync(currentUserId);
         
         var amigosIds = amistades.Select(a => a.UsuarioId1 == currentUserId ? a.Usuario2 : a.Usuario1)
-                                 .Where(u => u.EsActivo)
+                                 .Where(u => u.EmailConfirmed)
                                  .Select(u => u.Id)
                                  .ToList();
 

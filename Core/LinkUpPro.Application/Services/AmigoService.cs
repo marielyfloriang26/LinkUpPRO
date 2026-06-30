@@ -28,14 +28,14 @@ public class AmigoService : IAmigoService
         {
             var amigoEntity = amistad.UsuarioId1 == usuarioId ? amistad.Usuario2 : amistad.Usuario1;
             
-            if (amigoEntity != null && amigoEntity.EsActivo)
+            if (amigoEntity != null && amigoEntity.EmailConfirmed)
             {
                 amigos.Add(new UsuarioDto
                 {
                     Id = amigoEntity.Id,
                     Nombre = amigoEntity.Nombre,
                     Apellido = amigoEntity.Apellido,
-                    NombreUsuario = amigoEntity.NombreUsuario,
+                    NombreUsuario = amigoEntity.UserName ?? "",
                     FotoPerfilUrl = amigoEntity.FotoPerfilUrl
                 });
             }
@@ -44,11 +44,12 @@ public class AmigoService : IAmigoService
         return amigos.OrderBy(a => a.Nombre).ThenBy(a => a.Apellido).ToList();
     }
 
-    public async Task<IReadOnlyList<UsuarioDto>> BuscarAmigosAsync(int usuarioId, string searchString)
+    public async Task<IReadOnlyList<UsuarioDto>> BuscarAmigosAsync(int currentUserId, string searchString)
     {
-        var amigos = await GetAmigosAsync(usuarioId);
+        var amigos = await GetAmigosAsync(currentUserId);
+        
         if (string.IsNullOrWhiteSpace(searchString))
-            return amigos;
+            return amigos.ToList();
 
         var lowerSearch = searchString.Trim().ToLower();
         return amigos.Where(a => 
@@ -65,13 +66,13 @@ public class AmigoService : IAmigoService
 
         var amigosU1 = amistadesU1
             .Select(a => a.UsuarioId1 == usuarioId1 ? a.Usuario2 : a.Usuario1)
-            .Where(u => u != null && u.EsActivo)
+            .Where(u => u != null && u.EmailConfirmed)
             .Select(u => u.Id)
             .ToList();
             
         var amigosU2 = amistadesU2
             .Select(a => a.UsuarioId1 == usuarioId2 ? a.Usuario2 : a.Usuario1)
-            .Where(u => u != null && u.EsActivo)
+            .Where(u => u != null && u.EmailConfirmed)
             .Select(u => u.Id)
             .ToList();
 

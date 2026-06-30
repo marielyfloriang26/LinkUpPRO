@@ -1,4 +1,5 @@
 using LinkUpPro.Application.Interfaces.Shared;
+using LinkUpPro.Application.Interfaces.Services;
 using LinkUpPro.Application.ViewModels.User;
 using LinkUpPro.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -87,7 +88,7 @@ public class AccountController : Controller
         string fotoPath = string.Empty;
         if (vm.FotoPerfil != null)
         {
-            fotoPath = _fileService.UploadFile(vm.FotoPerfil, "images/users");
+            fotoPath = await _fileService.UploadFileAsync(vm.FotoPerfil, "users");
         }
 
         // 2. Crear entidad de usuario

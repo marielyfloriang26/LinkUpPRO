@@ -24,8 +24,8 @@ public class SolicitudAmistadRepository : RepositoryAsync<SolicitudAmistad>, ISo
             .Include(s => s.Receptor)
             .Where(s => s.ReceptorId == receptorId 
                      && s.Estado == "En espera de respuesta" 
-                     && s.Emisor.EsActivo 
-                     && s.Receptor.EsActivo)
+                     && s.Emisor.EmailConfirmed 
+                     && s.Receptor.EmailConfirmed)
             .OrderByDescending(s => s.FechaEnvio)
             .ToListAsync();
     }
@@ -38,8 +38,8 @@ public class SolicitudAmistadRepository : RepositoryAsync<SolicitudAmistad>, ISo
             .Where(s => s.EmisorId == emisorId 
                      && (s.Estado == "En espera de respuesta" || s.Estado == "Aceptada" || s.Estado == "Rechazada")
                      && !s.OcultaParaEmisor 
-                     && s.Emisor.EsActivo 
-                     && s.Receptor.EsActivo)
+                     && s.Emisor.EmailConfirmed 
+                     && s.Receptor.EmailConfirmed)
             .OrderByDescending(s => s.FechaEnvio)
             .ToListAsync();
     }

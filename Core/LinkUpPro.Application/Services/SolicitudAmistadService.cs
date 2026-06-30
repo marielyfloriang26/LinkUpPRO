@@ -33,8 +33,8 @@ public class SolicitudAmistadService : ISolicitudAmistadService
         var emisor = await _usuarioRepository.GetByIdAsync(emisorId);
         var receptor = await _usuarioRepository.GetByIdAsync(receptorId);
 
-        if (emisor == null || !emisor.EsActivo) throw new ApiException("No se puede enviar la solicitud porque uno de los usuarios se encuentra inactivo.");
-        if (receptor == null || !receptor.EsActivo) throw new ApiException("No se puede enviar la solicitud porque uno de los usuarios se encuentra inactivo.");
+        if (emisor == null || !emisor.EmailConfirmed) throw new ApiException("No se puede enviar la solicitud porque uno de los usuarios se encuentra inactivo.");
+        if (receptor == null || !receptor.EmailConfirmed) throw new ApiException("No se puede enviar la solicitud porque uno de los usuarios se encuentra inactivo.");
 
         var amistadExistente = await _amistadRepository.GetAmistadEntreUsuariosAsync(emisorId, receptorId);
         if (amistadExistente != null && amistadExistente.Estado == "Activa")
@@ -81,7 +81,7 @@ public class SolicitudAmistadService : ISolicitudAmistadService
 
         var emisor = await _usuarioRepository.GetByIdAsync(solicitud.EmisorId);
         var receptor = await _usuarioRepository.GetByIdAsync(solicitud.ReceptorId);
-        if (emisor == null || !emisor.EsActivo || receptor == null || !receptor.EsActivo)
+        if (emisor == null || !emisor.EmailConfirmed || receptor == null || !receptor.EmailConfirmed)
         {
             throw new ApiException("No se puede aceptar la solicitud porque uno de los usuarios se encuentra inactivo.");
         }
@@ -120,7 +120,7 @@ public class SolicitudAmistadService : ISolicitudAmistadService
 
         var emisor = await _usuarioRepository.GetByIdAsync(solicitud.EmisorId);
         var receptor = await _usuarioRepository.GetByIdAsync(solicitud.ReceptorId);
-        if (emisor == null || !emisor.EsActivo || receptor == null || !receptor.EsActivo)
+        if (emisor == null || !emisor.EmailConfirmed || receptor == null || !receptor.EmailConfirmed)
         {
             throw new ApiException("No se puede rechazar la solicitud porque uno de los usuarios se encuentra inactivo.");
         }
@@ -141,7 +141,7 @@ public class SolicitudAmistadService : ISolicitudAmistadService
 
         var emisor = await _usuarioRepository.GetByIdAsync(solicitud.EmisorId);
         var receptor = await _usuarioRepository.GetByIdAsync(solicitud.ReceptorId);
-        if (emisor == null || !emisor.EsActivo || receptor == null || !receptor.EsActivo)
+        if (emisor == null || !emisor.EmailConfirmed || receptor == null || !receptor.EmailConfirmed)
         {
             throw new ApiException("Ambas cuentas deben estar activas para cancelar.");
         }
@@ -186,10 +186,10 @@ public class SolicitudAmistadService : ISolicitudAmistadService
             FechaEnvio = s.FechaEnvio,
             Emisor = new UsuarioDto
             {
-                Id = s.Emisor.Id,
+                Id = s.Emisor!.Id,
                 Nombre = s.Emisor.Nombre,
                 Apellido = s.Emisor.Apellido,
-                NombreUsuario = s.Emisor.NombreUsuario,
+                NombreUsuario = s.Emisor.UserName ?? "",
                 FotoPerfilUrl = s.Emisor.FotoPerfilUrl
             }
         }).ToList();
@@ -208,10 +208,10 @@ public class SolicitudAmistadService : ISolicitudAmistadService
             FechaRespuesta = s.FechaRespuesta,
             Receptor = new UsuarioDto
             {
-                Id = s.Receptor.Id,
+                Id = s.Receptor!.Id,
                 Nombre = s.Receptor.Nombre,
                 Apellido = s.Receptor.Apellido,
-                NombreUsuario = s.Receptor.NombreUsuario,
+                NombreUsuario = s.Receptor.UserName ?? "",
                 FotoPerfilUrl = s.Receptor.FotoPerfilUrl
             }
         }).ToList();
@@ -235,20 +235,20 @@ public class SolicitudAmistadService : ISolicitudAmistadService
 
         var result = todosLosUsuarios.Where(u => 
             u.Id != currentUserId && 
-            u.EsActivo &&
+            u.EmailConfirmed &&
             !idsAmigos.Contains(u.Id) &&
             !idsEnviados.Contains(u.Id) &&
             !idsRecibidos.Contains(u.Id) &&
             (string.IsNullOrWhiteSpace(lowerSearch) || 
              u.Nombre.ToLower().Contains(lowerSearch) || 
              u.Apellido.ToLower().Contains(lowerSearch) || 
-             u.NombreUsuario.ToLower().Contains(lowerSearch))
+             (u.UserName != null && u.UserName.ToLower().Contains(lowerSearch)))
         ).Select(u => new UsuarioDto
         {
             Id = u.Id,
             Nombre = u.Nombre,
             Apellido = u.Apellido,
-            NombreUsuario = u.NombreUsuario,
+            NombreUsuario = u.UserName ?? "",
             FotoPerfilUrl = u.FotoPerfilUrl
         }).ToList();
 
