@@ -16,11 +16,13 @@ namespace LinkUpPro.Presentation.ViewModels.Solicitud
     public class SolicitudAmistadViewModel
     {
         public int Id { get; set; }
-        public string UsuarioId { get; set; }
-        public string NombreCompleto { get; set; }
-        public string NombreUsuario { get; set; }
-        public string FotoPerfilUrl { get; set; }
+        public string UsuarioId { get; set; } = null!;
+        public string NombreCompleto { get; set; } = null!;
+        public string NombreUsuario { get; set; } = null!;
+        public string FotoPerfilUrl { get; set; } = null!;
         public DateTime FechaSolicitud { get; set; }
+        public DateTime FechaEnvio { get; set; }
+        public string Estado { get; set; } = null!;
         public int AmigosEnComun { get; set; }
     }
 

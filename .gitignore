@@ -24,12 +24,16 @@ x86/
 [Aa]rm/
 [Aa]rm64/
 bld/
+[Bb]in/
+[Ob]j/
+[Log]s/
 
 # Standard Build Folders
 bin/
 Bin/
 obj/
 Obj/
+_ReSharper*/
 
 # Visual Studio 2015/2017/2019/2022 cache directory
 .vs/
@@ -47,10 +51,13 @@ nunit-agent*
 
 # Developer Express DB file
 App_Data/*.ldf
+App_Data/*.mdf
 
-# Rider
+# Rider / IntelliJ JetBrains
 .idea/
 *.sln.iml
+*.suo
+*.sln.docstates
 
 # Visual Studio Code
 .vscode/
@@ -85,3 +92,33 @@ appsettings.local.json
 .env
 .env.*
 !.env.example
+secrets.json
+
+# Paket dependency manager
+.paket/
+
+# F# Image compilation packager
+img/
+
+# DB files
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+
+# Backup and temporary files
+*~
+*.tmp
+*.temp
+*.bak
+*.log
+*.err
+
+# Node.js / npm / packages
+node_modules/
+jspm_packages/
+web_modules/
+.npm/
+.eslintcache
+.stylelintcache

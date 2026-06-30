@@ -4,71 +4,207 @@
     ViewData["Title"] = "Buscar Amigos";
 }
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-        <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-<div class="container mt-4">
-    <div class="row justify-content-center mb-5">
-        <div class="col-md-8 text-center">
-            <h2 class="fw-bold text-primary mb-3">Encuentra nuevos amigos</h2>
-            <p class="text-muted mb-4">Busca a personas que conoces por su nombre o usuario.</p>
+<div class="lup-layout">
+    <!-- SIDEBAR IZQUIERDO -->
+    <aside class="lup-sidebar lup-sidebar--left">
+        <div class="lup-profile-card">
+            <div class="lup-profile-card__cover"></div>
+            <div class="lup-profile-card__body">
+                <img src="@(User.FindFirst("FotoPerfilUrl")?.Value ?? "https://cdn-icons-png.flaticon.com/512/149/149071.png")"
+                     alt="Tu foto" class="lup-profile-card__avatar">
+                <p class="lup-profile-card__name">@User.Identity?.Name</p>
+                <p class="lup-profile-card__handle">Miembro de LinkUpPro</p>
+            </div>
+        </div>
+
+        <nav class="lup-quick-nav">
+            <a asp-controller="Publicacion" asp-action="Index" class="lup-quick-nav__item">
+                <i class="bi bi-house-door-fill"></i> Home
+            </a>
             
-            <form asp-action="Nueva" method="get" class="d-flex justify-content-center">
-                <div class="input-group input-group-lg shadow-sm rounded-pill w-75">
-                    <input type="text" name="query" value="@ViewBag.SearchQuery" class="form-control border-0 rounded-start-pill ps-4" placeholder="Buscar usuarios..." />
-                    <button type="submit" class="btn btn-primary rounded-end-pill px-4">
-                        <i class="bi bi-search"></i>
-                    </button>
+            <a asp-controller="Amigos" asp-action="Index" class="lup-quick-nav__item">
+                <i class="bi bi-people-fill"></i> Amigos
+            </a>
+            
+            <a asp-controller="Solicitudes" asp-action="Index" class="lup-quick-nav__item lup-quick-nav__item--active">
+                <i class="bi bi-person-plus-fill"></i> Solicitudes
+            </a>
+
+            <a asp-controller="Notificacion" asp-action="Index" class="lup-quick-nav__item">
+                <i class="bi bi-bell-fill"></i> Notificaciones
+            </a>
+
+            <a asp-controller="Battleship" asp-action="Index" class="lup-quick-nav__item">
+                <i class="bi bi-controller"></i> Battleship
+            </a>
+
+            <a asp-controller="Perfil" asp-action="Index" class="lup-quick-nav__item">
+                <i class="bi bi-person-circle"></i> Mi Perfil
+            </a>
+        </nav>
+    </aside>
+
+    <!-- ZONA CENTRAL -->
+    <main class="lup-feed">
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert" style="border-radius: var(--lup-radius-sm);">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <!-- BUSCADOR -->
+        <div class="lup-composer">
+            <h5 class="fw-bold mb-3"><i class="bi bi-search text-primary me-2"></i>Buscador de usuarios</h5>
+            <form asp-action="Nueva" method="get" class="d-flex flex-column gap-3">
+                <div class="d-flex gap-2">
+                    <input type="text" name="query" value="@ViewBag.SearchQuery" class="lup-input" placeholder="Nombre, apellido o nombre de usuario...">
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="lup-btn lup-btn--primary">Buscar</button>
+                    <a asp-action="Nueva" class="lup-btn lup-btn--ghost">Limpiar búsqueda</a>
                 </div>
             </form>
         </div>
-    </div>
 
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        @if (Model != null && Model.Count > 0)
-        {
-            @foreach (var user in Model)
+        <div class="lup-feed-divider">
+            <span>Resultados de búsqueda</span>
+        </div>
+
+        <form asp-action="Enviar" method="post" id="frmEnviarSolicitud">
+            @Html.AntiForgeryToken()
+            
+            @if (Model != null && Model.Count > 0)
             {
-                <div class="col">
-                    <div class="card h-100 border-0 shadow-sm rounded-4 hover-card">
-                        <div class="card-body text-center p-4">
-                            <img src="@(string.IsNullOrEmpty(user.FotoPerfilUrl) ? "/img/default.png" : user.FotoPerfilUrl)" class="rounded-circle mb-3 shadow-sm object-fit-cover" style="width: 90px; height: 90px;">
-                            <h5 class="card-title fw-bold mb-1">@user.NombreCompleto</h5>
-                            <p class="text-muted small mb-3">@@@user.NombreUsuario</p>
-                            <p class="text-info small fw-bold mb-4"><i class="bi bi-people-fill me-1"></i>@user.AmigosEnComun amigos en común</p>
-                            
-                            <form asp-action="Enviar" method="post">
-                                <input type="hidden" name="id" value="@user.Id" />
-                                <button type="submit" class="btn btn-primary rounded-pill w-100 shadow-sm">
-                                    <i class="bi bi-person-plus-fill me-2"></i>Enviar Solicitud
-                                </button>
-                            </form>
+                <div class="row row-cols-1 g-3 mb-4">
+                    @foreach (var user in Model)
+                    {
+                        <div class="col">
+                            <label class="lup-post mb-0 d-flex flex-row align-items-center p-3 gap-3 w-100" style="cursor: pointer; border: 1px solid transparent; transition: border-color 0.2s;">
+                                <div class="form-check m-0 d-flex align-items-center">
+                                    <input class="form-check-input" type="radio" name="id" value="@user.Id" required style="width: 1.25em; height: 1.25em;">
+                                </div>
+                                <img src="@(string.IsNullOrEmpty(user.FotoPerfilUrl) ? "https://cdn-icons-png.flaticon.com/512/149/149071.png" : user.FotoPerfilUrl)" class="lup-avatar lup-avatar--md">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-0 fw-bold text-dark">@user.NombreCompleto</h6>
+                                    <small class="text-muted d-block">@@@user.NombreUsuario</small>
+                                </div>
+                                <div class="text-end">
+                                    <small class="text-primary fw-bold d-block"><i class="bi bi-people-fill me-1"></i>@user.AmigosEnComun amigos en común</small>
+                                </div>
+                            </label>
                         </div>
-                    </div>
+                    }
+                </div>
+                
+                <div class="d-flex gap-2 justify-content-end border-top pt-3">
+                    <a asp-action="Index" class="lup-btn lup-btn--ghost">Volver atrás</a>
+                    <button type="submit" class="lup-btn lup-btn--primary">Enviar solicitud</button>
                 </div>
             }
-        }
-        else if (ViewBag.SearchQuery != null)
-        {
-            <div class="col-12 text-center text-muted my-5">
-                <i class="bi bi-search display-1 text-light mb-3"></i>
-                <p class="lead">No se encontraron usuarios para "@ViewBag.SearchQuery".</p>
-            </div>
-        }
-    </div>
+            else
+            {
+                <div class="lup-empty">
+                    <div class="lup-empty__icon"><i class="bi bi-search"></i></div>
+                    <h4 class="lup-empty__title">No existen usuarios disponibles para enviar una solicitud de amistad.</h4>
+                    @if (!string.IsNullOrEmpty(ViewBag.SearchQuery as string))
+                    {
+                        <p class="lup-empty__text">No se encontraron usuarios disponibles con el nombre ingresado.</p>
+                    }
+                </div>
+                
+                <div class="d-flex gap-2 justify-content-end border-top pt-3">
+                    <a asp-action="Index" class="lup-btn lup-btn--ghost">Volver atrás</a>
+                </div>
+            }
+        </form>
+    </main>
+
+    <!-- SIDEBAR DERECHO -->
+    <aside class="lup-sidebar lup-sidebar--right">
+        <div class="lup-widget">
+            <h6 class="lup-widget__title">Información</h6>
+            <p class="text-muted" style="font-size: 0.85rem;">Seleccione un usuario usando el botón de radio circular y presione "Enviar solicitud" al final del listado.</p>
+        </div>
+    </aside>
 </div>
 
 <style>
-    .hover-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+        --lup-bg:          #F0F2F5;
+        --lup-surface:     #FFFFFF;
+        --lup-border:      #E4E6EB;
+        --lup-text-1:      #1C1E21;
+        --lup-text-2:      #65676B;
+        --lup-text-3:      #8A8D91;
+        --lup-accent:      #5B4CFF;
+        --lup-accent-soft: #EEF0FF;
+        --lup-like:        #1877F2;
+        --lup-dislike:     #E74C3C;
+        --lup-green:       #10B981;
+        --lup-radius-sm:   8px;
+        --lup-radius-md:   12px;
+        --lup-radius-lg:   16px;
+        --lup-shadow:      0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
+        --lup-shadow-md:   0 4px 12px rgba(0,0,0,0.10);
+        --font:            'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
-    .hover-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important;
-    }
+
+    body { background: var(--lup-bg); font-family: var(--font); color: var(--lup-text-1); }
+
+    /* LAYOUT */
+    .lup-layout { display: grid; grid-template-columns: 240px 1fr 260px; gap: 20px; max-width: 1120px; margin: 0 auto; padding: 24px 16px; align-items: start; }
+    @@media (max-width: 1024px) { .lup-layout { grid-template-columns: 200px 1fr; } .lup-sidebar--right { display: none; } }
+    @@media (max-width: 680px) { .lup-layout { grid-template-columns: 1fr; padding: 12px; } .lup-sidebar--left { display: none; } }
+
+    /* SIDEBARS */
+    .lup-sidebar { position: sticky; top: 80px; }
+    .lup-profile-card { background: var(--lup-surface); border-radius: var(--lup-radius-lg); box-shadow: var(--lup-shadow); overflow: hidden; margin-bottom: 12px; }
+    .lup-profile-card__cover { height: 56px; background: linear-gradient(135deg, var(--lup-accent) 0%, #9B8FFF 100%); }
+    .lup-profile-card__body { padding: 0 16px 12px; text-align: center; margin-top: -20px; }
+    .lup-profile-card__avatar { width: 52px; height: 52px; border-radius: 50%; border: 3px solid var(--lup-surface); object-fit: cover; display: block; margin: 0 auto 8px; }
+    .lup-profile-card__name { font-size: 0.875rem; font-weight: 700; color: var(--lup-text-1); margin: 0 0 2px; }
+    .lup-profile-card__handle { font-size: 0.725rem; color: var(--lup-text-3); margin: 0; }
+
+    .lup-quick-nav { background: var(--lup-surface); border-radius: var(--lup-radius-md); box-shadow: var(--lup-shadow); overflow: hidden; padding: 6px 0; }
+    .lup-quick-nav__item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; font-size: 0.875rem; font-weight: 500; color: var(--lup-text-2); text-decoration: none; transition: background 0.15s, color 0.15s; }
+    .lup-quick-nav__item:hover { background: var(--lup-bg); color: var(--lup-accent); }
+    .lup-quick-nav__item--active { color: var(--lup-accent); background: var(--lup-accent-soft); }
+
+    /* WIDGETS */
+    .lup-widget { background: var(--lup-surface); border-radius: var(--lup-radius-lg); box-shadow: var(--lup-shadow); padding: 16px; margin-bottom: 16px; }
+    .lup-widget__title { font-size: 0.875rem; font-weight: 700; color: var(--lup-text-2); margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* FEED COMPONENTS */
+    .lup-composer { background: var(--lup-surface); border-radius: var(--lup-radius-lg); box-shadow: var(--lup-shadow); padding: 16px; margin-bottom: 16px; }
+    .lup-input { border: 1px solid var(--lup-border); border-radius: var(--lup-radius-sm); padding: 7px 10px; font-family: var(--font); font-size: 0.825rem; color: var(--lup-text-1); width: 100%; transition: border-color 0.15s; }
+    .lup-input:focus { outline: none; border-color: var(--lup-accent); box-shadow: 0 0 0 3px rgba(91,76,255,0.12); }
+    
+    .lup-post { background: var(--lup-surface); border-radius: var(--lup-radius-lg); box-shadow: var(--lup-shadow); transition: box-shadow 0.2s; }
+    .lup-post:hover { box-shadow: var(--lup-shadow-md); }
+    .lup-post:has(input[type="radio"]:checked) { border-color: var(--lup-accent); background: var(--lup-accent-soft); }
+    
+    .lup-feed-divider { display: flex; align-items: center; gap: 10px; color: var(--lup-text-3); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; }
+    .lup-feed-divider::before, .lup-feed-divider::after { content: ''; flex: 1; height: 1px; background: var(--lup-border); }
+    
+    .lup-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: 24px; font-family: var(--font); font-weight: 600; cursor: pointer; transition: all 0.15s; border: none; white-space: nowrap; text-decoration: none;}
+    .lup-btn--primary { background: var(--lup-accent); color: #fff; padding: 8px 18px; }
+    .lup-btn--primary:hover { background: #4438d4; color: #fff; transform: translateY(-1px); }
+    .lup-btn--ghost { background: var(--lup-bg); color: var(--lup-text-2); border: 1px solid var(--lup-border); padding: 7px 14px; }
+    .lup-btn--ghost:hover { background: var(--lup-border); color: var(--lup-text-1); }
+    
+    .lup-empty { text-align: center; padding: 48px 24px; background: var(--lup-surface); border-radius: var(--lup-radius-lg); box-shadow: var(--lup-shadow); margin-bottom: 16px; }
+    .lup-empty__icon { font-size: 3rem; color: var(--lup-text-3); margin-bottom: 12px; opacity: 0.5; }
+    .lup-empty__title { font-size: 1.1rem; font-weight: 700; color: var(--lup-text-1); margin-bottom: 6px; }
+    .lup-empty__text { font-size: 0.9rem; color: var(--lup-text-2); margin-bottom: 16px; }
+    
+    .lup-avatar { border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+    .lup-avatar--md { width: 44px; height: 44px; }
 </style>
