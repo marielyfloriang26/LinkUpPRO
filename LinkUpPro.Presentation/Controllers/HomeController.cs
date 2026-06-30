@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace LinkUpPro.Presentation.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "CuentaActiva")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

@@ -9,7 +9,10 @@ namespace LinkUpPro.Presentation
             var builder = WebApplication.CreateBuilder(args);
 
             // 1. Agregar servicios al contenedor
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews(options =>
+            {
+                options.Filters.Add<GlobalExceptionFilter>();
+            });
             
             // 2. Registrar la infraestructura (que incluye Identity configurado)
             builder.Services.AddPersistenceInfrastructure(builder.Configuration);

@@ -7,6 +7,14 @@ public class FileService : IFileService
 {
     public string UploadFile(IFormFile file, string folderPath)
     {
+        if (file.Length > 5 * 1024 * 1024) throw new Exception("Archivo muy grande");
+        
+        var ext = Path.GetExtension(file.FileName).ToLower();
+        var permitidas = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+        if (!permitidas.Contains(ext)) throw new Exception("Extensión no permitida");
+
+
+
         if (file == null || file.Length == 0) return string.Empty;
 
         // Crear carpeta si no existe
