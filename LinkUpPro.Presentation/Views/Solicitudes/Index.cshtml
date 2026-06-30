@@ -119,16 +119,8 @@
                                         <small class="text-primary fw-bold mt-1 d-block"><i class="bi bi-people-fill me-1"></i>@sol.AmigosEnComun amigos en común</small>
                                     </div>
                                     <div class="d-flex gap-2">
-                                        <form asp-action="Aceptar" method="post" class="m-0">
-                                            <input type="hidden" name="id" value="@sol.Id" />
-                                            @Html.AntiForgeryToken()
-                                            <button type="submit" class="lup-btn lup-btn--sm" style="background: var(--lup-green); color: #fff;">Aceptar</button>
-                                        </form>
-                                        <form asp-action="Rechazar" method="post" class="m-0">
-                                            <input type="hidden" name="id" value="@sol.Id" />
-                                            @Html.AntiForgeryToken()
-                                            <button type="submit" class="lup-btn lup-btn--outline lup-btn--sm" onclick="return confirm('¿Está seguro que desea rechazar la solicitud de amistad del usuario @sol.NombreUsuario?');">Rechazar</button>
-                                        </form>
+                                        <a asp-action="Aceptar" asp-route-id="@sol.Id" class="lup-btn lup-btn--sm" style="background: var(--lup-green); color: #fff;">Aceptar</a>
+                                        <a asp-action="Rechazar" asp-route-id="@sol.Id" class="lup-btn lup-btn--outline lup-btn--sm">Rechazar</a>
                                     </div>
                                 </div>
                             </div>
@@ -162,20 +154,12 @@
                                     <div class="d-flex gap-2">
                                         @if (sol.Estado == "En espera de respuesta")
                                         {
-                                            <form asp-action="Cancelar" method="post" class="m-0">
-                                                <input type="hidden" name="id" value="@sol.Id" />
-                                                @Html.AntiForgeryToken()
-                                                <button type="submit" class="lup-btn lup-btn--outline lup-btn--sm" onclick="return confirm('¿Está seguro que desea cancelar la solicitud de amistad enviada a @sol.NombreUsuario?');">Cancelar solicitud</button>
-                                            </form>
+                                            <a asp-action="Cancelar" asp-route-id="@sol.Id" class="lup-btn lup-btn--outline lup-btn--sm">Cancelar solicitud</a>
                                         }
                                         else
                                         {
                                             <span class="badge @(sol.Estado == "Aceptada" ? "bg-success" : (sol.Estado == "Rechazada" ? "bg-danger" : "bg-secondary")) align-self-center me-2">@sol.Estado</span>
-                                            <form asp-action="EliminarHistorial" method="post" class="m-0 align-self-center">
-                                                <input type="hidden" name="id" value="@sol.Id" />
-                                                @Html.AntiForgeryToken()
-                                                <button type="submit" class="lup-icon-btn" title="Eliminar del historial" onclick="return confirm('¿Está seguro que desea eliminar esta solicitud de su historial?');"><i class="bi bi-trash3"></i></button>
-                                            </form>
+                                            <a asp-action="EliminarHistorial" asp-route-id="@sol.Id" class="lup-icon-btn align-self-center" title="Eliminar del historial"><i class="bi bi-trash3"></i></a>
                                         }
                                     </div>
                                 </div>

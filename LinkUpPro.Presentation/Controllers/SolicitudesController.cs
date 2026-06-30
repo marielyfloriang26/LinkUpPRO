@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace LinkUpPro.Presentation.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "CuentaActiva")]
     public class SolicitudesController : Controller
     {
         private readonly ISolicitudAmistadService _solicitudService;
@@ -101,9 +101,24 @@ namespace LinkUpPro.Presentation.Controllers
             return RedirectToAction(nameof(Nueva));
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet]
         public async Task<IActionResult> Aceptar(int id)
+        {
+            var userId = GetCurrentUserId();
+            var pendientes = await _solicitudService.GetSolicitudesRecibidasAsync(userId);
+            var sol = pendientes.FirstOrDefault(s => s.Id == id);
+            if (sol == null)
+            {
+                TempData["ErrorMessage"] = "Esta solicitud ya no se encuentra disponible para ser aceptada.";
+                return RedirectToAction(nameof(Index));
+            }
+            var vm = new LinkUpPro.Presentation.ViewModels.Solicitud.SolicitudAmistadViewModel { Id = sol.Id, NombreUsuario = sol.Emisor.NombreUsuario };
+            return View(vm);
+        }
+
+        [HttpPost, ActionName("Aceptar")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AceptarConfirmado(int id)
         {
             try
             {
@@ -121,9 +136,20 @@ namespace LinkUpPro.Presentation.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet]
         public async Task<IActionResult> Rechazar(int id)
+        {
+            var userId = GetCurrentUserId();
+            var pendientes = await _solicitudService.GetSolicitudesRecibidasAsync(userId);
+            var sol = pendientes.FirstOrDefault(s => s.Id == id);
+            if (sol == null) return RedirectToAction(nameof(Index));
+            var vm = new LinkUpPro.Presentation.ViewModels.Solicitud.SolicitudAmistadViewModel { Id = sol.Id, NombreUsuario = sol.Emisor.NombreUsuario };
+            return View(vm);
+        }
+
+        [HttpPost, ActionName("Rechazar")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RechazarConfirmado(int id)
         {
             try
             {
@@ -141,9 +167,20 @@ namespace LinkUpPro.Presentation.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet]
         public async Task<IActionResult> Cancelar(int id)
+        {
+            var userId = GetCurrentUserId();
+            var enviadas = await _solicitudService.GetSolicitudesEnviadasAsync(userId);
+            var sol = enviadas.FirstOrDefault(s => s.Id == id);
+            if (sol == null) return RedirectToAction(nameof(Index));
+            var vm = new LinkUpPro.Presentation.ViewModels.Solicitud.SolicitudAmistadViewModel { Id = sol.Id, NombreUsuario = sol.Receptor.NombreUsuario };
+            return View(vm);
+        }
+
+        [HttpPost, ActionName("Cancelar")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CancelarConfirmado(int id)
         {
             try
             {
@@ -161,9 +198,20 @@ namespace LinkUpPro.Presentation.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet]
         public async Task<IActionResult> EliminarHistorial(int id)
+        {
+            var userId = GetCurrentUserId();
+            var enviadas = await _solicitudService.GetSolicitudesEnviadasAsync(userId);
+            var sol = enviadas.FirstOrDefault(s => s.Id == id);
+            if (sol == null) return RedirectToAction(nameof(Index));
+            var vm = new LinkUpPro.Presentation.ViewModels.Solicitud.SolicitudAmistadViewModel { Id = sol.Id, NombreUsuario = sol.Receptor.NombreUsuario };
+            return View(vm);
+        }
+
+        [HttpPost, ActionName("EliminarHistorial")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EliminarHistorialConfirmado(int id)
         {
             try
             {

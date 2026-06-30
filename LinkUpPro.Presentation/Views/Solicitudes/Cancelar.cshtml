@@ -1,0 +1,26 @@
+@model LinkUpPro.Presentation.ViewModels.Solicitud.SolicitudAmistadViewModel
+@{ ViewData["Title"] = "Cancelar Solicitud"; }
+<div class="lup-layout">
+    <main class="lup-feed w-100 mx-auto" style="max-width: 600px; margin-top: 50px;">
+        <div class="lup-post text-center p-5">
+            <i class="bi bi-person-x text-danger mb-3 d-block" style="font-size: 3rem;"></i>
+            <h4 class="fw-bold mb-4" style="color: var(--lup-text-1);">¿Está seguro que desea cancelar la solicitud de amistad enviada a @Model.NombreUsuario?</h4>
+            <form asp-action="Aceptar" method="post" class="mt-4">
+                <input type="hidden" asp-for="Id" />
+                @Html.AntiForgeryToken()
+                <div class="d-flex gap-3 justify-content-center">
+                    <a asp-action="Index" class="lup-btn lup-btn--ghost px-4">Volver atrás</a>
+                    <button type="submit" class="lup-btn px-4" style="background: var(--lup-dislike); color: #fff;">Cancelar solicitud</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+<style>
+    :root { --lup-surface: #FFFFFF; --lup-text-1: #1C1E21; --lup-text-2: #65676B; --lup-border: #E4E6EB; --lup-green: #10B981; --lup-radius-lg: 16px; --lup-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .lup-post { background: var(--lup-surface); border-radius: var(--lup-radius-lg); box-shadow: var(--lup-shadow); }
+    .lup-btn { display: inline-flex; align-items: center; justify-content: center; border-radius: 24px; font-weight: 600; cursor: pointer; border: none; text-decoration: none; padding: 8px 18px; }
+    .lup-btn--ghost { background: transparent; color: var(--lup-text-2); border: 1px solid var(--lup-border); }
+    .lup-btn--ghost:hover { background: var(--lup-border); color: var(--lup-text-1); }
+</style>
+

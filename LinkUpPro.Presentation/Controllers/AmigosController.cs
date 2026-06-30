@@ -10,7 +10,7 @@ using LinkUpPro.Application.Exceptions;
 
 namespace LinkUpPro.Presentation.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "CuentaActiva")]
     public class AmigosController : Controller
     {
         private readonly IAmigoService _amigoService;
