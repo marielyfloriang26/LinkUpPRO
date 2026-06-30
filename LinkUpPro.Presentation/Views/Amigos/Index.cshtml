@@ -76,15 +76,134 @@
             </div>
         }
 
+        <!-- BUSCADOR DE PUBLICACIONES -->
+        <div class="lup-composer mb-4">
+            <h5 class="fw-bold mb-3"><i class="bi bi-search me-2 text-primary"></i>Filtros de Publicaciones</h5>
+            <form asp-action="Index" method="get" class="row g-2">
+                <input type="hidden" name="query" value="@Model.SearchQuery" />
+                <div class="col-md-6">
+                    <input type="text" name="textoBusquedaPub" value="@Model.TextoBusquedaPub" class="lup-input" placeholder="Texto de búsqueda...">
+                </div>
+                <div class="col-md-6">
+                    <select name="amigoIdPub" class="lup-input">
+                        <option value="">Seleccione un amigo...</option>
+                        @foreach(var amigo in Model.Amigos)
+                        {
+                            if(Model.AmigoIdPub == amigo.Id) {
+                                <option value="@amigo.Id" selected>@amigo.NombreCompleto</option>
+                            } else {
+                                <option value="@amigo.Id">@amigo.NombreCompleto</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select name="tipoContenidoPub" class="lup-input">
+                        @if(Model.TipoContenidoPub == "Todos") { <option value="Todos" selected>Todos</option> } else { <option value="Todos">Todos</option> }
+                        @if(Model.TipoContenidoPub == "Imagen") { <option value="Imagen" selected>Imagen</option> } else { <option value="Imagen">Imagen</option> }
+                        @if(Model.TipoContenidoPub == "Video") { <option value="Video" selected>Video de YouTube</option> } else { <option value="Video">Video de YouTube</option> }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <input type="date" name="fechaDesdePub" value="@Model.FechaDesdePub?.ToString("yyyy-MM-dd")" class="lup-input" placeholder="Fecha desde">
+                </div>
+                <div class="col-md-4">
+                    <input type="date" name="fechaHastaPub" value="@Model.FechaHastaPub?.ToString("yyyy-MM-dd")" class="lup-input" placeholder="Fecha hasta">
+                </div>
+                <div class="col-md-12">
+                    <select name="estadoEdicionPub" class="lup-input">
+                        @if(Model.EstadoEdicionPub == "Todas") { <option value="Todas" selected>Todas</option> } else { <option value="Todas">Todas</option> }
+                        @if(Model.EstadoEdicionPub == "Editadas") { <option value="Editadas" selected>Editadas</option> } else { <option value="Editadas">Editadas</option> }
+                        @if(Model.EstadoEdicionPub == "NoEditadas") { <option value="NoEditadas" selected>No editadas</option> } else { <option value="NoEditadas">No editadas</option> }
+                    </select>
+                </div>
+                <div class="col-12 mt-2">
+                    <button type="submit" class="lup-btn lup-btn--primary">Buscar publicaciones</button>
+                    <a asp-action="Index" class="lup-btn lup-btn--ghost">Limpiar filtros</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="lup-feed-divider">
+            <span>Publicaciones de amigos</span>
+        </div>
+
+        @if(ViewBag.ErrorFechas != null)
+        {
+            <div class="alert alert-danger" style="border-radius: var(--lup-radius-sm);">@ViewBag.ErrorFechas</div>
+        }
+        else if (Model.Publicaciones != null && Model.Publicaciones.Count > 0)
+        {
+            foreach (var pub in Model.Publicaciones)
+            {
+                <div class="lup-post mb-4 p-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <img src="@(string.IsNullOrEmpty(pub.AutorFotoPerfilUrl) ? "https://cdn-icons-png.flaticon.com/512/149/149071.png" : pub.AutorFotoPerfilUrl)" class="lup-avatar lup-avatar--md me-2">
+                        <div>
+                            <h6 class="mb-0 fw-bold">@pub.AutorNombreCompleto</h6>
+                            <small class="text-muted"><a asp-controller="Perfil" asp-action="Ver" asp-route-username="@pub.AutorNombreUsuario">@@@pub.AutorNombreUsuario</a> • @pub.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</small>
+                            @if(pub.FechaModificacion.HasValue)
+                            {
+                                <small class="text-muted"> • (Editada)</small>
+                            }
+                        </div>
+                    </div>
+                    <p class="mb-2" style="font-size: 0.95rem;">@pub.ContenidoTexto</p>
+                    @if (!string.IsNullOrEmpty(pub.ImagenUrl))
+                    {
+                        <img src="@pub.ImagenUrl" class="img-fluid rounded mb-2 w-100" style="max-height: 400px; object-fit: cover;">
+                    }
+                    @if (!string.IsNullOrEmpty(pub.YouTubeVideoUrl))
+                    {
+                        <div class="ratio ratio-16x9 mb-2 rounded overflow-hidden">
+                            <iframe src="@pub.YouTubeVideoUrl" allowfullscreen></iframe>
+                        </div>
+                    }
+                    <div class="mt-2 border-top pt-2">
+                        <span class="text-muted" style="font-size: 0.8rem;">
+                            <i class="bi bi-hand-thumbs-up-fill me-1 text-primary"></i> @pub.CantidadMeGusta
+                            <i class="bi bi-hand-thumbs-down-fill ms-2 me-1 text-danger"></i> @pub.CantidadNoMeGusta
+                            <i class="bi bi-chat-fill ms-2 me-1"></i> @pub.Comentarios.Count
+                        </span>
+                        @if(!pub.PermiteComentarios)
+                        {
+                            <span class="badge bg-secondary ms-2" style="font-size: 0.7rem;">Comentarios desactivados</span>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        else if (Model.Amigos.Count > 0 && (!string.IsNullOrEmpty(Model.TextoBusquedaPub) || Model.AmigoIdPub.HasValue || Model.TipoContenidoPub != "Todos" || Model.FechaDesdePub.HasValue || Model.FechaHastaPub.HasValue || Model.EstadoEdicionPub != "Todas"))
+        {
+            <div class="lup-empty mb-4">
+                <div class="lup-empty__icon"><i class="bi bi-journal-x"></i></div>
+                <h4 class="lup-empty__title">No se encontraron publicaciones que coincidan con los criterios seleccionados.</h4>
+            </div>
+        }
+        else if (Model.Amigos.Count > 0)
+        {
+            <div class="lup-empty mb-4">
+                <div class="lup-empty__icon"><i class="bi bi-journal-text"></i></div>
+                <h4 class="lup-empty__title">Sus amigos todavía no han realizado publicaciones disponibles para usted.</h4>
+            </div>
+        }
+
         <!-- BUSCADOR DE AMIGOS -->
         <div class="lup-composer">
             <h5 class="fw-bold mb-3"><i class="bi bi-search me-2 text-primary"></i>Buscar Amigos</h5>
-            <form asp-action="Buscar" method="get" class="d-flex gap-2">
+            <form asp-action="Index" method="get" class="d-flex gap-2">
+                <input type="hidden" name="textoBusquedaPub" value="@Model.TextoBusquedaPub" />
+                <input type="hidden" name="amigoIdPub" value="@Model.AmigoIdPub" />
+                <input type="hidden" name="tipoContenidoPub" value="@Model.TipoContenidoPub" />
+                <input type="hidden" name="fechaDesdePub" value="@Model.FechaDesdePub?.ToString("yyyy-MM-dd")" />
+                <input type="hidden" name="fechaHastaPub" value="@Model.FechaHastaPub?.ToString("yyyy-MM-dd")" />
+                <input type="hidden" name="estadoEdicionPub" value="@Model.EstadoEdicionPub" />
+
                 <input type="text" name="query" value="@Model.SearchQuery" class="lup-input" placeholder="Nombre, apellido o usuario...">
                 <button type="submit" class="lup-btn lup-btn--primary">Buscar</button>
                 @if (!string.IsNullOrEmpty(Model.SearchQuery))
                 {
-                    <a asp-action="Index" class="lup-btn lup-btn--ghost">Limpiar</a>
+                    <a asp-action="Index" asp-route-textoBusquedaPub="@Model.TextoBusquedaPub" asp-route-amigoIdPub="@Model.AmigoIdPub" asp-route-tipoContenidoPub="@Model.TipoContenidoPub" asp-route-estadoEdicionPub="@Model.EstadoEdicionPub" asp-route-fechaDesdePub="@Model.FechaDesdePub?.ToString("yyyy-MM-dd")" asp-route-fechaHastaPub="@Model.FechaHastaPub?.ToString("yyyy-MM-dd")" class="lup-btn lup-btn--ghost">Limpiar</a>
                 }
             </form>
         </div>
@@ -153,7 +272,7 @@
             
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="text-muted fw-bold" style="font-size: 0.85rem;">Publicaciones disponibles</span>
-                <span class="badge bg-success rounded-pill">0</span> <!-- Pendiente de integrar publicaciones -->
+                <span class="badge bg-success rounded-pill">@Model.PublicacionesDisponibles</span>
             </div>
         </div>
     </aside>

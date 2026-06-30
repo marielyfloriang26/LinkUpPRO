@@ -21,7 +21,12 @@ public class SolicitudAmistadRepository : RepositoryAsync<SolicitudAmistad>, ISo
     {
         return await _dbContext.Set<SolicitudAmistad>()
             .Include(s => s.Emisor)
-            .Where(s => s.ReceptorId == receptorId && s.Estado == "Pendiente")
+            .Include(s => s.Receptor)
+            .Where(s => s.ReceptorId == receptorId 
+                     && s.Estado == "En espera de respuesta" 
+                     && s.Emisor.EsActivo 
+                     && s.Receptor.EsActivo)
+            .OrderByDescending(s => s.FechaEnvio)
             .ToListAsync();
     }
 
@@ -29,13 +34,19 @@ public class SolicitudAmistadRepository : RepositoryAsync<SolicitudAmistad>, ISo
     {
         return await _dbContext.Set<SolicitudAmistad>()
             .Include(s => s.Receptor)
-            .Where(s => s.EmisorId == emisorId && s.Estado == "Pendiente")
+            .Include(s => s.Emisor)
+            .Where(s => s.EmisorId == emisorId 
+                     && (s.Estado == "En espera de respuesta" || s.Estado == "Aceptada" || s.Estado == "Rechazada")
+                     && !s.OcultaParaEmisor 
+                     && s.Emisor.EsActivo 
+                     && s.Receptor.EsActivo)
+            .OrderByDescending(s => s.FechaEnvio)
             .ToListAsync();
     }
 
     public async Task<SolicitudAmistad> GetSolicitudPendienteAsync(int emisorId, int receptorId)
     {
         return await _dbContext.Set<SolicitudAmistad>()
-            .FirstOrDefaultAsync(s => s.EmisorId == emisorId && s.ReceptorId == receptorId && s.Estado == "Pendiente");
+            .FirstOrDefaultAsync(s => s.EmisorId == emisorId && s.ReceptorId == receptorId && s.Estado == "En espera de respuesta");
     }
 }

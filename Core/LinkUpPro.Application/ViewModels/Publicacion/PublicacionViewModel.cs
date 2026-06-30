@@ -5,6 +5,7 @@ public class PublicacionViewModel
     public int Id { get; set; }
     public int UsuarioId { get; set; }
     public string AutorNombreCompleto { get; set; } = null!;
+    public string AutorNombreUsuario { get; set; } = null!;
     public string? AutorFotoPerfilUrl { get; set; }
     public string ContenidoTexto { get; set; } = null!;
     public string? ImagenUrl { get; set; }

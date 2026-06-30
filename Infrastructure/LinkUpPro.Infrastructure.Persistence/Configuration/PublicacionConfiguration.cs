@@ -15,6 +15,7 @@ public class PublicacionConfiguration : IEntityTypeConfiguration<Publicacion>
         builder.Property(p => p.ImagenUrl).HasColumnType("VARCHAR(255)");
         builder.Property(p => p.YouTubeVideoUrl).HasColumnType("VARCHAR(255)");
         builder.Property(p => p.Privacidad).HasColumnType("VARCHAR(15)").IsRequired().HasDefaultValue("Publico");
+        builder.Property(p => p.Estado).HasColumnType("VARCHAR(15)").IsRequired().HasDefaultValue("Activa");
         builder.Property(p => p.FechaCreacion).HasColumnType("DATETIME").HasDefaultValueSql("GETUTCDATE()");
 
         builder.HasOne(p => p.Usuario)

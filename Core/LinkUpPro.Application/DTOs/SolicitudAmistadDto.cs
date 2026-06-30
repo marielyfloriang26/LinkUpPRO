@@ -9,6 +9,8 @@ public class SolicitudAmistadDto
     public int ReceptorId { get; set; }
     public string Estado { get; set; } = null!;
     public DateTime FechaEnvio { get; set; }
+    public DateTime? FechaRespuesta { get; set; }
+    public bool OcultaEnHistorial { get; set; }
     public UsuarioDto Emisor { get; set; } = null!;
     public UsuarioDto Receptor { get; set; } = null!;
 }

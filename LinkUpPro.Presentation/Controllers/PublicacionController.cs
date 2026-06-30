@@ -32,7 +32,8 @@ public class PublicacionController : Controller
             // Retorna una lista vacia o previa para cumplir la restriccion visual inmediatamente
             return View(new List<PublicacionViewModel>());
         }
-        var listaDtos = await _publicacionService.ObtenerTodasAsync(textoBusqueda, tipoContenido, estadoEdicion, fechaDesde, fechaHasta);
+        int currentUserId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "1");
+        var listaDtos = await _publicacionService.ObtenerTodasAsync(currentUserId, textoBusqueda, tipoContenido, estadoEdicion, fechaDesde, fechaHasta);
 
         var listaVm = _mapper.Map<List<PublicacionViewModel>>(listaDtos);
 
@@ -86,7 +87,8 @@ public class PublicacionController : Controller
         if (!ModelState.IsValid)
         {
             // Si hay errores, vuelve a cargar el feed mostrando los errores del formulario
-            var listaDtos = await _publicacionService.ObtenerTodasAsync();
+            int currentUserId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "1");
+            var listaDtos = await _publicacionService.ObtenerTodasAsync(currentUserId);
             var listaVm = _mapper.Map<List<PublicacionViewModel>>(listaDtos);
             return View("Index", listaVm);
         }
@@ -116,7 +118,8 @@ public class PublicacionController : Controller
         {
             ModelState.AddModelError(string.Empty, ex.Message);
             
-            var listaDtos = await _publicacionService.ObtenerTodasAsync();
+            int currentUserId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "1");
+            var listaDtos = await _publicacionService.ObtenerTodasAsync(currentUserId);
             var listaVm = _mapper.Map<List<PublicacionViewModel>>(listaDtos);
             return View("Index", listaVm);
         }

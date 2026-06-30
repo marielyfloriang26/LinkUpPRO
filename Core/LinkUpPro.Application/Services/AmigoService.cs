@@ -41,7 +41,21 @@ public class AmigoService : IAmigoService
             }
         }
         
-        return amigos;
+        return amigos.OrderBy(a => a.Nombre).ThenBy(a => a.Apellido).ToList();
+    }
+
+    public async Task<IReadOnlyList<UsuarioDto>> BuscarAmigosAsync(int usuarioId, string searchString)
+    {
+        var amigos = await GetAmigosAsync(usuarioId);
+        if (string.IsNullOrWhiteSpace(searchString))
+            return amigos;
+
+        var lowerSearch = searchString.Trim().ToLower();
+        return amigos.Where(a => 
+            a.Nombre.ToLower().Contains(lowerSearch) || 
+            a.Apellido.ToLower().Contains(lowerSearch) || 
+            a.NombreUsuario.ToLower().Contains(lowerSearch))
+            .ToList();
     }
 
     public async Task<int> GetAmigosEnComunCountAsync(int usuarioId1, int usuarioId2)
@@ -49,8 +63,17 @@ public class AmigoService : IAmigoService
         var amistadesU1 = await _amistadRepository.GetAmistadesByUsuarioIdAsync(usuarioId1);
         var amistadesU2 = await _amistadRepository.GetAmistadesByUsuarioIdAsync(usuarioId2);
 
-        var amigosU1 = amistadesU1.Select(a => a.UsuarioId1 == usuarioId1 ? a.UsuarioId2 : a.UsuarioId1).ToList();
-        var amigosU2 = amistadesU2.Select(a => a.UsuarioId1 == usuarioId2 ? a.UsuarioId2 : a.UsuarioId1).ToList();
+        var amigosU1 = amistadesU1
+            .Select(a => a.UsuarioId1 == usuarioId1 ? a.Usuario2 : a.Usuario1)
+            .Where(u => u != null && u.EsActivo)
+            .Select(u => u.Id)
+            .ToList();
+            
+        var amigosU2 = amistadesU2
+            .Select(a => a.UsuarioId1 == usuarioId2 ? a.Usuario2 : a.Usuario1)
+            .Where(u => u != null && u.EsActivo)
+            .Select(u => u.Id)
+            .ToList();
 
         return amigosU1.Intersect(amigosU2).Count();
     }
@@ -60,7 +83,7 @@ public class AmigoService : IAmigoService
         var amistad = await _amistadRepository.GetAmistadEntreUsuariosAsync(usuarioId, amigoId);
         if (amistad == null || amistad.Estado != "Activa")
         {
-            throw new ApiException("No se encontró una amistad activa.");
+            throw new ApiException("La amistad seleccionada ya no se encuentra disponible.");
         }
 
         amistad.Estado = "Eliminada";

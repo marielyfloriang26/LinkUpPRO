@@ -10,16 +10,18 @@ namespace LinkUpPro.Application.Services;
 public class PublicacionService : IPublicacionService
 {
     private readonly IPublicacionRepository _publicacionRepository;
+    private readonly IAmistadRepository _amistadRepository;
     private readonly IMapper _mapper;
 
-    public PublicacionService(IPublicacionRepository publicacionRepository, IMapper mapper)
+    public PublicacionService(IPublicacionRepository publicacionRepository, IAmistadRepository amistadRepository, IMapper mapper)
     {
         _publicacionRepository = publicacionRepository;
+        _amistadRepository = amistadRepository;
         _mapper = mapper;
     }
 
     
-    public async Task<List<PublicacionDto>> ObtenerTodasAsync(string? textoBusqueda = null, 
+    public async Task<List<PublicacionDto>> ObtenerTodasAsync(int currentUserId, string? textoBusqueda = null, 
         string? tipoContenido = null, 
         string? estadoEdicion = null, 
         DateTime? fechaDesde = null, 
@@ -27,8 +29,7 @@ public class PublicacionService : IPublicacionService
     {
         var publicacionesEntidad = await _publicacionRepository.GetTodasConDetallesAsync();
 
-        // TEMPORAL EL ID!!!!! Solo deben consultarse publicaciones pertenecientes al usuario autenticado 
-        var query = publicacionesEntidad.Where(p => p.UsuarioId == 1);
+        var query = publicacionesEntidad.Where(p => p.UsuarioId == currentUserId && p.Estado == "Activa");
 
         // La busqueda por texto no distingue mayusculas/minusculas e ignora espacios al inicio y final
         if (!string.IsNullOrWhiteSpace(textoBusqueda))
@@ -81,11 +82,71 @@ public class PublicacionService : IPublicacionService
 
         // Mapeo final al dto usando AutoMapper
         return _mapper.Map<List<PublicacionDto>>(listaOrdenada);
+    }
 
-        // Mapea la lista de entidades a la lista de publicaciondto usando AutoMapper
-      /*  var listaDtos = _mapper.Map<List<PublicacionDto>>(publicacionesEntidad);
+    public async Task<List<PublicacionDto>> ObtenerPublicacionesAmigosAsync(
+        int currentUserId, 
+        string? textoBusqueda = null, 
+        int? amigoId = null,
+        string? tipoContenido = null, 
+        string? estadoEdicion = null, 
+        DateTime? fechaDesde = null, 
+        DateTime? fechaHasta = null)
+    {
+        // 1. Obtener amigos activos del usuario actual
+        var amistades = await _amistadRepository.GetAmistadesByUsuarioIdAsync(currentUserId);
+        
+        var amigosIds = amistades.Select(a => a.UsuarioId1 == currentUserId ? a.Usuario2 : a.Usuario1)
+                                 .Where(u => u.EsActivo)
+                                 .Select(u => u.Id)
+                                 .ToList();
 
-        return listaDtos; */
+        // 2. Obtener publicaciones y filtrar
+        var publicacionesEntidad = await _publicacionRepository.GetTodasConDetallesAsync();
+
+        var query = publicacionesEntidad.Where(p => 
+            amigosIds.Contains(p.UsuarioId) && 
+            p.Privacidad == "SoloAmigos" && 
+            p.Estado == "Activa");
+
+        // 3. Aplicar filtros adicionales
+        if (amigoId.HasValue)
+        {
+            query = query.Where(p => p.UsuarioId == amigoId.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(textoBusqueda))
+        {
+            var textoLimpio = textoBusqueda.Trim().ToLower();
+            query = query.Where(p => p.ContenidoTexto != null && p.ContenidoTexto.ToLower().Contains(textoLimpio));
+        }
+
+        if (!string.IsNullOrEmpty(tipoContenido) && tipoContenido != "Todos")
+        {
+            if (tipoContenido == "Imagen")
+                query = query.Where(p => !string.IsNullOrEmpty(p.ImagenUrl));
+            else if (tipoContenido == "Video")
+                query = query.Where(p => !string.IsNullOrEmpty(p.YouTubeVideoUrl));
+        }
+
+        if (!string.IsNullOrEmpty(estadoEdicion) && estadoEdicion != "Todas")
+        {
+            if (estadoEdicion == "Editadas")
+                query = query.Where(p => p.FechaModificacion.HasValue);
+            else if (estadoEdicion == "NoEditadas")
+                query = query.Where(p => !p.FechaModificacion.HasValue);
+        }
+
+        if (fechaDesde.HasValue)
+            query = query.Where(p => p.FechaCreacion.Date >= fechaDesde.Value.Date);
+
+        if (fechaHasta.HasValue)
+            query = query.Where(p => p.FechaCreacion.Date <= fechaHasta.Value.Date);
+
+        // 4. Ordenar y retornar
+        var listaOrdenada = query.OrderByDescending(p => p.FechaCreacion).ToList();
+
+        return _mapper.Map<List<PublicacionDto>>(listaOrdenada);
     }
 
    
@@ -177,7 +238,8 @@ public class PublicacionService : IPublicacionService
         var publicacion = await _publicacionRepository.GetByIdAsync(id);
         if (publicacion != null)
         {
-            await _publicacionRepository.DeleteAsync(publicacion);
+            publicacion.Estado = "Eliminada";
+            await _publicacionRepository.UpdateAsync(publicacion);
         }
     }
 }

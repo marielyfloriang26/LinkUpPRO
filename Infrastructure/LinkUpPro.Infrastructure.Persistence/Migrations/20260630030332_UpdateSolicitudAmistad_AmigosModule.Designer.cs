@@ -4,6 +4,7 @@ using LinkUpPro.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LinkUpPro.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260630030332_UpdateSolicitudAmistad_AmigosModule")]
+    partial class UpdateSolicitudAmistad_AmigosModule
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -225,12 +228,6 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                     b.Property<string>("ContenidoTexto")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<string>("Estado")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("VARCHAR(15)")
-                        .HasDefaultValue("Activa");
 
                     b.Property<DateTime>("FechaCreacion")
                         .ValueGeneratedOnAdd()

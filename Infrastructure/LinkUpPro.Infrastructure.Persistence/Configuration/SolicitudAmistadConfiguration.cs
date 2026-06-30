@@ -11,8 +11,10 @@ public class SolicitudAmistadConfiguration : IEntityTypeConfiguration<SolicitudA
         builder.ToTable("SolicitudesAmistad");
         builder.HasKey(s => s.Id);
 
-        builder.Property(s => s.Estado).HasColumnType("VARCHAR(15)").IsRequired().HasDefaultValue("Pendiente");
+        builder.Property(s => s.Estado).HasMaxLength(50).IsRequired().HasDefaultValue("En espera de respuesta");
         builder.Property(s => s.FechaEnvio).HasColumnType("DATETIME").HasDefaultValueSql("GETUTCDATE()");
+        builder.Property(s => s.FechaRespuesta).HasColumnType("DATETIME").IsRequired(false);
+        builder.Property(s => s.OcultaParaEmisor).HasDefaultValue(false);
 
         builder.HasOne(s => s.Emisor)
             .WithMany(u => u.SolicitudesEnviadas)

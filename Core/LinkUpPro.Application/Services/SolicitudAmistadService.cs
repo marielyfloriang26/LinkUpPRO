@@ -33,33 +33,34 @@ public class SolicitudAmistadService : ISolicitudAmistadService
         var emisor = await _usuarioRepository.GetByIdAsync(emisorId);
         var receptor = await _usuarioRepository.GetByIdAsync(receptorId);
 
-        if (emisor == null || !emisor.EsActivo) throw new ApiException("El usuario emisor no existe o no está activo.");
-        if (receptor == null || !receptor.EsActivo) throw new ApiException("El usuario receptor no existe o no está activo.");
+        if (emisor == null || !emisor.EsActivo) throw new ApiException("No se puede enviar la solicitud porque uno de los usuarios se encuentra inactivo.");
+        if (receptor == null || !receptor.EsActivo) throw new ApiException("No se puede enviar la solicitud porque uno de los usuarios se encuentra inactivo.");
 
         var amistadExistente = await _amistadRepository.GetAmistadEntreUsuariosAsync(emisorId, receptorId);
         if (amistadExistente != null && amistadExistente.Estado == "Activa")
         {
-            throw new ApiException("Ya existe una amistad activa con este usuario.");
+            throw new ApiException("Este usuario ya forma parte de su lista de amigos.");
         }
 
         var solicitudPendiente = await _solicitudRepository.GetSolicitudPendienteAsync(emisorId, receptorId);
         if (solicitudPendiente != null)
         {
-            throw new ApiException("Ya hay una solicitud de amistad pendiente enviada a este usuario.");
+            throw new ApiException("Ya envió una solicitud de amistad a este usuario y se encuentra pendiente de respuesta.");
         }
         
         var solicitudPendienteInversa = await _solicitudRepository.GetSolicitudPendienteAsync(receptorId, emisorId);
         if (solicitudPendienteInversa != null)
         {
-            throw new ApiException("Este usuario ya te ha enviado una solicitud de amistad.");
+            throw new ApiException("Este usuario ya le envió una solicitud de amistad. Debe aceptarla o rechazarla desde sus solicitudes pendientes.");
         }
 
         var nuevaSolicitud = new SolicitudAmistad
         {
             EmisorId = emisorId,
             ReceptorId = receptorId,
-            Estado = "Pendiente",
-            FechaEnvio = DateTime.UtcNow
+            Estado = "En espera de respuesta",
+            FechaEnvio = DateTime.UtcNow,
+            OcultaParaEmisor = false
         };
 
         await _solicitudRepository.AddAsync(nuevaSolicitud);
@@ -70,15 +71,23 @@ public class SolicitudAmistadService : ISolicitudAmistadService
         var solicitud = await _solicitudRepository.GetByIdAsync(solicitudId);
         if (solicitud == null || solicitud.ReceptorId != receptorId)
         {
-            throw new ApiException("Solicitud no encontrada o no autorizada.");
+            throw new ApiException("Esta solicitud ya no se encuentra disponible para ser aceptada.");
         }
 
-        if (solicitud.Estado != "Pendiente")
+        if (solicitud.Estado != "En espera de respuesta")
         {
-            throw new ApiException("La solicitud no está pendiente (Estado: " + solicitud.Estado + ").");
+            throw new ApiException("Esta solicitud ya no se encuentra disponible para ser aceptada.");
+        }
+
+        var emisor = await _usuarioRepository.GetByIdAsync(solicitud.EmisorId);
+        var receptor = await _usuarioRepository.GetByIdAsync(solicitud.ReceptorId);
+        if (emisor == null || !emisor.EsActivo || receptor == null || !receptor.EsActivo)
+        {
+            throw new ApiException("No se puede aceptar la solicitud porque uno de los usuarios se encuentra inactivo.");
         }
 
         solicitud.Estado = "Aceptada";
+        solicitud.FechaRespuesta = DateTime.UtcNow;
         await _solicitudRepository.UpdateAsync(solicitud);
 
         var amistadInactiva = await _amistadRepository.GetAmistadEntreUsuariosAsync(solicitud.EmisorId, solicitud.ReceptorId);
@@ -107,9 +116,17 @@ public class SolicitudAmistadService : ISolicitudAmistadService
         {
             throw new ApiException("Solicitud no encontrada o no autorizada.");
         }
-        if (solicitud.Estado != "Pendiente") throw new ApiException("La solicitud no está pendiente.");
+        if (solicitud.Estado != "En espera de respuesta") throw new ApiException("La solicitud no está en espera de respuesta.");
+
+        var emisor = await _usuarioRepository.GetByIdAsync(solicitud.EmisorId);
+        var receptor = await _usuarioRepository.GetByIdAsync(solicitud.ReceptorId);
+        if (emisor == null || !emisor.EsActivo || receptor == null || !receptor.EsActivo)
+        {
+            throw new ApiException("No se puede rechazar la solicitud porque uno de los usuarios se encuentra inactivo.");
+        }
 
         solicitud.Estado = "Rechazada";
+        solicitud.FechaRespuesta = DateTime.UtcNow;
         await _solicitudRepository.UpdateAsync(solicitud);
     }
 
@@ -120,9 +137,17 @@ public class SolicitudAmistadService : ISolicitudAmistadService
         {
             throw new ApiException("Solicitud no encontrada o no autorizada.");
         }
-        if (solicitud.Estado != "Pendiente") throw new ApiException("La solicitud no está pendiente.");
+        if (solicitud.Estado != "En espera de respuesta") throw new ApiException("La solicitud no está en espera de respuesta.");
+
+        var emisor = await _usuarioRepository.GetByIdAsync(solicitud.EmisorId);
+        var receptor = await _usuarioRepository.GetByIdAsync(solicitud.ReceptorId);
+        if (emisor == null || !emisor.EsActivo || receptor == null || !receptor.EsActivo)
+        {
+            throw new ApiException("Ambas cuentas deben estar activas para cancelar.");
+        }
 
         solicitud.Estado = "Cancelada";
+        solicitud.FechaRespuesta = DateTime.UtcNow; 
         await _solicitudRepository.UpdateAsync(solicitud);
     }
 
@@ -131,18 +156,21 @@ public class SolicitudAmistadService : ISolicitudAmistadService
         var solicitud = await _solicitudRepository.GetByIdAsync(solicitudId);
         if (solicitud == null) throw new ApiException("Solicitud no encontrada.");
         
-        if (solicitud.EmisorId != usuarioId && solicitud.ReceptorId != usuarioId)
+        if (solicitud.EmisorId != usuarioId)
         {
-            throw new ApiException("No autorizado.");
+            throw new ApiException("Solo el emisor puede eliminar la solicitud del historial.");
         }
 
-        if (solicitud.Estado == "Aceptada" || solicitud.Estado == "Rechazada" || solicitud.Estado == "Cancelada")
+        if (solicitud.Estado == "Aceptada" || solicitud.Estado == "Rechazada")
         {
-            await _solicitudRepository.DeleteAsync(solicitud);
+            if (solicitud.OcultaParaEmisor) throw new ApiException("La solicitud ya ha sido ocultada anteriormente.");
+            
+            solicitud.OcultaParaEmisor = true;
+            await _solicitudRepository.UpdateAsync(solicitud);
         }
         else
         {
-            throw new ApiException("Solo se pueden eliminar del historial las solicitudes finalizadas (Aceptada, Rechazada, Cancelada).");
+            throw new ApiException("Solo se pueden eliminar del historial las solicitudes en estado Aceptada o Rechazada.");
         }
     }
 
@@ -177,6 +205,7 @@ public class SolicitudAmistadService : ISolicitudAmistadService
             ReceptorId = s.ReceptorId,
             Estado = s.Estado,
             FechaEnvio = s.FechaEnvio,
+            FechaRespuesta = s.FechaRespuesta,
             Receptor = new UsuarioDto
             {
                 Id = s.Receptor.Id,
@@ -193,15 +222,16 @@ public class SolicitudAmistadService : ISolicitudAmistadService
         var todosLosUsuarios = await _usuarioRepository.GetAllAsync();
         
         var amistadesActuales = await _amistadRepository.GetAmistadesByUsuarioIdAsync(currentUserId);
-        var idsAmigos = amistadesActuales.Select(a => a.UsuarioId1 == currentUserId ? a.UsuarioId2 : a.UsuarioId1).ToHashSet();
+        var idsAmigos = amistadesActuales.Where(a => a.Estado == "Activa").Select(a => a.UsuarioId1 == currentUserId ? a.UsuarioId2 : a.UsuarioId1).ToHashSet();
 
-        var solicitudesEnviadas = await _solicitudRepository.GetSolicitudesEnviadasAsync(currentUserId);
-        var idsEnviados = solicitudesEnviadas.Select(s => s.ReceptorId).ToHashSet();
+        // Obtener solo las pendientes para excluir
+        var pendientesEnviadas = await _solicitudRepository.GetSolicitudesEnviadasAsync(currentUserId);
+        var idsEnviados = pendientesEnviadas.Where(s => s.Estado == "En espera de respuesta").Select(s => s.ReceptorId).ToHashSet();
 
-        var solicitudesRecibidas = await _solicitudRepository.GetSolicitudesRecibidasAsync(currentUserId);
-        var idsRecibidos = solicitudesRecibidas.Select(s => s.EmisorId).ToHashSet();
+        var pendientesRecibidas = await _solicitudRepository.GetSolicitudesRecibidasAsync(currentUserId);
+        var idsRecibidos = pendientesRecibidas.Where(s => s.Estado == "En espera de respuesta").Select(s => s.EmisorId).ToHashSet();
 
-        var lowerSearch = string.IsNullOrWhiteSpace(searchString) ? "" : searchString.ToLower();
+        var lowerSearch = string.IsNullOrWhiteSpace(searchString) ? "" : searchString.Trim().ToLower();
 
         var result = todosLosUsuarios.Where(u => 
             u.Id != currentUserId && 
