@@ -139,7 +139,8 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                     Privacidad = table.Column<string>(type: "VARCHAR(15)", nullable: false, defaultValue: "Publico"),
                     FechaCreacion = table.Column<DateTime>(type: "DATETIME", nullable: false, defaultValueSql: "GETUTCDATE()"),
                     FechaModificacion = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    PermiteComentarios = table.Column<bool>(type: "bit", nullable: false)
+                    PermiteComentarios = table.Column<bool>(type: "bit", nullable: false),
+                    EstaEliminada = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

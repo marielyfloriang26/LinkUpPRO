@@ -219,6 +219,9 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("EstaEliminada")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("FechaCreacion")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("DATETIME")

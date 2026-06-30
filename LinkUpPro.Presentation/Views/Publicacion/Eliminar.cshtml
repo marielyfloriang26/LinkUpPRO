@@ -1,0 +1,59 @@
+@model LinkUpPro.Application.ViewModels.Publicacion.PublicacionViewModel
+
+@{
+    ViewData["Title"] = "Confirmar Eliminación";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<div class="container py-5" style="max-width: 600px; font-family: 'Inter', sans-serif;">
+    
+    <!-- TARJETA DE CONFIRMACION  -->
+    <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px; overflow: hidden; background: #ffffff;">
+        <div class="card-body p-4 text-center">
+            <div class="mb-3 text-danger" style="font-size: 3rem; line-height: 1;">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <h4 class="fw-bold mb-3 text-dark">¿Está seguro que desea eliminar esta publicación?</h4>
+            <p class="text-muted small px-3">
+                Esta acción ocultará permanentemente la publicación del feed y no estará disponible para ti ni para tus amigos.
+            </p>
+            
+            <form asp-controller="Publicacion" asp-action="Eliminar" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                
+                <div class="d-flex justify-content-center gap-2 mt-4">
+                    <!-- BOTON CANCELAR -->
+                    <a asp-controller="Publicacion" asp-action="Index" class="btn btn-light px-4 border" style="border-radius: 20px; font-weight: 600;">
+                        Cancelar
+                    </a>
+                    <!-- BOTON ACEPTAR -->
+                    <button type="submit" class="btn btn-danger px-4" style="border-radius: 20px; font-weight: 600; background: #E74C3C; border: none;">
+                        Aceptar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- VISTA PREVIA DEL POST  -->
+    <div class="card border-secondary-subtle p-3 opacity-75" style="border-radius: 12px; background: #f8f9fa; pointer-events: none;">
+        <span class="text-muted small fw-bold d-block mb-2">VISTA PREVIA DEL CONTENIDO:</span>
+        <p class="mb-2 text-dark">@Model.ContenidoTexto</p>
+        
+        @if (!string.IsNullOrEmpty(Model.ImagenUrl))
+        {
+            <div class="text-center">
+                <img src="@Model.ImagenUrl" class="img-thumbnail" style="max-height: 200px; object-fit: cover; border-radius: 8px;">
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Model.YouTubeVideoUrl))
+        {
+            <div class="text-muted small">
+                <i class="bi bi-youtube text-danger"></i> Video de YouTube adjunto
+            </div>
+        }
+    </div>
+</div>

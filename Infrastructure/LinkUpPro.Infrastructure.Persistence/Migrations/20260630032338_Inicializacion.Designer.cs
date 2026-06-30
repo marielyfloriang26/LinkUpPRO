@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LinkUpPro.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260627133340_Inicializacion")]
+    [Migration("20260630032338_Inicializacion")]
     partial class Inicializacion
     {
         /// <inheritdoc />
@@ -221,6 +221,9 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                     b.Property<string>("ContenidoTexto")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("EstaEliminada")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("FechaCreacion")
                         .ValueGeneratedOnAdd()

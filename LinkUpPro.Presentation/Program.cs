@@ -5,6 +5,7 @@ using LinkUpPro.Infrastructure.Persistence;
 using LinkUpPro.Infrastructure.Persistence.Repositories;
 using AutoMapper;
 using LinkUpPro.Infrastructure.Shared.Services;
+using LinkUpPro.Application.Interface.Services;
 
 namespace LinkUpPro.Presentation
 {
@@ -23,6 +24,7 @@ namespace LinkUpPro.Presentation
             builder.Services.AddTransient<IPublicacionRepository, PublicacionRepository>();
             builder.Services.AddTransient<IPublicacionService, PublicacionService>();
             builder.Services.AddTransient<IFileService, FileService>();
+            builder.Services.AddTransient<IComentarioService, ComentarioService>();
 
             builder.Services.AddAutoMapper(cfg => 
             {

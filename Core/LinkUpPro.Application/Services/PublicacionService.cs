@@ -28,7 +28,7 @@ public class PublicacionService : IPublicacionService
         var publicacionesEntidad = await _publicacionRepository.GetTodasConDetallesAsync();
 
         // TEMPORAL EL ID!!!!! Solo deben consultarse publicaciones pertenecientes al usuario autenticado 
-        var query = publicacionesEntidad.Where(p => p.UsuarioId == 1);
+        var query = publicacionesEntidad.Where(p => p.UsuarioId == 1 && !p.EstaEliminada);
 
         // La busqueda por texto no distingue mayusculas/minusculas e ignora espacios al inicio y final
         if (!string.IsNullOrWhiteSpace(textoBusqueda))
@@ -161,14 +161,37 @@ public class PublicacionService : IPublicacionService
         {  
             // Pasa los cambios del dto a la entidad recuperada
             publicacionExistente.ContenidoTexto = dto.ContenidoTexto;
-            publicacionExistente.ImagenUrl = dto.ImagenUrl;
-            publicacionExistente.YouTubeVideoUrl = dto.YouTubeVideoUrl;
+          //  publicacionExistente.ImagenUrl = dto.ImagenUrl;
+          //  publicacionExistente.YouTubeVideoUrl = dto.YouTubeVideoUrl;
             publicacionExistente.Privacidad = dto.Privacidad;
             publicacionExistente.PermiteComentarios = dto.PermiteComentarios;
             publicacionExistente.FechaModificacion = DateTime.UtcNow;
-
-            await _publicacionRepository.UpdateAsync(publicacionExistente);
+        
+        // Si se elige Video, extrae ID y elimina imagen anterior
+        if (!string.IsNullOrEmpty(dto.YouTubeVideoUrl))
+        {
+            var videoId = ExtraerYouTubeId(dto.YouTubeVideoUrl);
+            if (!string.IsNullOrEmpty(videoId))
+            {
+                publicacionExistente.YouTubeVideoUrl = $"https://www.youtube.com/embed/{videoId}";
+                publicacionExistente.ImagenUrl = null;
+            }
         }
+        // Si se elige imagen, asigna la nueva y elimina el enlace de video anterior
+        else if (!string.IsNullOrEmpty(dto.ImagenUrl))
+        {
+            publicacionExistente.ImagenUrl = dto.ImagenUrl;
+            publicacionExistente.YouTubeVideoUrl = null;
+        }
+        else if (dto.ImagenUrl == null && dto.YouTubeVideoUrl == null)
+        {
+            // Si ambos son nulos 
+            publicacionExistente.ImagenUrl = null;
+            publicacionExistente.YouTubeVideoUrl = null;
+        }
+        await _publicacionRepository.UpdateAsync(publicacionExistente);
+    }
+        
     }
 
     
@@ -177,7 +200,15 @@ public class PublicacionService : IPublicacionService
         var publicacion = await _publicacionRepository.GetByIdAsync(id);
         if (publicacion != null)
         {
-            await _publicacionRepository.DeleteAsync(publicacion);
+            publicacion.EstaEliminada = true;
+            await _publicacionRepository.UpdateAsync(publicacion);
         }
+    }
+
+    public async Task<PublicacionDto?> ObtenerPorIdAsync(int id)
+    {
+        var entidad = await _publicacionRepository.GetByIdAsync(id);
+        if (entidad == null) return null;
+        return _mapper.Map<PublicacionDto>(entidad);
     }
 }

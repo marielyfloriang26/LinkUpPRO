@@ -122,29 +122,142 @@ public class PublicacionController : Controller
         }
     }
 
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Editar(GuardarPublicacionViewModel vm)
+
+    [HttpGet]
+    public async Task<IActionResult> Editar(int id)
     {
-        if (!ModelState.IsValid)
+        var publicacionDto = await _publicacionService.ObtenerPorIdAsync(id);
+        if (publicacionDto == null)
         {
+            return NotFound();
+        }
+
+        // Validacion de permisos de autor (!!!!SIMULADO con ID 1 hasta poner Identity)
+        if (publicacionDto.UsuarioId != 1)
+        {
+            TempData["MensajeError"] = "No posee permisos para editar esta publicación.";
             return RedirectToAction(nameof(Index));
         }
 
-        // Convierte el vm al dto de modificacion
-        var modificarDto = _mapper.Map<ModificarPublicacionDto>(vm);
-
-        await _publicacionService.EditarAsync(modificarDto);
-
-        return RedirectToAction(nameof(Index));
+        var vm = _mapper.Map<GuardarPublicacionViewModel>(publicacionDto);
+        return View(vm);
     }
+
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Editar(GuardarPublicacionViewModel vm, string TipoContenido)
+    {
+        // Valida que la publi exista y que el usuario sea el dueno
+        var publicacionOriginal = await _publicacionService.ObtenerPorIdAsync(vm.Id);
+        if (publicacionOriginal == null) return NotFound();
+        if (publicacionOriginal.UsuarioId != 1)
+        {
+            TempData["MensajeError"] = "No posee permisos para editar esta publicación.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        if (TipoContenido == "Imagen")
+        {
+            // Solo valida archivo si el usuario carga uno nuevo
+            if (vm.ImagenArchivo != null)
+            {
+                var extension = Path.GetExtension(vm.ImagenArchivo.FileName).ToLower();
+                var extensionesValidas = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+                
+                if (!extensionesValidas.Contains(extension))
+                {
+                    ModelState.AddModelError("ImagenArchivo", "El archivo seleccionado no tiene un formato de imagen válido.");
+                }
+
+                if (vm.ImagenArchivo.Length > (5 * 1024 * 1024))
+                {
+                    ModelState.AddModelError("ImagenArchivo", "La imagen no debe superar los 5 MB.");
+                }
+            }
+            vm.YouTubeVideoUrl = null;
+        }
+        else if (TipoContenido == "Video")
+        {
+            if (string.IsNullOrEmpty(vm.YouTubeVideoUrl) || string.IsNullOrWhiteSpace(vm.YouTubeVideoUrl))
+            {
+                ModelState.AddModelError("YouTubeVideoUrl", "Debe ingresar un enlace válido de YouTube.");
+            }
+            vm.ImagenArchivo = null;
+            vm.ImagenUrl = null; // Limpia imagen vieja en el vm
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return View(vm);
+        }
+
+        try
+        {
+            var modificarDto = _mapper.Map<ModificarPublicacionDto>(vm);
+
+            // Si hay una nueva imagen, se sube y actualiza
+            if (TipoContenido == "Imagen" && vm.ImagenArchivo != null)
+            {
+                string rutaImagen = await _fileService.UploadFileAsync(vm.ImagenArchivo, "publicaciones");
+                modificarDto.ImagenUrl = rutaImagen;
+            }
+            else if (TipoContenido == "Imagen")
+            {
+                // Si no sube una nueva, mantiene la que ya tenia
+                modificarDto.ImagenUrl = publicacionOriginal.ImagenUrl;
+            }
+
+            await _publicacionService.EditarAsync(modificarDto);
+            TempData["MensajeExito"] = "La publicación fue actualizada correctamente.";
+            return RedirectToAction(nameof(Index));
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return View(vm);
+        }
+    }
+
+
+    [HttpGet]
     public async Task<IActionResult> Eliminar(int id)
     {
-        // Valida en el servidor la propiedad antes de eliminar
+        var publicacionDto = await _publicacionService.ObtenerPorIdAsync(id);
+        if (publicacionDto == null)
+        {
+            return NotFound();
+        }
+
+        // Valida permisos del autor (!!!simulado con ID 1)
+        if (publicacionDto.UsuarioId != 1)
+        {
+            TempData["MensajeError"] = "No posee permisos para eliminar esta publicación.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        // Mapea a vm para enviarlo a la vista de confirmacion
+        var vm = _mapper.Map<PublicacionViewModel>(publicacionDto);
+        return View(vm);
+    }
+
+    [HttpPost, ActionName("Eliminar")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EliminarConfirmado(int id)
+    {
+        var publicacion = await _publicacionService.ObtenerPorIdAsync(id);
+        if (publicacion == null) return NotFound();
+
+        if (publicacion.UsuarioId != 1) //!!!! SIMULADO
+        {
+            TempData["MensajeError"] = "No posee permisos para eliminar esta publicación.";
+            return RedirectToAction(nameof(Index));
+        }
+
         await _publicacionService.EliminarAsync(id);
+        
+        // Mensaje de éxito requerido
+        TempData["MensajeExito"] = "La publicación fue eliminada correctamente.";
         
         return RedirectToAction(nameof(Index));
     }

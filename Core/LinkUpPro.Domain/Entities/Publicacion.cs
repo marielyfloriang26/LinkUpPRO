@@ -15,6 +15,7 @@ public class Publicacion
     public DateTime? FechaModificacion {get; set;}
 
     public bool PermiteComentarios {get; set;} = true;
+    public bool EstaEliminada { get; set; } = false;
     public Usuario Usuario { get; set; } = null!;
     public ICollection<Comentario> Comentarios { get; set; } = new List<Comentario>();
     public ICollection<Reaccion> Reacciones { get; set; } = new List<Reaccion>();

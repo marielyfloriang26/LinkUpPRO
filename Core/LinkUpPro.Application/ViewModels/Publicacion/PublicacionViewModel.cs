@@ -27,6 +27,7 @@ public class PublicacionViewModel
     public DateTime? FechaModificacion { get; set; }
 
     public bool PermiteComentarios { get; set; } = true;
+    public bool EstaEliminada { get; set; }
     // Lista de comentarios ya listos para renderizar
     public List<ComentarioViewModel> Comentarios { get; set; } = new();
 }
