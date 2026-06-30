@@ -1,30 +1,53 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - LinkUpPro.Presentation</title>
+    <title>@ViewData["Title"] - LinkUpPro</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/LinkUpPro.Presentation.styles.css" asp-append-version="true" />
+    <style>
+        .navbar-brand { font-weight: 800; color: #0d6efd !important; letter-spacing: -0.5px; }
+        .nav-link { font-weight: 500; transition: color 0.2s; }
+        .nav-link:hover { color: #0d6efd !important; }
+        body { background-color: #f8f9fa; }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">LinkUpPro.Presentation</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom shadow-sm mb-4">
+            <div class="container-fluid px-4">
+                <a class="navbar-brand fs-3" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-link-45deg"></i> LinkUpPro
+                </a>
+                <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    <ul class="navbar-nav flex-grow-1 align-items-center">
+                        <li class="nav-item ms-lg-3">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house-door me-1"></i>Inicio
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <li class="nav-item ms-lg-2">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Amigos" asp-action="Index">
+                                <i class="bi bi-people me-1"></i>Amigos
+                            </a>
+                        </li>
+                        <li class="nav-item ms-lg-2">
+                            <a class="nav-link text-dark position-relative" asp-area="" asp-controller="Solicitudes" asp-action="Index">
+                                <i class="bi bi-person-plus me-1"></i>Solicitudes
+                                <!-- Hardcoded counter for demonstration as requested -->
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65em;">
+                                    3
+                                    <span class="visually-hidden">solicitudes pendientes</span>
+                                </span>
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -32,14 +55,14 @@
         </nav>
     </header>
     <div class="container">
-        <main role="main" class="pb-3">
+        <main role="main" class="pb-5">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - LinkUpPro.Presentation - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="border-top footer text-muted bg-white py-3 mt-auto">
+        <div class="container text-center">
+            &copy; 2026 - LinkUpPro - <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-decoration-none">Privacidad</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
