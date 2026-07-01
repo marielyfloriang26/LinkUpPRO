@@ -4,7 +4,7 @@ using MimeKit;
 using Microsoft.Extensions.Configuration;
 using LinkUpPro.Application.Interfaces.Shared;
 
-public class EmailService : IEmailService
+public class EmailService : IEmailService, LinkUpPro.Application.Interfaces.Services.Interfaces.IEmailService
 {
     private readonly IConfiguration _config;
 

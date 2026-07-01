@@ -29,6 +29,7 @@ builder.Services.AddPersistenceInfrastructure(builder.Configuration);
 // Complementary transient services from incoming branch
 builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<LinkUpPro.Application.Interfaces.Shared.IEmailService, EmailService>();
+builder.Services.AddTransient<LinkUpPro.Application.Interfaces.Services.Interfaces.IEmailService, EmailService>();
 builder.Services.AddTransient<IUploadFileService, UploadFileService>();
 
 builder.Services.AddTransient<IPublicacionRepository, PublicacionRepository>();
