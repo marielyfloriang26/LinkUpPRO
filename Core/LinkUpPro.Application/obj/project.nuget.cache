@@ -1,7 +1,6 @@
 {
   "version": 2,
-
-  "dgSpecHash": "AQom4lwgbFw=",
+  "dgSpecHash": "yASFNVuBNp4=",
   "success": true,
   "projectFilePath": "C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj",
   "expectedPackageFiles": [
@@ -12,6 +11,15 @@
     "C:\\Users\\Mariely Florian\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512"
   ],
   "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "message": "Problem reading the cache file C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\obj\\project.nuget.cache : '\"' is invalid after a value. Expected either ',', '}', or ']'. Path: $ | LineNumber: 28 | BytePositionInLine: 2.",
+      "projectPath": "C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj",
+      "targetGraphs": []
+    },
     {
       "code": "NU1903",
       "level": "Warning",
@@ -25,11 +33,4 @@
       ]
     }
   ]
-
-  "dgSpecHash": "DuzMKX03YX4=",
-  "success": true,
-  "projectFilePath": "C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj",
-  "expectedPackageFiles": [],
-  "logs": []
-
 }
