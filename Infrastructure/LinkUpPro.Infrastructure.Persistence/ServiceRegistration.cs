@@ -1,6 +1,8 @@
 using LinkUpPro.Application.Interfaces.Repositories;
+using LinkUpPro.Domain.Entities;
 using LinkUpPro.Infrastructure.Persistence.Contexts;
 using LinkUpPro.Infrastructure.Persistence.Repositories;
+using Microsoft.AspNetCore.Identity; // Para AddIdentity
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,6 +10,8 @@ using Microsoft.AspNetCore.Identity;
 using LinkUpPro.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
+
+
 
 namespace LinkUpPro.Infrastructure.Persistence;
 

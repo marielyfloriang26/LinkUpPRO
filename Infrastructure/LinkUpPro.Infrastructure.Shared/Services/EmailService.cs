@@ -1,8 +1,9 @@
-// LinkUpPro.Infrastructure.Shared/Services/EmailService.cs
 using MailKit.Net.Smtp;
+using MailKit.Security;
 using MimeKit;
 using Microsoft.Extensions.Configuration;
-using LinkUpPro.Application.Interfaces.Shared; // Asegúrate de tener esta interfaz
+using LinkUpPro.Application.Interfaces.Shared;
+using LinkUpPro.Application.Interfaces.Services.Interfaces;
 
 public class EmailService : IEmailService
 {
@@ -22,12 +23,15 @@ public class EmailService : IEmailService
         email.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = body };
 
         using var smtp = new SmtpClient();
-        await smtp.ConnectAsync(_config["EmailSettings:Host"], 
-                                int.Parse(_config["EmailSettings:Port"]), 
-                                MailKit.Security.SecureSocketOptions.StartTls);
-        
-        await smtp.AuthenticateAsync(_config["EmailSettings:User"], 
-                                     _config["EmailSettings:Password"]);
+        var smtpHost = _config["EmailSettings:Host"] ?? "smtp.gmail.com";
+        var smtpPort = int.TryParse(_config["EmailSettings:Port"], out var p) ? p : 587;
+        var smtpUser = _config["EmailSettings:User"] ?? _config["EmailSettings:Username"];
+
+        await smtp.ConnectAsync(smtpHost, smtpPort, SecureSocketOptions.StartTls);
+        if (!string.IsNullOrEmpty(smtpUser))
+        {
+            await smtp.AuthenticateAsync(smtpUser, _config["EmailSettings:Password"]);
+        }
         
         await smtp.SendAsync(email);
         await smtp.DisconnectAsync(true);

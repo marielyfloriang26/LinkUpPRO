@@ -1,12 +1,18 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 
 namespace LinkUpPro.Domain.Entities;
 
 public class Usuario : IdentityUser<int>
 {
+    // IdentityUser<int> hereda automáticamente de forma segura:
+    // Id, UserName, Email, PhoneNumber, PasswordHash, AccessFailedCount, LockoutEnd, EmailConfirmed, etc.
+    
     public string Nombre { get; set; } = null!;
     public string Apellido { get; set; } = null!;
     public string? FotoPerfilUrl { get; set; }
+    public bool EsActivo { get; set; }
     public DateTime FechaRegistro { get; set; } = DateTime.UtcNow;
     public DateTime? UltimoReenvioCorreo { get; set; }
 

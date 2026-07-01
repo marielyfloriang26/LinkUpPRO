@@ -6,23 +6,28 @@ using LinkUpPro.Infrastructure.Persistence;
 using LinkUpPro.Infrastructure.Persistence.Repositories;
 using AutoMapper;
 using LinkUpPro.Infrastructure.Shared.Services;
+using LinkUpPro.Infrastructure.Persistence.Contexts;
+using LinkUpPro.Domain.Entities;
+using LinkUpPro.Application.Interfaces.Services.Interfaces;
+using LinkUpPro.Infrastructure.Persistence.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
-namespace LinkUpPro.Presentation
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
             // 1. Agregar servicios al contenedor
             builder.Services.AddControllersWithViews(options =>
             {
                 options.Filters.Add<GlobalExceptionFilter>();
             });
-            
+
             // 2. Registrar la infraestructura (que incluye Identity configurado)
             builder.Services.AddPersistenceInfrastructure(builder.Configuration);
+
+            // Complementary transient services from incoming branch
+            builder.Services.AddTransient<IAccountService, AccountService>();
+            builder.Services.AddTransient<IEmailService, EmailService>();
+            builder.Services.AddTransient<IUploadFileService, UploadFileService>();
 
             builder.Services.AddTransient<IPublicacionRepository, PublicacionRepository>();
             builder.Services.AddTransient<IPublicacionService, PublicacionService>();
@@ -67,3 +72,4 @@ namespace LinkUpPro.Presentation
         }
     }
 }
+

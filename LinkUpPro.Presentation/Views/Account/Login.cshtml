@@ -1,51 +1,68 @@
 @model LinkUpPro.Application.ViewModels.User.LoginViewModel
-@{ ViewData["Title"] = "Iniciar Sesión"; }
 
 <div class="container mt-5">
-    <div class="card shadow-sm p-4 col-md-6 mx-auto">
-        <h2 class="text-center">Iniciar Sesión</h2>
-        <form asp-action="Login" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-            
-            <div class="mb-3">
-                <label>Nombre de Usuario</label>
-                <input asp-for="NombreUsuario" class="form-control" />
-                <span asp-validation-for="NombreUsuario" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label>Contraseña</label>
-                <div class="input-group">
-                    <input asp-for="Password" type="password" id="loginPass" class="form-control" />
-                    <button type="button" class="btn btn-outline-secondary" onclick="togglePass('loginPass')">👁️</button>
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3>Iniciar Sesión - LinkUpPro</h3>
                 </div>
-                <span asp-validation-for="Password" class="text-danger"></span>
+                <div class="card-body">
+                    <form asp-action="Login" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Nombre de usuario</label>
+                            <input asp-for="NombreUsuario" class="form-control" />
+                            <span asp-validation-for="NombreUsuario" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Contraseña</label>
+                            <div class="input-group">
+                                <input asp-for="Password" type="password" id="passLogin" class="form-control" />
+                                <button class="btn btn-outline-secondary" type="button" onclick="togglePass('passLogin', this)">👁️</button>
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input asp-for="MantenerSesion" class="form-check-input" type="checkbox" />
+                            <label class="form-check-label" asp-for="MantenerSesion">Mantener sesión iniciada</label>
+                            <br /><small class="text-muted text-wrap d-block">Seleccione esta opción únicamente si está utilizando un dispositivo personal.</small>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mb-3">Iniciar sesión</button>
+                    </form>
+                    
+                    <div class="text-center">
+                        <a asp-action="Register" class="d-block mb-1">Registrarse</a>
+                        <a asp-action="ForgotPassword" class="d-block mb-1">Restablecer contraseña</a>
+                        <a asp-action="ResendEmail" class="d-block">Reenviar correo de activación</a>
+                    </div>
+                </div>
             </div>
-
-            <div class="mb-3 form-check">
-                <input asp-for="MantenerSesion" class="form-check-input" />
-                <label class="form-check-label">Mantener sesión iniciada</label>
-                <small class="text-muted d-block">Seleccione esta opción únicamente si está utilizando un dispositivo personal.</small>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100">Iniciar sesión</button>
-        </form>
-
-        <div class="mt-3 text-center">
-            <a asp-action="Register">Registrarse</a> | 
-            <a asp-action="ForgotPassword">Restablecer contraseña</a> |
-            <a asp-action="ResendEmail">Reenviar correo de activación</a>
+        </div>
+    </div>
+</div>
         </div>
     </div>
 </div>
 
 <script>
-    function togglePass(id) {
-        const input = document.getElementById(id);
-        input.type = (input.type === "password") ? "text" : "password";
+function togglePass(id, btn) {
+    const input = document.getElementById(id);
+    if (input.type === "password") {
+        input.type = "text";
+        btn.textContent = "🔒";
+    } else {
+        input.type = "password";
+        btn.textContent = "👁️";
     }
+}
 </script>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
