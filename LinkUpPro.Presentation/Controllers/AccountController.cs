@@ -113,16 +113,9 @@ public class AccountController : Controller
                 new { userId = user.Id, token = token }, protocol: HttpContext.Request.Scheme);
 
             // 4. Enviar correo (Requerimiento de Capa Shared)
-            try
-            {
-                await _emailService.SendAsync(vm.Correo, "Activación de Cuenta - LinkUp Pro", 
-                    $"Hola {vm.Nombre}, por favor activa tu cuenta haciendo clic en el siguiente enlace: <a href='{callbackUrl}'>Activar Cuenta</a>");
-                TempData["Success"] = "Su cuenta fue creada correctamente. Hemos enviado un enlace de activación a su correo.";
-            }
-            catch (Exception)
-            {
-                TempData["Success"] = $"Su cuenta fue creada correctamente. [Modo Desarrollo] No se pudo enviar el correo de activación. Puedes activarla usando este enlace: <a href='{callbackUrl}' class='alert-link'>Activar Cuenta Aquí</a>";
-            }
+            await _emailService.SendAsync(vm.Correo, "Activación de Cuenta - LinkUp Pro", 
+                $"Hola {vm.Nombre}, por favor activa tu cuenta haciendo clic en el siguiente enlace: <a href='{callbackUrl}'>Activar Cuenta</a>");
+            TempData["Success"] = "Su cuenta fue creada correctamente. Hemos enviado un enlace de activación a su correo.";
 
             return RedirectToAction("Login");
         }
@@ -171,15 +164,7 @@ public class AccountController : Controller
         {
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var callbackUrl = Url.Action("ResetPassword", "Account", new { token, email = user.Email }, protocol: HttpContext.Request.Scheme);
-            try
-            {
-                await _emailService.SendAsync(user.Email, "Restablecer contraseña", $"Para restablecer su contraseña haga clic aquí: <a href='{callbackUrl}'>Restablecer</a>");
-            }
-            catch (Exception)
-            {
-                ViewBag.Message = $"[Modo Desarrollo] No se pudo enviar el correo. Enlace para restablecer: <a href='{callbackUrl}' class='alert-link'>Restablecer Contraseña Aquí</a>";
-                return View();
-            }
+            await _emailService.SendAsync(user.Email, "Restablecer contraseña", $"Para restablecer su contraseña haga clic aquí: <a href='{callbackUrl}'>Restablecer</a>");
         }
         ViewBag.Message = "Si el nombre de usuario corresponde a una cuenta registrada, recibirá un enlace para restablecer su contraseña.";
         return View();
@@ -286,16 +271,9 @@ public class AccountController : Controller
             var callbackUrl = Url.Action("ConfirmEmail", "Account", 
                 new { userId = user.Id, token = token }, protocol: HttpContext.Request.Scheme);
 
-            try
-            {
-                await _emailService.SendAsync(user.Email!, "Reenvío de Activación - LinkUp Pro", 
-                    $"Hola, aquí tienes tu nuevo enlace: <a href='{callbackUrl}'>Activar Cuenta</a>");
-                TempData["Success"] = mensajeExito;
-            }
-            catch (Exception)
-            {
-                TempData["Success"] = $"{mensajeExito} [Modo Desarrollo] No se pudo enviar el correo de activación. Puedes activarla usando este enlace: <a href='{callbackUrl}' class='alert-link'>Activar Cuenta Aquí</a>";
-            }
+            await _emailService.SendAsync(user.Email!, "Reenvío de Activación - LinkUp Pro", 
+                $"Hola, aquí tienes tu nuevo enlace: <a href='{callbackUrl}'>Activar Cuenta</a>");
+            TempData["Success"] = mensajeExito;
 
             // 4. Registrar la hora del envío
             user.UltimoReenvioCorreo = DateTime.Now;
