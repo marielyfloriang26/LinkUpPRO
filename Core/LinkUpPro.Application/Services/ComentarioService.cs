@@ -44,7 +44,7 @@ public class ComentarioService : IComentarioService
 
         // La publicacion debe existir y encontrarse activa (no eliminada)
         var publicacion = await _publicacionRepository.GetByIdAsync(dto.PublicacionId);
-        if (publicacion == null || publicacion.EstaEliminada)
+        if (publicacion == null || publicacion.Estado == "Eliminada")
         {
             throw new Exception("La publicación no existe o no se encuentra activa.");
         }

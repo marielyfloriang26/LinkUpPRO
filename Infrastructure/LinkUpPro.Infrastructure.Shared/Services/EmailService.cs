@@ -3,7 +3,6 @@ using MailKit.Security;
 using MimeKit;
 using Microsoft.Extensions.Configuration;
 using LinkUpPro.Application.Interfaces.Shared;
-using LinkUpPro.Application.Interfaces.Services.Interfaces;
 
 public class EmailService : IEmailService
 {

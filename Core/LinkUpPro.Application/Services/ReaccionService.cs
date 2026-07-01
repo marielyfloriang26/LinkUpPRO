@@ -21,7 +21,7 @@ public class ReaccionService : IReaccionService
     {
         // Valida que la publi exista
         var publicacion = await _publicacionRepository.GetByIdAsync(publicacionId);
-        if (publicacion == null || publicacion.EstaEliminada)
+        if (publicacion == null || publicacion.Estado == "Eliminada")
         {
             throw new Exception("La publicación no existe o no se encuentra activa.");
         }
