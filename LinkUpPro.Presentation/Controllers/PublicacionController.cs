@@ -5,21 +5,24 @@ using LinkUpPro.Application.DTOs.Publicacion;
 using LinkUpPro.Application.Interfaces.Services;
 using LinkUpPro.Application.ViewModels.Publicacion;
 using LinkUpPro.Application.DTOs.PublicacionDTO;
+using LinkUpPro.Application.Interfaces.Shared;
 
 namespace LinkUpPro.Presentation.Controllers;
 
-// [Authorize]
+[Authorize(Policy = "CuentaActiva")]
 public class PublicacionController : Controller
 {
     private readonly IPublicacionService _publicacionService;
     private readonly IFileService _fileService;
     private readonly IMapper _mapper;
+    private readonly IAuthorizationService _authorizationService;
 
-    public PublicacionController(IPublicacionService publicacionService, IFileService fileService, IMapper mapper)
+    public PublicacionController(IPublicacionService publicacionService, IFileService fileService, IMapper mapper, IAuthorizationService authorizationService)
     {
         _publicacionService = publicacionService;
         _fileService = fileService;
         _mapper = mapper;
+        _authorizationService = authorizationService;
     }
 
     [HttpGet]
@@ -102,10 +105,10 @@ public class PublicacionController : Controller
                 crearDto.ImagenUrl = rutaImagen;
             }
 
-        // Simulación: Aquí debería capturar el ID del usuario autenticado mediante Identity
-        // Ejemplo: crearDto.UsuarioId = Convert.ToInt32(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+        //  captura el ID del usuario autenticado mediante Identity
+        crearDto.UsuarioId = Convert.ToInt32(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
         
-        crearDto.UsuarioId = 1; // !!!!!!!!!!!!!!
+        // crearDto.UsuarioId = 1; // !!!!!!!!!!!!!!
         // TEMPORAL Temporal para pruebas hasta que tu compañero monte el Login
 
         await _publicacionService.CrearAsync(crearDto);
@@ -132,12 +135,17 @@ public class PublicacionController : Controller
             return NotFound();
         }
 
-        // Validacion de permisos de autor (!!!!SIMULADO con ID 1 hasta poner Identity)
-        if (publicacionDto.UsuarioId != 1)
+        // Validacion de permisos de autor
+        var authResult = await _authorizationService.AuthorizeAsync(User, publicacionDto, "PropietarioPolicy");
+        if (!authResult.Succeeded)
+        {
+            return Forbid();
+        }
+       /* if (publicacionDto.UsuarioId != 1)
         {
             TempData["MensajeError"] = "No posee permisos para editar esta publicación.";
             return RedirectToAction(nameof(Index));
-        }
+        } */
 
         var vm = _mapper.Map<GuardarPublicacionViewModel>(publicacionDto);
         return View(vm);
@@ -151,11 +159,17 @@ public class PublicacionController : Controller
         // Valida que la publi exista y que el usuario sea el dueno
         var publicacionOriginal = await _publicacionService.ObtenerPorIdAsync(vm.Id);
         if (publicacionOriginal == null) return NotFound();
-        if (publicacionOriginal.UsuarioId != 1)
+        
+        var authResult = await _authorizationService.AuthorizeAsync(User, publicacionOriginal, "PropietarioPolicy");
+        if (!authResult.Succeeded)
+        {
+            return Forbid();
+        }
+        /*if (publicacionOriginal.UsuarioId != 1)
         {
             TempData["MensajeError"] = "No posee permisos para editar esta publicación.";
             return RedirectToAction(nameof(Index));
-        }
+        } */
 
         if (TipoContenido == "Imagen")
         {
@@ -229,12 +243,17 @@ public class PublicacionController : Controller
             return NotFound();
         }
 
-        // Valida permisos del autor (!!!simulado con ID 1)
-        if (publicacionDto.UsuarioId != 1)
+        // Valida permisos del autor 
+        var authResult = await _authorizationService.AuthorizeAsync(User, publicacionDto, "PropietarioPolicy");
+        if (!authResult.Succeeded)
+        {
+            return Forbid();
+        }
+        /*if (publicacionDto.UsuarioId != 1)
         {
             TempData["MensajeError"] = "No posee permisos para eliminar esta publicación.";
             return RedirectToAction(nameof(Index));
-        }
+        }*/
 
         // Mapea a vm para enviarlo a la vista de confirmacion
         var vm = _mapper.Map<PublicacionViewModel>(publicacionDto);
@@ -248,11 +267,16 @@ public class PublicacionController : Controller
         var publicacion = await _publicacionService.ObtenerPorIdAsync(id);
         if (publicacion == null) return NotFound();
 
-        if (publicacion.UsuarioId != 1) //!!!! SIMULADO
+        var authResult = await _authorizationService.AuthorizeAsync(User, publicacion, "PropietarioPolicy");
+        if (!authResult.Succeeded)
+        {
+            return Forbid();
+        }
+        /*if (publicacion.UsuarioId != 1) //!!!! SIMULADO
         {
             TempData["MensajeError"] = "No posee permisos para eliminar esta publicación.";
             return RedirectToAction(nameof(Index));
-        }
+        }*/
 
         await _publicacionService.EliminarAsync(id);
         

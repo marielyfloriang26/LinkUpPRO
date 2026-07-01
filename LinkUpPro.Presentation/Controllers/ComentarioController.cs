@@ -2,16 +2,20 @@
 using Microsoft.AspNetCore.Mvc;
 using LinkUpPro.Application.DTOs.ComentarioDTO;
 using LinkUpPro.Application.Interface.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LinkUpPro.Presentation.Controllers;
 
+[Authorize(Policy = "CuentaActiva")]
 public class ComentarioController : Controller
 {
     private readonly IComentarioService _comentarioService;
+    private readonly IAuthorizationService _authorizationService;
 
-    public ComentarioController(IComentarioService comentarioService)
+    public ComentarioController(IComentarioService comentarioService, IAuthorizationService authorizationService)
     {
         _comentarioService = comentarioService;
+         _authorizationService = authorizationService;
     }
 
     [HttpPost]
@@ -23,8 +27,8 @@ public class ComentarioController : Controller
             return BadRequest("El formulario contiene datos inválidos.");
         }
 
-        // !!!!! Simulación: Asignamos el ID del usuario logueado (Mariely = 1)
-        dto.UsuarioId = 1; 
+        
+        dto.UsuarioId = Convert.ToInt32(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
 
         try
         {
@@ -41,8 +45,16 @@ public class ComentarioController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Editar(int id, string contenido, int PublicacionId)
     {
-        // !!!!! Simulación: Autor logueado ID 1
-        int usuarioId = 1;
+        var comentario = await _comentarioService.ObtenerPorIdAsync(id); 
+        if (comentario == null) return NotFound();
+
+        // Valida propiedad del comentario 
+        var authResult = await _authorizationService.AuthorizeAsync(User, comentario, "PropietarioPolicy");
+        if (!authResult.Succeeded)
+        {
+            return Forbid();
+        }
+        int usuarioId = Convert.ToInt32(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
 
         try
         {
@@ -60,8 +72,17 @@ public class ComentarioController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Eliminar(int id, int PublicacionId)
     {
-        // !!!Simulación: Autor logueado ID 1
-        int usuarioId = 1;
+        var comentario = await _comentarioService.ObtenerPorIdAsync(id); 
+
+        if (comentario == null) return NotFound();
+
+        // Valida propiedad 
+        var authResult = await _authorizationService.AuthorizeAsync(User, comentario, "PropietarioPolicy");
+        if (!authResult.Succeeded)
+        {
+            return Forbid();
+        }
+        int usuarioId = Convert.ToInt32(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
 
         try
         {

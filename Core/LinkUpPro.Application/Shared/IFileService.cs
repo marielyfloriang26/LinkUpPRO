@@ -5,5 +5,6 @@ namespace LinkUpPro.Application.Interfaces.Shared;
 
 public interface IFileService
 {
-    string UploadFile(IFormFile file, string folderPath);
+    Task<string> UploadFileAsync(IFormFile file, string folderName);
+    void DeleteFile(string fileUrl);
 }

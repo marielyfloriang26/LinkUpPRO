@@ -5028,34 +5028,32 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\jerem\\.nuget\\packages\\": {}
+    "C:\\Users\\Mariely Florian\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\jerem\\OneDrive\\Documents\\GitHub\\LinkUpPro\\Infrastructure\\LinkUpPro.Infrastructure.Persistence\\LinkUpPro.Infrastructure.Persistence.csproj",
+      "projectUniqueName": "C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Infrastructure\\LinkUpPro.Infrastructure.Persistence\\LinkUpPro.Infrastructure.Persistence.csproj",
       "projectName": "LinkUpPro.Infrastructure.Persistence",
-      "projectPath": "C:\\Users\\jerem\\OneDrive\\Documents\\GitHub\\LinkUpPro\\Infrastructure\\LinkUpPro.Infrastructure.Persistence\\LinkUpPro.Infrastructure.Persistence.csproj",
-      "packagesPath": "C:\\Users\\jerem\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\jerem\\OneDrive\\Documents\\GitHub\\LinkUpPro\\Infrastructure\\LinkUpPro.Infrastructure.Persistence\\obj\\",
+      "projectPath": "C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Infrastructure\\LinkUpPro.Infrastructure.Persistence\\LinkUpPro.Infrastructure.Persistence.csproj",
+      "packagesPath": "C:\\Users\\Mariely Florian\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Infrastructure\\LinkUpPro.Infrastructure.Persistence\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\jerem\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\Mariely Florian\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "C:\\Users\\jerem\\OneDrive\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj": {
-              "projectPath": "C:\\Users\\jerem\\OneDrive\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj"
+            "C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj": {
+              "projectPath": "C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj"
             }
           }
         }
@@ -5070,7 +5068,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "10.0.100"
+      "SdkAnalysisLevel": "9.0.300"
     },
     "frameworks": {
       "net9.0": {
@@ -5114,26 +5112,12 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[9.0.13, 9.0.13]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Ref",
-            "version": "[9.0.13, 9.0.13]"
-          },
-          {
-            "name": "Microsoft.WindowsDesktop.App.Ref",
-            "version": "[9.0.13, 9.0.13]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

@@ -6,6 +6,7 @@ using LinkUpPro.Infrastructure.Persistence.Repositories;
 using AutoMapper;
 using LinkUpPro.Infrastructure.Shared.Services;
 using LinkUpPro.Application.Interface.Services;
+using LinkUpPro.Application.Interfaces.Shared;
 
 namespace LinkUpPro.Presentation
 {
@@ -15,13 +16,13 @@ namespace LinkUpPro.Presentation
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // 1. Agregar servicios al contenedor
+            // Agrega servicios al contenedor
             builder.Services.AddControllersWithViews(options =>
             {
-                options.Filters.Add<GlobalExceptionFilter>();
+               // options.Filters.Add<GlobalExceptionFilter>();
             });
             
-            // 2. Registrar la infraestructura (que incluye Identity configurado)
+            // Registra la infraestructura (que incluye Identity configurado)
             builder.Services.AddPersistenceInfrastructure(builder.Configuration);
 
 
@@ -41,7 +42,7 @@ namespace LinkUpPro.Presentation
 
             var app = builder.Build();
 
-            // 3. Configurar el pipeline de peticiones HTTP
+            // Configura el pipeline de peticiones HTTP
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
@@ -53,7 +54,7 @@ namespace LinkUpPro.Presentation
             
             app.UseRouting();
 
-            // ¡IMPORTANTE! El orden aquí es crítico:
+            
             // Primero se identifica quién es el usuario (Authentication)
             // Luego se verifica si tiene permiso para lo que intenta hacer (Authorization)
             app.UseAuthentication();
@@ -61,7 +62,7 @@ namespace LinkUpPro.Presentation
 
             app.MapStaticAssets();
             
-            // 4. Ruta por defecto: Redirigimos al Login al iniciar
+            // Ruta por defecto: Redirige al Login al iniciar
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Account}/{action=Login}/{id?}")

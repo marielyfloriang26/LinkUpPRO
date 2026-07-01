@@ -12,13 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LinkUpPro.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-<<<<<<<< HEAD:Infrastructure/LinkUpPro.Infrastructure.Persistence/Migrations/20260630214433_Inicializacion.Designer.cs
-    [Migration("20260630214433_Inicializacion")]
+    [Migration("20260701024510_Inicializacion")]
     partial class Inicializacion
-========
-    [Migration("20260628052026_InitialIdentity")]
-    partial class InitialIdentity
->>>>>>>> feature-USEN-ESTA-PARA-SEGURIDA:Infrastructure/LinkUpPro.Infrastructure.Persistence/Migrations/20260628052026_InitialIdentity.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

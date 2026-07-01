@@ -1,6 +1,7 @@
 // LinkUpPro.Infrastructure.Shared/ServiceRegistration.cs
 using LinkUpPro.Application.Interfaces.Shared;
 using Microsoft.Extensions.DependencyInjection;
+using LinkUpPro.Infrastructure.Shared.Services;
 
 public static class SharedInfrastructureRegistration
 {

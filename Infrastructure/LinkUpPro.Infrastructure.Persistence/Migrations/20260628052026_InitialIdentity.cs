@@ -6,11 +6,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LinkUpPro.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-<<<<<<<< HEAD:Infrastructure/LinkUpPro.Infrastructure.Persistence/Migrations/20260630214433_Inicializacion.cs
-    public partial class Inicializacion : Migration
-========
+
     public partial class InitialIdentity : Migration
->>>>>>>> feature-USEN-ESTA-PARA-SEGURIDA:Infrastructure/LinkUpPro.Infrastructure.Persistence/Migrations/20260628052026_InitialIdentity.cs
+
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -1,7 +1,10 @@
 
+using LinkUpPro.Application.Interfaces;
+using LinkUpPro.Domain.Common;
+
 namespace LinkUpPro.Application.DTOs.Publicacion;
 
-public class PublicacionDto
+public class PublicacionDto : IEntidadPropietaria
 {
     public int Id { get; set; }
     public int UsuarioId { get; set; }

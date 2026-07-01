@@ -1,4 +1,5 @@
 using LinkUpPro.Application.Interfaces.Services;
+using LinkUpPro.Application.Interfaces.Shared;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 

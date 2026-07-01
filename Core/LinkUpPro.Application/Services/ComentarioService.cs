@@ -57,7 +57,7 @@ public class ComentarioService : IComentarioService
 
         // El usuario debe encontrarse autenticado y activo
         var usuario = await _usuarioRepository.GetByIdAsync(dto.UsuarioId);
-        if (usuario == null || !usuario.EsActivo)
+        if (usuario == null || !usuario.EmailConfirmed)
         {
             throw new Exception("El usuario no se encuentra activo.");
         }
@@ -122,4 +122,12 @@ public async Task EliminarAsync(int id, int usuarioId)
         await _comentarioRepository.DeleteAsync(comentario);
     }
 }
+
+    public async Task<ComentarioDto?> ObtenerPorIdAsync(int id)
+    {
+        var comentario = await _comentarioRepository.GetByIdAsync(id);
+        if (comentario == null) return null;
+
+        return _mapper.Map<ComentarioDto>(comentario);
+    }
 }

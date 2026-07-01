@@ -2,9 +2,11 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using LinkUpPro.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LinkUpPro.Presentation.Controllers;
 
+[Authorize(Policy = "CuentaActiva")]
 public class ReaccionController : Controller
 {
     private readonly IReaccionService _reaccionService;
@@ -18,7 +20,7 @@ public class ReaccionController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Reaccionar(int publicacionId, string tipoReaccion)
     {
-        int usuarioId = 1;
+        int usuarioId = Convert.ToInt32(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
 
         try
         {
@@ -37,7 +39,7 @@ public class ReaccionController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EliminarReaccion(int publicacionId)
     {
-        int usuarioId = 1; // !! SIMULACION
+        int usuarioId = Convert.ToInt32(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
 
         try
         {

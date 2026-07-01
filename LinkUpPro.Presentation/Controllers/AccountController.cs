@@ -87,7 +87,7 @@ public class AccountController : Controller
         string fotoPath = string.Empty;
         if (vm.FotoPerfil != null)
         {
-            fotoPath = _fileService.UploadFile(vm.FotoPerfil, "images/users");
+            fotoPath = await _fileService.UploadFileAsync(vm.FotoPerfil, "images/users");
         }
 
         // 2. Crear entidad de usuario

@@ -1,6 +1,9 @@
+
+using LinkUpPro.Domain.Common;
+
 namespace LinkUpPro.Application.DTOs.ComentarioDTO;
 
-public class ComentarioDto
+public class ComentarioDto : IEntidadPropietaria
 {
     public int Id { get; set; }
     public int PublicacionId { get; set; }

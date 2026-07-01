@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using LinkUpPro.Domain.Common;
+
 
 namespace LinkUpPro.Domain.Entities;
 
-public class Comentario
+public class Comentario : IEntidadPropietaria
 {
     public int Id { get; set; }
     public int PublicacionId { get; set; }
