@@ -1,12 +1,12 @@
 @model LinkUpPro.Application.ViewModels.Publicacion.GuardarPublicacionViewModel
 
 @{
-    string nombreUsuario = User.Identity?.Name?.Split(' ')[0] ?? "Mariely";
+    string nombreUsuario = User.FindFirst("NombreCompleto")?.Value?.Split(' ')[0] ?? User.Identity?.Name ?? "Mariely";
     string fotoPerfilUrl = User.FindFirst("FotoPerfilUrl")?.Value ?? "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 }
 
 <style>
-    /* Si el formulario está abierto, oculta la barra de accesos rapidos de abajo */
+    /* Si el formulario esta abierto, oculta la barra de accesos rapidos de abajo */
     #composerForm.is-open ~ .lup-composer__shortcuts {
         display: none !important;
     }

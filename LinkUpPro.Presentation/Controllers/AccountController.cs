@@ -32,7 +32,7 @@ public class AccountController : Controller
     [AllowAnonymous]
     public IActionResult Login() 
     {
-        if (User.Identity!.IsAuthenticated) return RedirectToAction("Index", "Home");
+        if (User.Identity!.IsAuthenticated) return RedirectToAction("Index", "Publicacion");
         return View(new LoginViewModel());
     }
 
@@ -58,7 +58,7 @@ public class AccountController : Controller
 
         var result = await _signInManager.PasswordSignInAsync(user.UserName, vm.Password, vm.MantenerSesion, lockoutOnFailure: true);
 
-        if (result.Succeeded) return RedirectToAction("Index", "Home");
+        if (result.Succeeded) return RedirectToAction("Index", "Publicacion");
         
         if (result.IsLockedOut)
         {

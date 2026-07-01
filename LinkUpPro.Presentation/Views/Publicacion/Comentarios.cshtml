@@ -8,7 +8,7 @@
                             <div class="lup-comments__list">
                               @foreach (var comentario in Model.Comentarios.Where(c => c.ComentarioPadreId == null))
                                 {
-                                    bool esAutorComentario = comentario.UsuarioId == 1; // Simulación
+                                   bool esAutorComentario = comentario.UsuarioId.ToString() == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
                                     
                                     <div class="lup-comment-container mb-3">
                                         <!-- Comentario principal -->
@@ -114,7 +114,7 @@
                                             <div class="lup-comment__replies-list ms-5 mt-2 border-start ps-3">
                                                 @foreach (var respuesta in comentario.Respuestas)
                                                 {
-                                                    bool esAutorRespuesta = respuesta.UsuarioId == 1; // Simulación
+                                                                                                     bool esAutorRespuesta = respuesta.UsuarioId.ToString() == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
                                                     
                                                     <div class="lup-comment mt-2">
                                                         <img src="@(string.IsNullOrEmpty(respuesta.AutorFotoPerfil) ? "https://cdn-icons-png.flaticon.com/512/149/149071.png" : respuesta.AutorFotoPerfil)"

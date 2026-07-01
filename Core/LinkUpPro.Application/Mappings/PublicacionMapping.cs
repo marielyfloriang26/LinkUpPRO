@@ -25,7 +25,11 @@ public class PublicacionMapping : Profile
             .ForMember(dest => dest.CantidadMeGusta, opt => opt.MapFrom(src => src.Reacciones.Count(r => r.TipoReaccion == "Like")))
             .ForMember(dest => dest.CantidadNoMeGusta, opt => opt.MapFrom(src => src.Reacciones.Count(r => r.TipoReaccion == "Dislike")))
             .ForMember(dest => dest.Comentarios, opt => opt.MapFrom(src => src.Comentarios))
-            .ForMember(dest => dest.ReaccionUsuarioAutenticado, opt => opt.MapFrom(src => src.Reacciones.FirstOrDefault(r => r.UsuarioId == 1).TipoReaccion));
+            .ForMember(dest => dest.ReaccionUsuarioAutenticado, opt => opt.MapFrom((src, dest, destMember, context) => 
+            {
+                var userId = context.Items.ContainsKey("UsuarioId") ? (int)context.Items["UsuarioId"] : 1;
+                return src.Reacciones.FirstOrDefault(r => r.UsuarioId == userId)?.TipoReaccion;
+            }));
 
         CreateMap<PublicacionDto, PublicacionViewModel>().ReverseMap();
         CreateMap<PublicacionDto, GuardarPublicacionViewModel>().ReverseMap();

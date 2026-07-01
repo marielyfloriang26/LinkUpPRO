@@ -28,16 +28,22 @@ public class PublicacionController : Controller
     [HttpGet]
     public async Task<IActionResult> Index(string? textoBusqueda, string? tipoContenido, string? estadoEdicion, DateTime? fechaDesde, DateTime? fechaHasta)
     {
+        int usuarioId = Convert.ToInt32(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+
         if (fechaDesde.HasValue && fechaHasta.HasValue && fechaDesde > fechaHasta)
         {
             ViewBag.ErrorFechas = "La fecha inicial no puede ser posterior a la fecha final.";
-
-            // Retorna una lista vacia o previa para cumplir la restriccion visual inmediatamente
-            return View(new List<PublicacionViewModel>());
+ 
+            // Cargar publicaciones normales ignorando las fechas erróneas
+            var listaDtos = await _publicacionService.ObtenerTodasAsync(usuarioId, textoBusqueda, tipoContenido, estadoEdicion);
+            var listaVm = _mapper.Map<List<PublicacionViewModel>>(listaDtos);
+            
+            return View(listaVm);
         }
-        var listaDtos = await _publicacionService.ObtenerTodasAsync(textoBusqueda, tipoContenido, estadoEdicion, fechaDesde, fechaHasta);
+       
+        var listaDtosNormal = await _publicacionService.ObtenerTodasAsync(usuarioId,textoBusqueda, tipoContenido, estadoEdicion, fechaDesde, fechaHasta);
 
-        var listaVm = _mapper.Map<List<PublicacionViewModel>>(listaDtos);
+        var listaVmNormal = _mapper.Map<List<PublicacionViewModel>>(listaDtosNormal);
 
         //se mantiene el estado en el ViewBag para que los inputs de la vista parcial conserven lo escrito al recargar
         ViewBag.TextoBusqueda = textoBusqueda;
@@ -46,7 +52,7 @@ public class PublicacionController : Controller
         ViewBag.FechaDesde = fechaDesde?.ToString("yyyy-MM-dd");
         ViewBag.FechaHasta = fechaHasta?.ToString("yyyy-MM-dd");
        
-        return View(listaVm);
+        return View(listaVmNormal);
     }
 
 
@@ -89,7 +95,8 @@ public class PublicacionController : Controller
         if (!ModelState.IsValid)
         {
             // Si hay errores, vuelve a cargar el feed mostrando los errores del formulario
-            var listaDtos = await _publicacionService.ObtenerTodasAsync();
+            int usuarioId = Convert.ToInt32(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            var listaDtos = await _publicacionService.ObtenerTodasAsync(usuarioId);
             var listaVm = _mapper.Map<List<PublicacionViewModel>>(listaDtos);
             return View("Index", listaVm);
         }
@@ -108,8 +115,6 @@ public class PublicacionController : Controller
         //  captura el ID del usuario autenticado mediante Identity
         crearDto.UsuarioId = Convert.ToInt32(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
         
-        // crearDto.UsuarioId = 1; // !!!!!!!!!!!!!!
-        // TEMPORAL Temporal para pruebas hasta que tu compañero monte el Login
 
         await _publicacionService.CrearAsync(crearDto);
         TempData["MensajeExito"] = "La publicación fue creada correctamente.";
@@ -119,7 +124,8 @@ public class PublicacionController : Controller
         {
             ModelState.AddModelError(string.Empty, ex.Message);
             
-            var listaDtos = await _publicacionService.ObtenerTodasAsync();
+            int usuarioId = Convert.ToInt32(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            var listaDtos = await _publicacionService.ObtenerTodasAsync(usuarioId);
             var listaVm = _mapper.Map<List<PublicacionViewModel>>(listaDtos);
             return View("Index", listaVm);
         }

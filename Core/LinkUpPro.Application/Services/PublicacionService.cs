@@ -19,7 +19,7 @@ public class PublicacionService : IPublicacionService
     }
 
     
-    public async Task<List<PublicacionDto>> ObtenerTodasAsync(string? textoBusqueda = null, 
+    public async Task<List<PublicacionDto>> ObtenerTodasAsync(int usuarioId,string? textoBusqueda = null, 
         string? tipoContenido = null, 
         string? estadoEdicion = null, 
         DateTime? fechaDesde = null, 
@@ -27,8 +27,7 @@ public class PublicacionService : IPublicacionService
     {
         var publicacionesEntidad = await _publicacionRepository.GetTodasConDetallesAsync();
 
-        // TEMPORAL EL ID!!!!! Solo deben consultarse publicaciones pertenecientes al usuario autenticado 
-        var query = publicacionesEntidad.Where(p => p.UsuarioId == 1 && !p.EstaEliminada);
+        var query = publicacionesEntidad.Where(p => p.UsuarioId == usuarioId && !p.EstaEliminada);
 
         // La busqueda por texto no distingue mayusculas/minusculas e ignora espacios al inicio y final
         if (!string.IsNullOrWhiteSpace(textoBusqueda))
@@ -80,7 +79,7 @@ public class PublicacionService : IPublicacionService
         var listaOrdenada = query.OrderByDescending(p => p.FechaCreacion).ToList();
 
         // Mapeo final al dto usando AutoMapper
-        return _mapper.Map<List<PublicacionDto>>(listaOrdenada);
+        return _mapper.Map<List<PublicacionDto>>(listaOrdenada, opt => opt.Items["UsuarioId"] = usuarioId);
 
         // Mapea la lista de entidades a la lista de publicaciondto usando AutoMapper
       /*  var listaDtos = _mapper.Map<List<PublicacionDto>>(publicacionesEntidad);

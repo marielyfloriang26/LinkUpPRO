@@ -32,26 +32,45 @@
             <span>Publicaciones recientes</span>
         </div>
 
-        <!-- ESTADO VACÍO -->
+        <!-- ESTADO VACIO -->
         @if (Model == null || !Model.Any())
         {
-            <div class="lup-empty">
-                <div class="lup-empty__icon">
-                    <i class="bi bi-rss"></i>
+            // Comprueba si el usuario aplico algun criterio de busqueda o filtro
+            bool tieneFiltros = !string.IsNullOrEmpty(ViewBag.TextoBusqueda) || 
+                                (ViewBag.TipoContenido != null && ViewBag.TipoContenido != "Todos") || 
+                                (ViewBag.EstadoEdicion != null && ViewBag.EstadoEdicion != "Todas") || 
+                                !string.IsNullOrEmpty(ViewBag.FechaDesde) || 
+                                !string.IsNullOrEmpty(ViewBag.FechaHasta);
+
+            if (tieneFiltros)
+            {
+                <!-- Mensaje al no encontrar resultados de filtros -->
+                <div class="alert alert-warning text-center my-3 border border-warning-subtle" style="border-radius: 8px; padding: 20px; font-size: 0.9rem; background-color: #fff3cd; color: #664d03;">
+                    <i class="bi bi-exclamation-circle-fill me-2"></i>
+                    No se encontraron publicaciones que coincidan con los criterios seleccionados.
                 </div>
-                <h4 class="lup-empty__title">Tu feed está esperando</h4>
-                <p class="lup-empty__text">Conecta con personas de tu industria o crea tu primera publicación.</p>
-                <button class="lup-btn lup-btn--primary lup-btn--sm"
-                        onclick="document.getElementById('composerForm').classList.add('is-open'); window.scrollTo({top:0,behavior:'smooth'})">
-                    Crear publicación
-                </button>
-            </div>
+            }
+            else
+            {
+                <!-- Estado vacío inicial (sin filtros) -->
+                <div class="lup-empty">
+                    <div class="lup-empty__icon">
+                        <i class="bi bi-rss"></i>
+                    </div>
+                    <h4 class="lup-empty__title">Tu feed está esperando</h4>
+                    <p class="lup-empty__text">Conecta con personas de tu industria o crea tu primera publicación.</p>
+                    <button class="lup-btn lup-btn--primary lup-btn--sm"
+                            onclick="document.getElementById('composerForm').classList.add('is-open'); window.scrollTo({top:0,behavior:'smooth'})">
+                        Crear publicación
+                    </button>
+                </div>
+            }
         }
         else
         {
             foreach (var post in Model)
             {
-                var isOwner = post.AutorNombreCompleto == User.Identity?.Name;
+                 var isOwner = post.UsuarioId.ToString() == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
                 <article id="post-@post.Id" class="lup-post @(isOwner ? "lup-post--own" : "")">
 
                     <!-- CABECERA -->
