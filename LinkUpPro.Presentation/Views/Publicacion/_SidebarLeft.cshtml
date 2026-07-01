@@ -10,7 +10,7 @@
     {
         // Cuenta solo publicaciones que no hayan sido eliminadas
         var todas = PublicacionRepo.GetAllAsync().GetAwaiter().GetResult();
-        cantPublicaciones = todas.Count(p => p.UsuarioId == currentUserId && !p.EstaEliminada);
+        cantPublicaciones = todas.Count(p => p.UsuarioId == currentUserId && p.Estado == "Activa");
     }
 }
 <aside class="lup-sidebar lup-sidebar--left">

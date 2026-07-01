@@ -1,9 +1,8 @@
 using System.IO;
 using System.Threading.Tasks;
-using LinkUpPro.Application.Account.ViewModels;
+using LinkUpPro.Application.Interfaces.Shared;
 using LinkUpPro.Application.DTOs.Account;
 using LinkUpPro.Application.Interfaces.Services;
-using LinkUpPro.Application.Interfaces.Services.Interfaces;
 using LinkUpPro.Application.ViewModels.User;
 using LinkUpPro.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -72,6 +71,7 @@ public class AccountController : Controller
         }
 
         ModelState.AddModelError("", "El nombre de usuario o la contraseña son incorrectos.");
+        return View(vm);
     }
 
     [HttpGet]
