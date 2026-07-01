@@ -1,3 +1,4 @@
+using LinkUpPro.Application;
 using LinkUpPro.Application.Interfaces.Repositories;
 using LinkUpPro.Application.Interfaces.Services;
 using LinkUpPro.Application.Services;
@@ -31,6 +32,7 @@ namespace LinkUpPro.Presentation
             {
                 cfg.AddProfile<LinkUpPro.Application.Mappings.PublicacionMapping>();
             });
+            builder.Services.AddApplicationLayer();
             builder.Services.AddSharedInfrastructure();
 
             var app = builder.Build();

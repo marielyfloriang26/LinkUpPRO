@@ -79,10 +79,21 @@ namespace LinkUpPro.Presentation.Controllers
             {
                 var pubDtos = await _publicacionService.ObtenerPublicacionesAmigosAsync(userId, textoBusquedaPub, amigoIdPub, tipoContenidoPub, estadoEdicionPub, fechaDesdePub, fechaHastaPub);
                 vm.Publicaciones = _mapper.Map<List<LinkUpPro.Application.ViewModels.Publicacion.PublicacionViewModel>>(pubDtos);
-                vm.PublicacionesDisponibles = vm.Publicaciones.Count;
             }
 
+            // Publicaciones disponibles should be the total active publications of friends regardless of text/date filters
+            var todasPubs = await _publicacionService.ObtenerPublicacionesAmigosAsync(userId);
+            vm.PublicacionesDisponibles = todasPubs.Count;
+
             return View(vm);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AmigosEnComun(int id)
+        {
+            var userId = GetCurrentUserId();
+            var mutualFriends = await _amigoService.GetAmigosEnComunAsync(userId, id);
+            return View(mutualFriends);
         }
 
         [HttpGet]

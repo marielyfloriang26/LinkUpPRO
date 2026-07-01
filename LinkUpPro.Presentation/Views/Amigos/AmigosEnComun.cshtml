@@ -1,0 +1,181 @@
+@model IReadOnlyList<LinkUpPro.Application.DTOs.UsuarioDto>
+
+@{
+    ViewData["Title"] = "Amigos en común";
+}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<div class="lup-layout">
+    <!-- SIDEBAR IZQUIERDO -->
+    <aside class="lup-sidebar lup-sidebar--left">
+        <div class="lup-profile-card">
+            <div class="lup-profile-card__cover"></div>
+            <div class="lup-profile-card__body">
+                <img src="@(User.FindFirst("FotoPerfilUrl")?.Value ?? "https://cdn-icons-png.flaticon.com/512/149/149071.png")"
+                     alt="Tu foto" class="lup-profile-card__avatar">
+                <p class="lup-profile-card__name">@User.Identity?.Name</p>
+                <p class="lup-profile-card__handle">Miembro de LinkUpPro</p>
+            </div>
+        </div>
+
+        <nav class="lup-quick-nav">
+            <a asp-controller="Publicacion" asp-action="Index" class="lup-quick-nav__item">
+                <i class="bi bi-house-door-fill"></i> Home
+            </a>
+            
+            <a asp-controller="Amigos" asp-action="Index" class="lup-quick-nav__item lup-quick-nav__item--active">
+                <i class="bi bi-people-fill"></i> Amigos
+            </a>
+            
+            <a asp-controller="Solicitudes" asp-action="Index" class="lup-quick-nav__item">
+                <i class="bi bi-person-plus-fill"></i> Solicitudes
+            </a>
+
+            <a asp-controller="Notificacion" asp-action="Index" class="lup-quick-nav__item">
+                <i class="bi bi-bell-fill"></i> Notificaciones
+            </a>
+
+            <a asp-controller="Battleship" asp-action="Index" class="lup-quick-nav__item">
+                <i class="bi bi-controller"></i> Battleship
+            </a>
+
+            <a asp-controller="Perfil" asp-action="Index" class="lup-quick-nav__item">
+                <i class="bi bi-person-circle"></i> Mi Perfil
+            </a>
+        </nav>
+    </aside>
+
+    <!-- ZONA CENTRAL: LISTADO DE AMIGOS EN COMÚN -->
+    <main class="lup-feed">
+        <div class="lup-composer mb-4">
+            <h4 class="fw-bold mb-0">
+                <i class="bi bi-people-fill text-primary me-2"></i>Amigos en común
+            </h4>
+        </div>
+
+        @if (Model != null && Model.Count > 0)
+        {
+            <div class="row row-cols-1 row-cols-md-2 g-3">
+                @foreach (var amigo in Model)
+                {
+                    <div class="col">
+                        <div class="lup-post mb-0 h-100 d-flex flex-column p-3">
+                            <div class="d-flex align-items-center mb-3">
+                                <a asp-controller="Perfil" asp-action="Ver" asp-route-username="@amigo.NombreUsuario" class="text-decoration-none d-flex align-items-center">
+                                    <img src="@(string.IsNullOrEmpty(amigo.FotoPerfilUrl) ? "https://cdn-icons-png.flaticon.com/512/149/149071.png" : amigo.FotoPerfilUrl)" alt="@amigo.Nombre @amigo.Apellido" class="lup-avatar lup-avatar--md me-3 border">
+                                    <div>
+                                        <h6 class="mb-0 fw-bold text-dark">@amigo.Nombre @amigo.Apellido</h6>
+                                        <small class="text-muted">@@@amigo.NombreUsuario</small>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="d-flex gap-2 mt-auto pt-2 border-top">
+                                <a asp-controller="Perfil" asp-action="Ver" asp-route-username="@amigo.NombreUsuario" class="lup-btn lup-btn--outline lup-btn--sm flex-grow-1 justify-content-center">Ver Perfil</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="lup-empty">
+                <div class="lup-empty__icon">
+                    <i class="bi bi-people"></i>
+                </div>
+                <h4 class="lup-empty__title">No tienen amigos en común.</h4>
+                <a asp-action="Index" class="lup-btn lup-btn--primary lup-btn--sm mt-3">Volver a Amigos</a>
+            </div>
+        }
+    </main>
+
+    <!-- SIDEBAR DERECHO -->
+    <aside class="lup-sidebar lup-sidebar--right">
+        <div class="lup-widget">
+            <h6 class="lup-widget__title">Información</h6>
+            <p class="text-muted" style="font-size: 0.85rem;">Aquí se muestran los amigos activos que tienes en común con este usuario.</p>
+        </div>
+    </aside>
+</div>
+
+<style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+        --lup-bg:          #F0F2F5;
+        --lup-surface:     #FFFFFF;
+        --lup-border:      #E4E6EB;
+        --lup-text-1:      #1C1E21;
+        --lup-text-2:      #65676B;
+        --lup-text-3:      #8A8D91;
+        --lup-accent:      #5B4CFF;
+        --lup-accent-soft: #EEF0FF;
+        --lup-like:        #1877F2;
+        --lup-dislike:     #E74C3C;
+        --lup-green:       #10B981;
+        --lup-radius-sm:   8px;
+        --lup-radius-md:   12px;
+        --lup-radius-lg:   16px;
+        --lup-shadow:      0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
+        --lup-shadow-md:   0 4px 12px rgba(0,0,0,0.10);
+        --font:            'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    body { background: var(--lup-bg); font-family: var(--font); color: var(--lup-text-1); }
+
+    /* LAYOUT */
+    .lup-layout {
+        display: grid;
+        grid-template-columns: 240px 1fr 260px;
+        gap: 20px;
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 24px 16px;
+        align-items: start;
+    }
+    @@media (max-width: 1024px) {
+        .lup-layout { grid-template-columns: 200px 1fr; }
+        .lup-sidebar--right { display: none; }
+    }
+    @@media (max-width: 680px) {
+        .lup-layout { grid-template-columns: 1fr; padding: 12px; }
+        .lup-sidebar--left { display: none; }
+    }
+
+    /* SIDEBARS */
+    .lup-sidebar { position: sticky; top: 80px; }
+    .lup-profile-card { background: var(--lup-surface); border-radius: var(--lup-radius-lg); box-shadow: var(--lup-shadow); overflow: hidden; margin-bottom: 12px; }
+    .lup-profile-card__cover { height: 56px; background: linear-gradient(135deg, var(--lup-accent) 0%, #9B8FFF 100%); }
+    .lup-profile-card__body { padding: 0 16px 12px; text-align: center; margin-top: -20px; }
+    .lup-profile-card__avatar { width: 52px; height: 52px; border-radius: 50%; border: 3px solid var(--lup-surface); object-fit: cover; display: block; margin: 0 auto 8px; }
+    .lup-profile-card__name { font-size: 0.875rem; font-weight: 700; color: var(--lup-text-1); margin: 0 0 2px; }
+    .lup-profile-card__handle { font-size: 0.725rem; color: var(--lup-text-3); margin: 0; }
+
+    .lup-quick-nav { background: var(--lup-surface); border-radius: var(--lup-radius-md); box-shadow: var(--lup-shadow); overflow: hidden; padding: 6px 0; }
+    .lup-quick-nav__item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; font-size: 0.875rem; font-weight: 500; color: var(--lup-text-2); text-decoration: none; transition: background 0.15s, color 0.15s; }
+    .lup-quick-nav__item:hover { background: var(--lup-bg); color: var(--lup-accent); }
+    .lup-quick-nav__item--active { color: var(--lup-accent); background: var(--lup-accent-soft); }
+
+    /* WIDGETS */
+    .lup-widget { background: var(--lup-surface); border-radius: var(--lup-radius-lg); box-shadow: var(--lup-shadow); padding: 16px; margin-bottom: 16px; }
+    .lup-widget__title { font-size: 0.875rem; font-weight: 700; color: var(--lup-text-2); margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* FEED COMPONENTS */
+    .lup-post { background: var(--lup-surface); border-radius: var(--lup-radius-lg); box-shadow: var(--lup-shadow); transition: box-shadow 0.2s; }
+    
+    .lup-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: 24px; font-family: var(--font); font-weight: 600; cursor: pointer; transition: all 0.15s; border: none; white-space: nowrap; text-decoration: none;}
+    .lup-btn--primary { background: var(--lup-accent); color: #fff; padding: 8px 18px; }
+    .lup-btn--primary:hover { background: #4438d4; color: #fff; transform: translateY(-1px); }
+    .lup-btn--ghost { background: var(--lup-bg); color: var(--lup-text-2); border: 1px solid var(--lup-border); padding: 7px 14px; }
+    .lup-btn--ghost:hover { background: var(--lup-border); color: var(--lup-text-1); }
+    
+    .lup-empty { text-align: center; padding: 48px 24px; background: var(--lup-surface); border-radius: var(--lup-radius-lg); box-shadow: var(--lup-shadow); }
+    .lup-empty__icon { font-size: 3rem; color: var(--lup-text-3); margin-bottom: 12px; opacity: 0.5; }
+    .lup-empty__title { font-size: 1.1rem; font-weight: 700; color: var(--lup-text-1); margin-bottom: 6px; }
+    
+    .lup-avatar { border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+    .lup-avatar--md { width: 44px; height: 44px; }
+</style>

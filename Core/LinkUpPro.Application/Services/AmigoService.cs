@@ -78,6 +78,34 @@ public class AmigoService : IAmigoService
 
         return amigosU1.Intersect(amigosU2).Count();
     }
+    
+    public async Task<IReadOnlyList<UsuarioDto>> GetAmigosEnComunAsync(int usuarioId1, int usuarioId2)
+    {
+        var amistadesU1 = await _amistadRepository.GetAmistadesByUsuarioIdAsync(usuarioId1);
+        var amistadesU2 = await _amistadRepository.GetAmistadesByUsuarioIdAsync(usuarioId2);
+
+        var amigosU1 = amistadesU1
+            .Select(a => a.UsuarioId1 == usuarioId1 ? a.Usuario2 : a.Usuario1)
+            .Where(u => u != null && u.EmailConfirmed)
+            .ToList();
+            
+        var amigosU2Ids = amistadesU2
+            .Select(a => a.UsuarioId1 == usuarioId2 ? a.Usuario2 : a.Usuario1)
+            .Where(u => u != null && u.EmailConfirmed)
+            .Select(u => u.Id)
+            .ToHashSet();
+
+        var comun = amigosU1.Where(u => amigosU2Ids.Contains(u.Id)).Select(amigoEntity => new UsuarioDto
+        {
+            Id = amigoEntity.Id,
+            Nombre = amigoEntity.Nombre,
+            Apellido = amigoEntity.Apellido,
+            NombreUsuario = amigoEntity.UserName ?? "",
+            FotoPerfilUrl = amigoEntity.FotoPerfilUrl
+        }).ToList();
+
+        return comun;
+    }
 
     public async Task DeleteAmigoAsync(int usuarioId, int amigoId)
     {
