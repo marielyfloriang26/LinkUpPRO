@@ -1,25 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Domain\\LinkUpPro.Domain.csproj": {}
+    "C:\\Users\\jerem\\OneDrive\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Domain\\LinkUpPro.Domain.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Domain\\LinkUpPro.Domain.csproj": {
+    "C:\\Users\\jerem\\OneDrive\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Domain\\LinkUpPro.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Domain\\LinkUpPro.Domain.csproj",
+        "projectUniqueName": "C:\\Users\\jerem\\OneDrive\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Domain\\LinkUpPro.Domain.csproj",
         "projectName": "LinkUpPro.Domain",
-        "projectPath": "C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Domain\\LinkUpPro.Domain.csproj",
-        "packagesPath": "C:\\Users\\Mariely Florian\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Domain\\obj\\",
+        "projectPath": "C:\\Users\\jerem\\OneDrive\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Domain\\LinkUpPro.Domain.csproj",
+        "packagesPath": "C:\\Users\\jerem\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\jerem\\OneDrive\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Mariely Florian\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\jerem\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -38,7 +40,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
         "net9.0": {
@@ -54,6 +56,20 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[9.0.13, 9.0.13]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[9.0.13, 9.0.13]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[9.0.13, 9.0.13]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -62,7 +78,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

@@ -1,32 +1,26 @@
 {
   "version": 2,
-  "dgSpecHash": "yASFNVuBNp4=",
+  "dgSpecHash": "ecWeWUez7pE=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj",
+  "projectFilePath": "C:\\Users\\jerem\\OneDrive\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Mariely Florian\\.nuget\\packages\\automapper\\13.0.1\\automapper.13.0.1.nupkg.sha512",
-    "C:\\Users\\Mariely Florian\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\6.0.0\\microsoft.extensions.dependencyinjection.abstractions.6.0.0.nupkg.sha512",
-    "C:\\Users\\Mariely Florian\\.nuget\\packages\\microsoft.extensions.options\\6.0.0\\microsoft.extensions.options.6.0.0.nupkg.sha512",
-    "C:\\Users\\Mariely Florian\\.nuget\\packages\\microsoft.extensions.primitives\\6.0.0\\microsoft.extensions.primitives.6.0.0.nupkg.sha512",
-    "C:\\Users\\Mariely Florian\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512"
+    "C:\\Users\\jerem\\.nuget\\packages\\automapper\\13.0.1\\automapper.13.0.1.nupkg.sha512",
+    "C:\\Users\\jerem\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\6.0.0\\microsoft.extensions.dependencyinjection.abstractions.6.0.0.nupkg.sha512",
+    "C:\\Users\\jerem\\.nuget\\packages\\microsoft.extensions.options\\6.0.0\\microsoft.extensions.options.6.0.0.nupkg.sha512",
+    "C:\\Users\\jerem\\.nuget\\packages\\microsoft.extensions.primitives\\6.0.0\\microsoft.extensions.primitives.6.0.0.nupkg.sha512",
+    "C:\\Users\\jerem\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
+    "C:\\Users\\jerem\\.nuget\\packages\\microsoft.netcore.app.ref\\9.0.13\\microsoft.netcore.app.ref.9.0.13.nupkg.sha512",
+    "C:\\Users\\jerem\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\9.0.13\\microsoft.windowsdesktop.app.ref.9.0.13.nupkg.sha512",
+    "C:\\Users\\jerem\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\9.0.13\\microsoft.aspnetcore.app.ref.9.0.13.nupkg.sha512"
   ],
   "logs": [
-    {
-      "code": "Undefined",
-      "level": "Warning",
-      "message": "Problem reading the cache file C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\obj\\project.nuget.cache : '\"' is invalid after a value. Expected either ',', '}', or ']'. Path: $ | LineNumber: 28 | BytePositionInLine: 2.",
-      "projectPath": "C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj",
-      "warningLevel": 1,
-      "filePath": "C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj",
-      "targetGraphs": []
-    },
     {
       "code": "NU1903",
       "level": "Warning",
       "message": "Package 'AutoMapper' 13.0.1 has a known high severity vulnerability, https://github.com/advisories/GHSA-rvv3-g6hj-g44x",
-      "projectPath": "C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj",
+      "projectPath": "C:\\Users\\jerem\\OneDrive\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj",
+      "filePath": "C:\\Users\\jerem\\OneDrive\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj",
       "libraryId": "AutoMapper",
       "targetGraphs": [
         "net9.0"
