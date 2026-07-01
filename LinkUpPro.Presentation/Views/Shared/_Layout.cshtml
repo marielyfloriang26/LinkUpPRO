@@ -19,7 +19,13 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+
+                    @using Microsoft.AspNetCore.Identity
+                    @using LinkUpPro.Domain.Entities
+                    @inject SignInManager<Usuario> SignInManager
+
                     <ul class="navbar-nav flex-grow-1">
+
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
@@ -30,6 +36,20 @@
                         <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Publicacion" asp-action="Index">Publicaciones</a>
                     </li>
                         </li>
+
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            </li>
+                        }
+                    </ul>
+                    <ul class="navbar-nav">
+                        <partial name="_LoginPartial" />
+
                     </ul>
                 </div>
             </div>
@@ -37,6 +57,24 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+
+            <div class="container mt-3">
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        @TempData["Success"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        @TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
             @RenderBody()
         </main>
     </div>

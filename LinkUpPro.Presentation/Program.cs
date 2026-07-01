@@ -15,11 +15,15 @@ namespace LinkUpPro.Presentation
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            builder.Services.AddControllersWithViews();
+            // 1. Agregar servicios al contenedor
+            builder.Services.AddControllersWithViews(options =>
+            {
+                options.Filters.Add<GlobalExceptionFilter>();
+            });
             
-            // Add Infrastructure Persistence layer
+            // 2. Registrar la infraestructura (que incluye Identity configurado)
             builder.Services.AddPersistenceInfrastructure(builder.Configuration);
+
 
             builder.Services.AddTransient<IPublicacionRepository, PublicacionRepository>();
             builder.Services.AddTransient<IPublicacionService, PublicacionService>();
@@ -32,25 +36,35 @@ namespace LinkUpPro.Presentation
                 cfg.AddProfile<LinkUpPro.Application.Mappings.PublicacionMapping>();
             });
 
+            builder.Services.AddSharedInfrastructure();
+
+
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // 3. Configurar el pipeline de peticiones HTTP
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles(); 
+            
             app.UseRouting();
 
+            // ¡IMPORTANTE! El orden aquí es crítico:
+            // Primero se identifica quién es el usuario (Authentication)
+            // Luego se verifica si tiene permiso para lo que intenta hacer (Authorization)
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapStaticAssets();
+            
+            // 4. Ruta por defecto: Redirigimos al Login al iniciar
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}")
+                pattern: "{controller=Account}/{action=Login}/{id?}")
                 .WithStaticAssets();
 
             app.Run();

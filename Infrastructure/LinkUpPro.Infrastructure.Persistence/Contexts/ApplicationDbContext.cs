@@ -1,15 +1,17 @@
 using LinkUpPro.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace LinkUpPro.Infrastructure.Persistence.Contexts;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : IdentityDbContext<Usuario, IdentityRole<int>, int>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
     }
 
-    public DbSet<Usuario> Usuarios { get; set; }
+    /*public DbSet<Usuario> Usuarios { get; set; }*/
     public DbSet<Publicacion> Publicaciones { get; set; }
     public DbSet<Comentario> Comentarios { get; set; }
     public DbSet<Reaccion> Reacciones { get; set; }
@@ -21,7 +23,7 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
         base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
 }
