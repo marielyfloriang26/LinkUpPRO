@@ -70,8 +70,12 @@ namespace LinkUpPro.Presentation.Controllers
                 });
             }
 
-            // Validations for dates
-            if (fechaDesdePub.HasValue && fechaHastaPub.HasValue && fechaDesdePub > fechaHastaPub)
+            // Validations for dates and friend
+            if (amigoIdPub.HasValue && !amigosDto.Any(a => a.Id == amigoIdPub.Value))
+            {
+                ViewBag.ErrorAmigo = "El usuario seleccionado ya no forma parte de su lista de amigos.";
+            }
+            else if (fechaDesdePub.HasValue && fechaHastaPub.HasValue && fechaDesdePub > fechaHastaPub)
             {
                 ViewBag.ErrorFechas = "La fecha inicial no puede ser posterior a la fecha final.";
             }

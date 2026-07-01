@@ -114,7 +114,7 @@ public class SolicitudAmistadService : ISolicitudAmistadService
         var solicitud = await _solicitudRepository.GetByIdAsync(solicitudId);
         if (solicitud == null || solicitud.ReceptorId != receptorId)
         {
-            throw new ApiException("Solicitud no encontrada o no autorizada.");
+            throw new ApiException("No posee permisos para realizar esta acción sobre la solicitud.");
         }
         if (solicitud.Estado != "En espera de respuesta") throw new ApiException("La solicitud no está en espera de respuesta.");
 
@@ -135,7 +135,7 @@ public class SolicitudAmistadService : ISolicitudAmistadService
         var solicitud = await _solicitudRepository.GetByIdAsync(solicitudId);
         if (solicitud == null || solicitud.EmisorId != emisorId)
         {
-            throw new ApiException("Solicitud no encontrada o no autorizada.");
+            throw new ApiException("No posee permisos para realizar esta acción sobre la solicitud.");
         }
         if (solicitud.Estado != "En espera de respuesta") throw new ApiException("La solicitud no está en espera de respuesta.");
 
@@ -206,6 +206,7 @@ public class SolicitudAmistadService : ISolicitudAmistadService
             Estado = s.Estado,
             FechaEnvio = s.FechaEnvio,
             FechaRespuesta = s.FechaRespuesta,
+            OcultaEnHistorial = s.OcultaParaEmisor,
             Receptor = new UsuarioDto
             {
                 Id = s.Receptor!.Id,

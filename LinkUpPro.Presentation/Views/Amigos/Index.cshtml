@@ -136,7 +136,11 @@
             <span>Publicaciones de amigos</span>
         </div>
 
-        @if(ViewBag.ErrorFechas != null)
+        @if(ViewBag.ErrorAmigo != null)
+        {
+            <div class="alert alert-danger" style="border-radius: var(--lup-radius-sm);">@ViewBag.ErrorAmigo</div>
+        }
+        else if(ViewBag.ErrorFechas != null)
         {
             <div class="alert alert-danger" style="border-radius: var(--lup-radius-sm);">@ViewBag.ErrorFechas</div>
         }

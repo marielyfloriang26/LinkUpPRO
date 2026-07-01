@@ -34,7 +34,10 @@ namespace LinkUpPro.Presentation.Controllers
 
             var vm = new SolicitudesIndexViewModel
             {
-                Pendientes = pendientesDto.Select(s => new SolicitudAmistadViewModel
+                Pendientes = pendientesDto
+                    .Where(s => s.Estado == "En espera de respuesta")
+                    .OrderByDescending(s => s.FechaEnvio)
+                    .Select(s => new SolicitudAmistadViewModel
                 {
                     Id = s.Id,
                     UsuarioId = s.Emisor.Id,
@@ -45,7 +48,10 @@ namespace LinkUpPro.Presentation.Controllers
                     FechaEnvio = s.FechaEnvio,
                     Estado = s.Estado
                 }).ToList(),
-                Enviadas = enviadasDto.Select(s => new SolicitudAmistadViewModel
+                Enviadas = enviadasDto
+                    .Where(s => !s.OcultaEnHistorial && s.Estado != "Cancelada")
+                    .OrderByDescending(s => s.FechaEnvio)
+                    .Select(s => new SolicitudAmistadViewModel
                 {
                     Id = s.Id,
                     UsuarioId = s.Receptor.Id,
