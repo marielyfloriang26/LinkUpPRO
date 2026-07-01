@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using LinkUpPro.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
+using LinkUpPro.Application.Authorization;
 
 namespace LinkUpPro.Infrastructure.Persistence;
 
@@ -48,6 +49,7 @@ public static class ServiceRegistration
         services.AddAuthorization(options =>
         {
             options.AddPolicy("CuentaActiva", policy => policy.RequireClaim("EsActivo", "True"));
+            options.AddPolicy("PropietarioPolicy", policy => policy.Requirements.Add(new PropietarioRequirement())); // agg
         });
 
         services.AddSingleton<IAuthorizationHandler, PropietarioHandler>();
