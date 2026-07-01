@@ -80,8 +80,7 @@ public class PublicacionService : IPublicacionService
         // Las publicaciones deben organizarse desde la mas reciente hasta la mas antigua utilizando fecha y hora
         var listaOrdenada = query.OrderByDescending(p => p.FechaCreacion).ToList();
 
-        // Mapeo final al dto usando AutoMapper
-        return _mapper.Map<List<PublicacionDto>>(listaOrdenada);
+        return _mapper.Map<List<PublicacionDto>>(listaOrdenada, opt => opt.Items["UsuarioId"] = currentUserId);
     }
 
     public async Task<List<PublicacionDto>> ObtenerPublicacionesAmigosAsync(
@@ -146,7 +145,7 @@ public class PublicacionService : IPublicacionService
         // 4. Ordenar y retornar
         var listaOrdenada = query.OrderByDescending(p => p.FechaCreacion).ToList();
 
-        return _mapper.Map<List<PublicacionDto>>(listaOrdenada);
+        return _mapper.Map<List<PublicacionDto>>(listaOrdenada, opt => opt.Items["UsuarioId"] = currentUserId);
     }
 
    
@@ -233,6 +232,13 @@ public class PublicacionService : IPublicacionService
     }
 
     
+    public async Task<PublicacionDto?> ObtenerPorIdAsync(int id)
+    {
+        var publicacion = await _publicacionRepository.GetByIdAsync(id);
+        if (publicacion == null || publicacion.Estado == "Eliminada") return null;
+        return _mapper.Map<PublicacionDto>(publicacion);
+    }
+
     public async Task EliminarAsync(int id)
     {
         var publicacion = await _publicacionRepository.GetByIdAsync(id);

@@ -1,0 +1,109 @@
+@using LinkUpPro.Domain.Entities
+@using LinkUpPro.Application.Interfaces.Repositories
+@inject IRepositoryAsync<Publicacion> PublicacionRepo
+@{
+    var currentUserIdString = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    int currentUserId = string.IsNullOrEmpty(currentUserIdString) ? 0 : Convert.ToInt32(currentUserIdString);
+    
+    int cantPublicaciones = 0;
+    if (currentUserId > 0)
+    {
+        // Cuenta solo publicaciones que no hayan sido eliminadas
+        var todas = PublicacionRepo.GetAllAsync().GetAwaiter().GetResult();
+        cantPublicaciones = todas.Count(p => p.UsuarioId == currentUserId && !p.EstaEliminada);
+    }
+}
+<aside class="lup-sidebar lup-sidebar--left">
+        <div class="lup-profile-card">
+            <div class="lup-profile-card__cover"></div>
+            <div class="lup-profile-card__body">
+                <img src="@(User.FindFirst("FotoPerfilUrl")?.Value ?? "https://cdn-icons-png.flaticon.com/512/149/149071.png")"
+                     alt="Tu foto" class="lup-profile-card__avatar">
+                    <p class="lup-profile-card__name">@(User.FindFirst("NombreCompleto")?.Value ?? User.Identity?.Name)</p>
+                <p class="lup-profile-card__handle">Miembro de LinkUpPro</p>
+            </div>
+            <div class="lup-profile-card__stats">
+                <div class="lup-stat">
+                    <span class="lup-stat__num">@cantPublicaciones</span>
+                    <span class="lup-stat__label">Publicaciones</span>
+                </div>
+                <div class="lup-stat lup-stat--accent">
+                    <span class="lup-stat__num">—</span>
+                    <span class="lup-stat__label">Conexiones</span>
+                </div>
+            </div>
+        </div>
+
+        <nav class="lup-quick-nav">
+            <a asp-controller="Publicacion" asp-action="Index" class="lup-quick-nav__item lup-quick-nav__item--active">
+                <i class="bi bi-house-door-fill"></i> Home
+            </a>
+            
+            <a asp-controller="Amigos" asp-action="Index" class="lup-quick-nav__item">
+                <i class="bi bi-people-fill"></i> Amigos
+            </a>
+            
+            <a asp-controller="Amigos" asp-action="Solicitudes" class="lup-quick-nav__item position-relative">
+                <i class="bi bi-person-plus-fill"></i> Solicitudes
+                @if (ViewBag.CantidadSolicitudes > 0)
+                {
+                    <span class="badge rounded-pill bg-danger text-xs align-middle ms-1" style="font-size: 0.65rem;">
+                        @ViewBag.CantidadSolicitudes
+                    </span>
+                }
+            </a>
+
+            <a asp-controller="Notificacion" asp-action="Index" class="lup-quick-nav__item">
+                <i class="bi bi-bell-fill"></i> Notificaciones
+                @if (ViewBag.CantidadNotificaciones > 0)
+                {
+                    <span class="badge rounded-pill bg-primary text-xs align-middle ms-1" style="font-size: 0.65rem;">
+                        @ViewBag.CantidadNotificaciones
+                    </span>
+                }
+            </a>
+
+            <a asp-controller="Battleship" asp-action="Index" class="lup-quick-nav__item">
+                <i class="bi bi-controller"></i> Battleship
+            </a>
+
+            <a asp-controller="Perfil" asp-action="Index" class="lup-quick-nav__item">
+                <i class="bi bi-person-circle"></i> Mi Perfil
+            </a>
+
+                            <!-- Botón que abre el modal de confirmación -->
+            <div class="w-100 border-top mt-1 pt-1">
+                <button type="button" class="lup-quick-nav__item text-danger fw-bold border-0 bg-transparent w-100 text-start" 
+                        style="cursor: pointer; gap: 10px; padding: 10px 16px;" 
+                        data-bs-toggle="modal" data-bs-target="#logoutModal">
+                    <i class="bi bi-box-arrow-right text-danger"></i> Cerrar Sesión
+                </button>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Modal de Confirmación de Cerrar Sesión -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 12px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.15); overflow: hidden;">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-dark" id="logoutModalLabel">Cerrar Sesión</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary" style="font-size: 0.95rem;">
+                    ¿Estás seguro de que deseas cerrar tu sesión en LinkUp Pro?
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-light fw-semibold text-secondary" data-bs-dismiss="modal" style="border-radius: 8px; border: 1px solid #dee2e6;">Cancelar</button>
+                    
+                    <!-- Formulario real que realiza el Logout -->
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline m-0">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger fw-semibold px-4" style="border-radius: 8px; background-color: #dc3545; border: none;">Sí, cerrar sesión</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+        </nav>
+    </aside>

@@ -10,11 +10,21 @@ public class AppUserClaimsPrincipalFactory : UserClaimsPrincipalFactory<Usuario,
         RoleManager<IdentityRole<int>> roleManager,
         IOptions<IdentityOptions> options) : base(userManager, roleManager, options) { }
 
-    protected override async Task<ClaimsIdentity> GenerateClaimsAsync(Usuario user)
+        protected override async Task<ClaimsIdentity> GenerateClaimsAsync(Usuario user)
     {
         var identity = await base.GenerateClaimsAsync(user);
-        // Esto valida si el email está confirmado (tu criterio de cuenta activa)
+        
         identity.AddClaim(new Claim("EsActivo", user.EmailConfirmed.ToString()));
+
+        if (!string.IsNullOrEmpty(user.Nombre))
+        {
+            identity.AddClaim(new Claim("NombreCompleto", $"{user.Nombre} {user.Apellido}"));
+        }
+        if (!string.IsNullOrEmpty(user.FotoPerfilUrl))
+        {
+            identity.AddClaim(new Claim("FotoPerfilUrl", user.FotoPerfilUrl));
+        }
+
         return identity;
     }
 }

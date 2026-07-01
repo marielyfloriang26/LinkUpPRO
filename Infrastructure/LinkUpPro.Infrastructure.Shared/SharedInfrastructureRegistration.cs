@@ -3,6 +3,7 @@ using LinkUpPro.Application.Interfaces.Shared;
 using LinkUpPro.Application.Interfaces.Services;
 using LinkUpPro.Infrastructure.Shared.Services;
 using Microsoft.Extensions.DependencyInjection;
+using LinkUpPro.Infrastructure.Shared.Services;
 
 public static class SharedInfrastructureRegistration
 {

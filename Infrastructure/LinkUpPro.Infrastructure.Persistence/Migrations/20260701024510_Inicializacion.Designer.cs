@@ -13,12 +13,17 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
 <<<<<<<< HEAD:Infrastructure/LinkUpPro.Infrastructure.Persistence/Migrations/20260627133340_Inicializacion.Designer.cs
+<<<<<<<< HEAD:Infrastructure/LinkUpPro.Infrastructure.Persistence/Migrations/20260627133340_Inicializacion.Designer.cs
     [Migration("20260627133340_Inicializacion")]
     partial class Inicializacion
 ========
     [Migration("20260625030218_InitialIdentityMigration")]
     partial class InitialIdentityMigration
 >>>>>>>> feature-login-registro:Infrastructure/LinkUpPro.Infrastructure.Persistence/Migrations/20260625030218_InitialIdentityMigration.Designer.cs
+========
+    [Migration("20260701024510_Inicializacion")]
+    partial class Inicializacion
+>>>>>>>> origin/feature-publicaciones:Infrastructure/LinkUpPro.Infrastructure.Persistence/Migrations/20260701024510_Inicializacion.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -116,6 +121,9 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("DATETIME")
                         .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<DateTime?>("FechaModificacion")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PublicacionId")
                         .HasColumnType("int");

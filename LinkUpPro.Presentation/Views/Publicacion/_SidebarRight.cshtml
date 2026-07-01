@@ -1,0 +1,27 @@
+<aside class="lup-sidebar lup-sidebar--right">
+        <div class="lup-widget">
+            <h6 class="lup-widget__title">Personas que quizás conozcas</h6>
+            @for (int i = 0; i < 3; i++)
+            {
+                <div class="lup-suggestion">
+                    <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                         alt="Sugerencia" class="lup-avatar lup-avatar--sm">
+                    <div class="lup-suggestion__info">
+                        <p class="lup-suggestion__name">Usuario sugerido</p>
+                        <p class="lup-suggestion__role">Profesional · LinkUpPro</p>
+                    </div>
+                    <button class="lup-btn lup-btn--outline lup-btn--xs">
+                        <i class="bi bi-person-plus-fill"></i> Conectar
+                    </button>
+                </div>
+            }
+        </div>
+
+        <div class="lup-widget lup-widget--muted">
+            <p class="lup-widget__footer-links">
+                <a href="#">Privacidad</a> · <a href="#">Términos</a> · <a href="#">Ayuda</a>
+                <br>
+                <span>© 2025 LinkUpPro</span>
+            </p>
+        </div>
+    </aside>

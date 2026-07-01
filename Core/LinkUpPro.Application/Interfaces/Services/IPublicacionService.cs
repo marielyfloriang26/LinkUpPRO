@@ -13,5 +13,6 @@ public interface IPublicacionService
 
     Task EditarAsync(ModificarPublicacionDto dto);
 
+    Task<PublicacionDto?> ObtenerPorIdAsync(int id);
     Task EliminarAsync(int id);
 }

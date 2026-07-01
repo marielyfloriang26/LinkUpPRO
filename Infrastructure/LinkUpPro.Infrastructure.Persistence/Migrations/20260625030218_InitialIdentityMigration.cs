@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -6,11 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LinkUpPro.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-<<<<<<<< HEAD:Infrastructure/LinkUpPro.Infrastructure.Persistence/Migrations/20260627133340_Inicializacion.cs
-    public partial class Inicializacion : Migration
-========
     public partial class InitialIdentityMigration : Migration
->>>>>>>> feature-login-registro:Infrastructure/LinkUpPro.Infrastructure.Persistence/Migrations/20260625030218_InitialIdentityMigration.cs
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -353,7 +349,8 @@ namespace LinkUpPro.Infrastructure.Persistence.Migrations
                     UsuarioId = table.Column<int>(type: "int", nullable: false),
                     Contenido = table.Column<string>(type: "TEXT", nullable: false),
                     ComentarioPadreId = table.Column<int>(type: "int", nullable: true),
-                    FechaCreacion = table.Column<DateTime>(type: "DATETIME", nullable: false, defaultValueSql: "GETUTCDATE()")
+                    FechaCreacion = table.Column<DateTime>(type: "DATETIME", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    FechaModificacion = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
