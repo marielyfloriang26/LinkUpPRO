@@ -1,0 +1,213 @@
+@model LinkUpPro.Application.ViewModels.Publicacion.GuardarPublicacionViewModel
+
+@{
+    string nombreUsuario = User.FindFirst("NombreCompleto")?.Value?.Split(' ')[0] ?? User.Identity?.Name ?? "Mariely";
+    string fotoPerfilUrl = User.FindFirst("FotoPerfilUrl")?.Value ?? "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+}
+
+<style>
+    /* Si el formulario esta abierto, oculta la barra de accesos rapidos de abajo */
+    #composerForm.is-open ~ .lup-composer__shortcuts {
+        display: none !important;
+    }
+</style>
+
+<div class="lup-composer">
+            <div class="lup-composer__top">
+                <img src="@fotoPerfilUrl" alt="Tu foto" class="lup-avatar lup-avatar--md">
+              
+               <!-- <img src="@(User.FindFirst("FotoPerfilUrl")?.Value ?? "https://cdn-icons-png.flaticon.com/512/149/149071.png")" alt="Tu foto" class="lup-avatar lup-avatar--md">  -->
+
+                <button class="lup-composer__trigger" onclick="document.getElementById('composerForm').classList.toggle('is-open')">
+                    ¿Qué tienes en mente, @nombreUsuario?<!-- @User.Identity?.Name?.Split(' ')[0]?-->
+                </button>
+            </div>
+
+            <div class="lup-composer__form" id="composerForm" >
+                <form asp-controller="Publicacion" asp-action="Crear" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+
+                    <textarea asp-for="ContenidoTexto" class="lup-composer__textarea"
+                              rows="4" placeholder="Comparte algo con tu red..." required></textarea>
+                <span asp-validation-for="ContenidoTexto" class="text-danger small"></span>
+
+                <div id="previewContainer" class="d-none my-2 position-relative text-center">
+                <img id="imagePreview" src="#" alt="Previsualización" class="img-thumbnail" style="max-height: 200px;">
+                <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1" onclick="removerImagenSeleccionada()">X</button>
+            </div>
+
+                    <div class="lup-composer__meta">
+                        <div class="lup-field-group" id="wrapperVideo">
+                            <label class="lup-field-label">
+                                <i class="bi bi-youtube text-danger"></i> Video de YouTube
+                            </label>
+                            <input type="url" asp-for="YouTubeVideoUrl" id="inputVideo" class="lup-input lup-input--sm"
+                                   placeholder="https://www.youtube.com/watch?v=...">
+                            <span asp-validation-for="YouTubeVideoUrl" class="text-danger small"></span>
+                        </div>
+
+                        <div class="lup-field-group">
+                            <label class="lup-field-label">
+                                <i class="bi bi-shield-lock"></i> Privacidad
+                            </label>
+                            <select asp-for="Privacidad" class="lup-select lup-select--sm">
+                                <option value="SoloAmigos">👥 Solo Amigos</option>
+                                <option value="Privado">🔒 Solo yo</option>
+                            </select>
+                    </div>
+
+                    <div class="lup-field-group mb-3 px-3">
+                    <label class="lup-field-label"><i class="bi bi-collection"></i> Formato Obligatorio</label>
+                    <select name="TipoContenido" id="tipoContenidoSelect" class="lup-select lup-select--sm" onchange="conmutarTipoContenido()">
+                        <option value="Imagen" selected>Imagen</option>
+                        <option value="Video">Video de YouTube</option>
+                    </select>
+                </div>
+            </div>
+
+                    <div class="lup-composer__actions">
+                        <label class="lup-btn lup-btn--ghost lup-btn--sm" id="btnUploadFoto" style="cursor: pointer;">
+                            <i class="bi bi-image-fill" style="color: #10B981;"></i>
+                            <span>Foto</span>
+                            <input type="file" asp-for="ImagenArchivo" id="inputImagen" class="d-none" accept=".jpg,.jpeg,.png,.webp" onchange="mostrarPrevisualizacion(this)">
+                        </label>
+                        <span asp-validation-for="ImagenArchivo" class="text-danger small d-block"></span>
+
+                       <button type="button" class="lup-shortcut border-0 bg-transparent" onclick="abrirComposerConVideo()">
+                    <i class="bi bi-youtube" style="color: #EF4444;"></i> Video
+                    </button>
+
+                        <div class="lup-composer__actions-right">
+                            <div class="form-check d-inline-block me-2">
+                            <input class="form-check-input" type="checkbox" asp-for="PermiteComentarios" id="chkComentarios">
+                            <label class="form-check-label small text-muted" for="chkComentarios">Permitir Comentarios</label>
+                        </div>
+
+                            <button type="button" class="lup-btn lup-btn--ghost lup-btn--sm"
+                                    onclick="document.getElementById('composerForm').classList.remove('is-open')">
+                                Cancelar
+                            </button>
+                            
+                            <button type="submit" class="lup-btn lup-btn--primary lup-btn--sm">
+                                <i class="bi bi-send-fill"></i> Publicar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Accesos rapidos cuando el form esta cerrado -->
+            <div class="lup-composer__shortcuts">
+                <label class="lup-shortcut">
+                    <i class="bi bi-image-fill" style="color: #10B981;"></i> Foto
+                    <input type="file" class="d-none" accept="image/*"
+                           onchange="abrirYPrevisualizarDesdeAccesoRapido(this)">
+                </label>
+
+                <button type="button" class="lup-shortcut border-0 bg-transparent" onclick="abrirComposerConVideo()">
+                    <i class="bi bi-youtube" style="color: #EF4444;"></i> Video
+                    </button>
+                
+                <label class="lup-shortcut">
+                    <i class="bi bi-emoji-smile" style="color: #F59E0B;"></i> Sentimiento
+                </label>
+                
+
+                @if (ViewData["HayPublicaciones"] != null && (bool)ViewData["HayPublicaciones"])
+                {
+                    <button type="button" class="lup-shortcut border-0 bg-transparent text-primary" 
+                            onclick="document.getElementById('composerForm').classList.add('is-open')"
+                            style="margin-left: auto; font-weight: 600;">
+                        <i class="bi bi-plus-circle-fill"></i> Crear publicación
+                    </button>
+                }
+            </div>  
+
+        </div>
+        
+
+
+        <script>
+    function conmutarTipoContenido() {
+        var selector = document.getElementById("tipoContenidoSelect").value;
+        var wrapperVid = document.getElementById("wrapperVideo");
+        var btnFoto = document.getElementById("btnUploadFoto");
+        var inputVid = document.getElementById("inputVideo");
+
+        if (selector === "Imagen") {
+            wrapperVid.classList.add("d-none");
+            btnFoto.classList.remove("d-none");
+            if(inputVid) inputVid.value = ""; 
+        } else if (selector === "Video") {
+            wrapperVid.classList.remove("d-none");
+            btnFoto.classList.add("d-none");
+            removerImagenSeleccionada();
+        }
+    }
+
+    function mostrarPrevisualizacion(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var previewImg = document.getElementById("imagePreview");
+                var container = document.getElementById("previewContainer");
+                previewImg.src = e.target.result;
+                container.classList.remove("d-none");
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function removerImagenSeleccionada() {
+        var inputImg = document.getElementById("inputImagen");
+        var container = document.getElementById("previewContainer");
+        if(inputImg) inputImg.value = ""; 
+        if(container) container.classList.add("d-none");
+    }
+
+    function abrirYPrevisualizarDesdeAccesoRapido(inputFast) {
+        if (inputFast.files && inputFast.files[0]) {
+            var mainInput = document.getElementById("inputImagen");
+            mainInput.files = inputFast.files;
+            document.getElementById('composerForm').classList.add('is-open');
+            document.getElementById("tipoContenidoSelect").value = "Imagen";
+            conmutarTipoContenido();
+            mostrarPrevisualizacion(mainInput);
+        }
+    }
+
+    function abrirComposerConVideo() {
+        document.getElementById('composerForm').classList.add('is-open');
+        document.getElementById("tipoContenidoSelect").value = "Video";
+        conmutarTipoContenido();
+    }
+
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        conmutarTipoContenido();
+    });
+
+    @if (!ViewData.ModelState.IsValid)
+                {
+                    <text>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        var formContainer = document.getElementById('composerForm');
+                        if (formContainer) {
+                            formContainer.classList.add('is-open');
+
+                        
+                        var tipoContenidoEnviado = "@Context.Request.Form["TipoContenido"]";
+                var selectFormato = document.getElementById("tipoContenidoSelect");
+                
+                if (selectFormato && tipoContenidoEnviado) {
+                    
+                    selectFormato.value = tipoContenidoEnviado;
+                    
+                    
+                    conmutarTipoContenido();
+                }
+                        }
+                    });
+                    </text>
+                }
+</script>

@@ -1,0 +1,18 @@
+@using Microsoft.AspNetCore.Identity
+@using LinkUpPro.Domain.Entities
+
+@inject SignInManager<Usuario> SignInManager
+@inject UserManager<Usuario> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+        <button type="button" class="nav-link btn btn-link text-dark border-0 bg-transparent" data-bs-toggle="modal" data-bs-target="#logoutModal">
+        Cerrar Sesión
+    </button>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Iniciar Sesión</a>
+    </li>
+}

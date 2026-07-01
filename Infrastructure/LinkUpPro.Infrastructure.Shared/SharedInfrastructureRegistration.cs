@@ -1,0 +1,13 @@
+// LinkUpPro.Infrastructure.Shared/ServiceRegistration.cs
+using LinkUpPro.Application.Interfaces.Shared;
+using Microsoft.Extensions.DependencyInjection;
+using LinkUpPro.Infrastructure.Shared.Services;
+
+public static class SharedInfrastructureRegistration
+{
+    public static void AddSharedInfrastructure(this IServiceCollection services)
+    {
+        services.AddTransient<IEmailService, EmailService>();
+        services.AddTransient<IFileService, FileService>();
+    }
+}

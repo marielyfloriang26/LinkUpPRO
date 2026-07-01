@@ -1,0 +1,178 @@
+@model List<LinkUpPro.Application.ViewModels.Publicacion.PublicacionViewModel>
+
+
+@{
+    ViewData["Title"] = "Feed";
+}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="~/css/publicaciones.css" asp-append-version="true" />
+@await Html.PartialAsync("FiltrosBusqueda")
+
+<div class="lup-layout">
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <!-- SIDEBAR IZQUIERDO-->
+    @await Html.PartialAsync("_SidebarLeft")
+
+    
+    <!-- FEED CENTRAL -->
+    <main class="lup-feed">
+        
+        @{
+    // Guarda si hay publicaciones para que el componente de abajo lo sepa
+    ViewData["HayPublicaciones"] = Model != null && Model.Any();
+}
+        <!-- CREAR PUBLICACIÓN -->
+        @await Html.PartialAsync("CrearPublicacion", new LinkUpPro.Application.ViewModels.Publicacion.GuardarPublicacionViewModel())
+
+        <!-- SEPARADOR DE FEED -->
+        <div class="lup-feed-divider">
+            <span>Publicaciones recientes</span>
+        </div>
+
+        <!-- ESTADO VACIO -->
+        @if (Model == null || !Model.Any())
+        {
+            // Comprueba si el usuario aplico algun criterio de busqueda o filtro
+            bool tieneFiltros = !string.IsNullOrEmpty(ViewBag.TextoBusqueda) || 
+                                (ViewBag.TipoContenido != null && ViewBag.TipoContenido != "Todos") || 
+                                (ViewBag.EstadoEdicion != null && ViewBag.EstadoEdicion != "Todas") || 
+                                !string.IsNullOrEmpty(ViewBag.FechaDesde) || 
+                                !string.IsNullOrEmpty(ViewBag.FechaHasta);
+
+            if (tieneFiltros)
+            {
+                <!-- Mensaje al no encontrar resultados de filtros -->
+                <div class="alert alert-warning text-center my-3 border border-warning-subtle" style="border-radius: 8px; padding: 20px; font-size: 0.9rem; background-color: #fff3cd; color: #664d03;">
+                    <i class="bi bi-exclamation-circle-fill me-2"></i>
+                    No se encontraron publicaciones que coincidan con los criterios seleccionados.
+                </div>
+            }
+            else
+            {
+                <!-- Estado vacío inicial (sin filtros) -->
+                <div class="lup-empty">
+                    <div class="lup-empty__icon">
+                        <i class="bi bi-rss"></i>
+                    </div>
+                    <h4 class="lup-empty__title">Tu feed está esperando</h4>
+                    <p class="lup-empty__text">Conecta con personas de tu industria o crea tu primera publicación.</p>
+                    <button class="lup-btn lup-btn--primary lup-btn--sm"
+                            onclick="document.getElementById('composerForm').classList.add('is-open'); window.scrollTo({top:0,behavior:'smooth'})">
+                        Crear publicación
+                    </button>
+                </div>
+            }
+        }
+        else
+        {
+            foreach (var post in Model)
+            {
+                 var isOwner = post.UsuarioId.ToString() == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                <article id="post-@post.Id" class="lup-post @(isOwner ? "lup-post--own" : "")">
+
+                    <!-- CABECERA -->
+                    <div class="lup-post__header">
+                        <a href="#" class="lup-post__author-link">
+                            <img src="@(string.IsNullOrEmpty(post.AutorFotoPerfilUrl) ? "https://cdn-icons-png.flaticon.com/512/149/149071.png" : post.AutorFotoPerfilUrl)"
+                                 alt="@post.AutorNombreCompleto" class="lup-avatar lup-avatar--md">
+                        </a>
+                        <div class="lup-post__author-info">
+                        <a href="#" class="lup-post__author-name">@post.AutorNombreCompleto</a>
+                        <div class="lup-post__meta">
+                            <span>@post.FechaCreacion.ToLocalTime().ToString("dd MMM · HH:mm")</span>
+                            <span class="lup-post__privacy">@(post.Privacidad == "Publico" ? "🌎" : "🔒")</span>
+                            
+                            @if (post.FechaModificacion.HasValue)
+                            {
+                                <span class="badge bg-light text-muted border ms-1 fw-normal" style="font-size: 0.65rem; padding: 1px 5px; vertical-align: middle;">
+                                    <i class="bi bi-pencil-fill" style="font-size: 0.55rem;"></i> Editada
+                                </span>
+                            }
+                            </div>
+                    </div>
+
+                    @if (TempData["MensajeExito"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle-fill"></i> @TempData["MensajeExito"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                        @if (isOwner)
+                        {
+                            <div class="dropdown ms-auto">
+                                <button class="lup-icon-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-three-dots"></i>
+                                </button>
+                                <ul class="lup-dropdown">
+                                    <li>
+                                        <a asp-controller="Publicacion" asp-action="Editar" asp-route-id="@post.Id" class="lup-dropdown__item">
+                                        <i class="bi bi-pencil-fill"></i> Editar
+                                    </a>
+                                    </li>
+                                    <li>
+                                        <a asp-controller="Publicacion" asp-action="Eliminar" asp-route-id="@post.Id" class="lup-dropdown__item lup-dropdown__item--danger">
+                                        <i class="bi bi-trash3-fill"></i> Eliminar
+                                    </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="dropdown ms-auto">
+                                <button class="lup-icon-btn" type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots"></i>
+                                </button>
+                                <ul class="lup-dropdown">
+                                    <li><a href="#" class="lup-dropdown__item"><i class="bi bi-flag-fill"></i> Reportar</a></li>
+                                    <li><a href="#" class="lup-dropdown__item"><i class="bi bi-eye-slash-fill"></i> No me interesa</a></li>
+                                </ul>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- CONTENIDO -->
+                    <div class="lup-post__body">
+                        <p class="lup-post__text">@post.ContenidoTexto</p>
+
+                        @if (!string.IsNullOrEmpty(post.ImagenUrl))
+                        {
+                            <div class="lup-post__media">
+                                <img src="@post.ImagenUrl" alt="Imagen del post" class="lup-post__img">
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(post.YouTubeVideoUrl))
+                        {
+                            var videoId = post.YouTubeVideoUrl.Contains("v=")
+                                ? post.YouTubeVideoUrl.Split("v=")[1].Split("&")[0]
+                                : post.YouTubeVideoUrl.Split("/").Last();
+                            <div class="lup-post__video">
+                                <div class="ratio ratio-16x9">
+                                    <iframe src="https://www.youtube.com/embed/@videoId"
+                                            title="Video" allowfullscreen loading="lazy"></iframe>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- CONTADOR DE REACCIONES -->
+                    @await Html.PartialAsync("Reacciones", post)
+
+                @await Html.PartialAsync("Comentarios", post)
+
+                </article>
+            }
+        }
+
+    </main>
+
+    <!-- SIDEBAR DERECHO (sugerencias) -->
+    @await Html.PartialAsync("_SidebarRight")
+
+
+<script src="~/js/publicaciones.js" asp-append-version="true"></script>

@@ -1,0 +1,222 @@
+@model LinkUpPro.Application.ViewModels.Publicacion.PublicacionViewModel
+
+<div class="lup-comments" id="comments-@Model.Id">
+                        
+                        @* Los comentarios y respuestas existentes deben continuar visibles siempre *@
+                        @if (Model.Comentarios != null && Model.Comentarios.Any())
+                        {
+                            <div class="lup-comments__list">
+                              @foreach (var comentario in Model.Comentarios.Where(c => c.ComentarioPadreId == null))
+                                {
+                                   bool esAutorComentario = comentario.UsuarioId.ToString() == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                                    
+                                    <div class="lup-comment-container mb-3">
+                                        <!-- Comentario principal -->
+                                        <div class="lup-comment">
+                                            <img src="@(string.IsNullOrEmpty(comentario.AutorFotoPerfil) ? "https://cdn-icons-png.flaticon.com/512/149/149071.png" : comentario.AutorFotoPerfil)"
+                                                 alt="@comentario.AutorNombre" class="lup-avatar lup-avatar--sm">
+                                            <div class="lup-comment__bubble">
+                                                <div class="lup-comment__header" id="commentHeader-@comentario.Id">
+                                                    <span class="lup-comment__author">@comentario.AutorNombre</span>
+                                                    <span class="lup-comment__time">
+                                                        @comentario.FechaCreacion.ToLocalTime().ToString("dd MMM yyyy · HH:mm")
+                                                        @if (comentario.FechaModificacion.HasValue)
+                                                        {
+                                                            <span class="text-muted small ms-1" style="font-size: 0.65rem;">(Editado)</span>
+                                                        }
+                                                    </span>
+                                                </div>
+
+                                                @if (comentario.Contenido == "Este comentario fue eliminado.")
+                                                {
+                                                    <p class="lup-comment__text text-muted fst-italic">@comentario.Contenido</p>
+                                                }
+                                                else
+                                                {
+                                                    <p class="lup-comment__text" id="commentText-@comentario.Id">@comentario.Contenido</p>
+                                                    
+                                                    <!-- Formulario de Edición Inline -->
+                                                    <form asp-controller="Comentario" asp-action="Editar" method="post" class="d-none mt-2" id="editCommentForm-@comentario.Id">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@comentario.Id" />
+                                                    <input type="hidden" name="publicacionId" value="@Model.Id" /> 
+                                                                                                        
+                                                        <div class="input-group input-group-sm">
+                                                            <input type="text" name="contenido" class="form-control" value="@comentario.Contenido" required maxLength="500" />
+                                                            <button class="btn btn-primary btn-sm" type="submit" style="background: #5B4CFF; border: none;">Guardar</button>
+                                                            <button class="btn btn-secondary btn-sm" type="button" onclick="closeEditComment('@comentario.Id')">Cancelar</button>
+                                                        </div>
+                                                    </form>
+
+                                                    <!-- Confirmación de Eliminación Estilizada Inline -->
+                                                    <div class="d-none alert alert-danger p-2 my-2 text-center border-0" id="deleteConfirm-@comentario.Id" style="border-radius: 8px; font-size: 0.78rem; background-color: #FDF0F0; color: #C0392B;">
+                                                        <span class="d-block mb-2 fw-semibold"><i class="bi bi-exclamation-triangle-fill"></i> ¿Está seguro que desea eliminar este comentario?</span>
+                                                        <form asp-controller="Comentario" asp-action="Eliminar" method="post" class="d-inline">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="id" value="@comentario.Id" />
+                                                        <input type="hidden" name="publicacionId" value="@Model.Id" /> 
+                                                            <button type="submit" class="btn btn-danger btn-sm py-1 px-3" style="font-size: 0.7rem; border-radius: 12px; background: #C0392B; border: none;">Aceptar</button>
+                                                        </form>
+                                                        <button type="button" class="btn btn-light btn-sm py-1 px-3 border ms-1" style="font-size: 0.7rem; border-radius: 12px;" onclick="closeDeleteComment('@comentario.Id')">Cancelar</button>
+                                                    </div>
+                                                }
+                                                
+                                                @if (comentario.Contenido != "Este comentario fue eliminado.")
+                                                {
+                                                    <div class="lup-comment__actions" id="commentActions-@comentario.Id">
+                                                        <button class="lup-comment__action">Me gusta</button>
+                                                        
+                                                        @if (Model.PermiteComentarios)
+                                                        {
+                                                            <button class="lup-comment__action" onclick="toggleReplyForm('@comentario.Id')">Responder</button>
+                                                        }
+
+                                                        @if (esAutorComentario)
+                                                        {
+                                                            <button class="lup-comment__action text-primary ms-2" onclick="openEditComment('@comentario.Id')">Editar</button>
+                                                            <!-- Botón de eliminar con diseño inline -->
+                                                            <button type="button" class="lup-comment__action text-danger ms-2" onclick="openDeleteComment('@comentario.Id')">Eliminar</button>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <!-- Formulario de Respuesta -->
+                                        @if (Model.PermiteComentarios && comentario.Contenido != "Este comentario fue eliminado.")
+                                        {
+                                            <div class="reply-form-container d-none mt-2" id="replyForm-@comentario.Id">
+                                                <form asp-controller="Comentario" asp-action="Crear" method="post" class="lup-comment-input ms-5">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="PublicacionId" value="@Model.Id" />
+                                                    <input type="hidden" name="ComentarioPadreId" value="@comentario.Id" />
+
+                                                    <img src="@(User.FindFirst("FotoPerfilUrl")?.Value ?? "https://cdn-icons-png.flaticon.com/512/149/149071.png")"
+                                                         alt="Tu foto" class="lup-avatar lup-avatar--sm" style="width: 28px; height: 28px;">
+                                                    <div class="lup-comment-input__field">
+                                                        <input type="text" 
+                                                               name="Contenido" 
+                                                               placeholder="Responde a este comentario..." 
+                                                               class="lup-comment-input__text"
+                                                               style="font-size: 0.8rem;"
+                                                               required>
+                                                        <button class="lup-comment-input__send" type="submit" style="width: 28px; height: 28px; font-size: 0.7rem;">
+                                                            <i class="bi bi-send-fill"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        }
+
+                                        <!-- Respuestas Anidadas -->
+                                        @if (comentario.Respuestas != null && comentario.Respuestas.Any())
+                                        {
+                                            <div class="lup-comment__replies-list ms-5 mt-2 border-start ps-3">
+                                                @foreach (var respuesta in comentario.Respuestas)
+                                                {
+                                                                                                     bool esAutorRespuesta = respuesta.UsuarioId.ToString() == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                                                    
+                                                    <div class="lup-comment mt-2">
+                                                        <img src="@(string.IsNullOrEmpty(respuesta.AutorFotoPerfil) ? "https://cdn-icons-png.flaticon.com/512/149/149071.png" : respuesta.AutorFotoPerfil)"
+                                                             alt="@respuesta.AutorNombre" class="lup-avatar lup-avatar--sm" style="width: 30px; height: 30px;">
+                                                        <div class="lup-comment__bubble">
+                                                            <div class="lup-comment__header" id="commentHeader-@respuesta.Id">
+                                                                <span class="lup-comment__author" style="font-size: 0.78rem;">@respuesta.AutorNombre</span>
+                                                                <span class="lup-comment__time" style="font-size: 0.65rem;">
+                                                                    @respuesta.FechaCreacion.ToLocalTime().ToString("dd MMM yyyy · HH:mm")
+                                                                    @if (respuesta.FechaModificacion.HasValue)
+                                                                    {
+                                                                        <span class="text-muted small ms-1" style="font-size: 0.6rem;">(Editado)</span>
+                                                                    }
+                                                                </span>
+                                                            </div>
+
+                                                            @if (respuesta.Contenido == "Este comentario fue eliminado.")
+                                                            {
+                                                                <p class="lup-comment__text text-muted fst-italic" style="font-size: 0.825rem;">@respuesta.Contenido</p>
+                                                            }
+                                                            else
+                                                            {
+                                                                <p class="lup-comment__text" id="commentText-@respuesta.Id" style="font-size: 0.825rem;">@respuesta.Contenido</p>
+                                                                
+                                                                <!-- Formulario de Edicion Inline para Respuestas -->
+                                                                <form asp-controller="Comentario" asp-action="Editar" method="post" class="d-none mt-2" id="editCommentForm-@respuesta.Id">
+                                                                    @Html.AntiForgeryToken()
+                                                                    <input type="hidden" name="id" value="@respuesta.Id" />
+                                                                    <input type="hidden" name="publicacionId" value="@Model.Id" />
+                                                                    <div class="input-group input-group-sm">
+                                                                        <input type="text" name="contenido" class="form-control" value="@respuesta.Contenido" required maxLength="500" />
+                                                                        <button class="btn btn-primary btn-sm" type="submit" style="background: #5B4CFF; border: none;">Guardar</button>
+                                                                        <button class="btn btn-secondary btn-sm" type="button" onclick="closeEditComment('@respuesta.Id')">Cancelar</button>
+                                                                    </div>
+                                                                </form>
+
+                                                                <!-- Confirmación de Eliminación Estilizada para Respuestas -->
+                                                                <div class="d-none alert alert-danger p-2 my-2 text-center border-0" id="deleteConfirm-@respuesta.Id" style="border-radius: 8px; font-size: 0.75rem; background-color: #FDF0F0; color: #C0392B;">
+                                                                    <span class="d-block mb-2 fw-semibold"><i class="bi bi-exclamation-triangle-fill"></i> ¿Está seguro que desea eliminar esta respuesta?</span>
+                                                                    <form asp-controller="Comentario" asp-action="Eliminar" method="post" class="d-inline">
+                                                                        @Html.AntiForgeryToken()
+                                                                        <input type="hidden" name="id" value="@respuesta.Id" />
+                                                                        <input type="hidden" name="publicacionId" value="@Model.Id" />
+                                                                        <button type="submit" class="btn btn-danger btn-sm py-1 px-3" style="font-size: 0.68rem; border-radius: 12px; background: #C0392B; border: none;">Aceptar</button>
+                                                                    </form>
+                                                                    <button type="button" class="btn btn-light btn-sm py-1 px-3 border ms-1" style="font-size: 0.68rem; border-radius: 12px;" onclick="closeDeleteComment('@respuesta.Id')">Cancelar</button>
+                                                                </div>
+                                                            }
+                                                            
+                                                            @if (respuesta.Contenido != "Este comentario fue eliminado.")
+                                                            {
+                                                                <div class="lup-comment__actions" id="commentActions-@respuesta.Id">
+                                                                    <button class="lup-comment__action" style="font-size: 0.68rem;">Me gusta</button>
+                                                                    @if (Model.PermiteComentarios)
+                                                                    {
+                                                                        <button class="lup-comment__action" style="font-size: 0.68rem;" onclick="toggleReplyForm('@comentario.Id')">Responder</button>
+                                                                    }
+                                                                    
+                                                                    @if (esAutorRespuesta)
+                                                                    {
+                                                                        <button class="lup-comment__action text-primary ms-2" style="font-size: 0.68rem;" onclick="openEditComment('@respuesta.Id')">Editar</button>
+                                                                        <!-- Botón de eliminar con diseño inline -->
+                                                                        <button type="button" class="lup-comment__action text-danger ms-2" style="font-size: 0.68rem;" onclick="openDeleteComment('@respuesta.Id')">Eliminar</button>
+                                                                    }
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        }
+
+                        
+                        @if (Model.PermiteComentarios)
+                        {
+                            <form asp-controller="Comentario" asp-action="Crear" method="post" class="lup-comment-input">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="PublicacionId" value="@Model.Id" />
+
+                                <img src="@(User.FindFirst("FotoPerfilUrl")?.Value ?? "https://cdn-icons-png.flaticon.com/512/149/149071.png")"
+                                     alt="Tu foto" class="lup-avatar lup-avatar--sm">
+                                <div class="lup-comment-input__field">
+                                    <input type="text" 
+                                           name="Contenido" 
+                                           placeholder="Escribe un comentario..." 
+                                           class="lup-comment-input__text"
+                                           required>
+                                    <button class="lup-comment-input__send" type="submit">
+                                        <i class="bi bi-send-fill"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        }
+                        else
+                        {
+                            <div class="alert alert-danger text-danger border border-danger-subtle text-center my-2" style="font-size: 0.85rem; border-radius: 8px; background-color: #f8d7da; padding: 10px; width: 100%;">
+                                <i class="bi bi-chat-left-x-fill me-1"></i> 
+                                Los comentarios están desactivados para esta publicación.
+                            </div>
+                        }
+                    </div>
