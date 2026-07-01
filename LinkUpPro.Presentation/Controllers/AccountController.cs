@@ -286,15 +286,26 @@ public class AccountController : Controller
             var callbackUrl = Url.Action("ConfirmEmail", "Account", 
                 new { userId = user.Id, token = token }, protocol: HttpContext.Request.Scheme);
 
-            await _emailService.SendAsync(user.Email, "Reenvío de Activación - LinkUp Pro", 
-                $"Hola, aquí tienes tu nuevo enlace: <a href='{callbackUrl}'>Activar Cuenta</a>");
+            try
+            {
+                await _emailService.SendAsync(user.Email!, "Reenvío de Activación - LinkUp Pro", 
+                    $"Hola, aquí tienes tu nuevo enlace: <a href='{callbackUrl}'>Activar Cuenta</a>");
+                TempData["Success"] = mensajeExito;
+            }
+            catch (Exception)
+            {
+                TempData["Success"] = $"{mensajeExito} [Modo Desarrollo] No se pudo enviar el correo de activación. Puedes activarla usando este enlace: <a href='{callbackUrl}' class='alert-link'>Activar Cuenta Aquí</a>";
+            }
 
             // 4. Registrar la hora del envío
             user.UltimoReenvioCorreo = DateTime.Now;
             await _userManager.UpdateAsync(user);
         }
 
-        TempData["Success"] = mensajeExito;
+        if (TempData["Success"] == null)
+        {
+            TempData["Success"] = mensajeExito;
+        }
         return RedirectToAction("Login");
     }
 
