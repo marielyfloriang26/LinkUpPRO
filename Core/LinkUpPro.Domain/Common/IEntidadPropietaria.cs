@@ -1,4 +1,4 @@
-namespace LinkUpPro.Application.Interfaces;
+namespace LinkUpPro.Domain.Common;
 
 public interface IEntidadPropietaria {
     int UsuarioId { get; }
