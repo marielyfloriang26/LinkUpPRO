@@ -39,88 +39,112 @@ namespace LinkUpPro.Presentation.Controllers
             DateTime? fechaHastaPub,
             string? estadoEdicionPub)
         {
-            var userId = GetCurrentUserId();
-            var amigosDto = string.IsNullOrWhiteSpace(query) 
-                ? await _amigoService.GetAmigosAsync(userId) 
-                : await _amigoService.BuscarAmigosAsync(userId, query);
-
-            var vm = new AmigoListViewModel
+            try
             {
-                Amigos = new List<AmigoViewModel>(),
-                TotalAmigos = (await _amigoService.GetAmigosAsync(userId)).Count,
-                SearchQuery = query,
-                TextoBusquedaPub = textoBusquedaPub,
-                AmigoIdPub = amigoIdPub,
-                TipoContenidoPub = tipoContenidoPub ?? "Todos",
-                FechaDesdePub = fechaDesdePub,
-                FechaHastaPub = fechaHastaPub,
-                EstadoEdicionPub = estadoEdicionPub ?? "Todas"
-            };
+                var userId = GetCurrentUserId();
+                var amigosDto = string.IsNullOrWhiteSpace(query) 
+                    ? await _amigoService.GetAmigosAsync(userId) 
+                    : await _amigoService.BuscarAmigosAsync(userId, query);
 
-            foreach (var a in amigosDto)
-            {
-                vm.Amigos.Add(new AmigoViewModel
+                var vm = new AmigoListViewModel
                 {
-                    Id = a.Id,
-                    Nombre = a.Nombre,
-                    Apellido = a.Apellido,
-                    NombreUsuario = a.NombreUsuario,
-                    FotoPerfilUrl = a.FotoPerfilUrl,
-                    AmigosEnComun = await _amigoService.GetAmigosEnComunCountAsync(userId, a.Id)
-                });
-            }
+                    Amigos = new List<AmigoViewModel>(),
+                    TotalAmigos = (await _amigoService.GetAmigosAsync(userId)).Count,
+                    SearchQuery = query,
+                    TextoBusquedaPub = textoBusquedaPub,
+                    AmigoIdPub = amigoIdPub,
+                    TipoContenidoPub = tipoContenidoPub ?? "Todos",
+                    FechaDesdePub = fechaDesdePub,
+                    FechaHastaPub = fechaHastaPub,
+                    EstadoEdicionPub = estadoEdicionPub ?? "Todas"
+                };
 
-            // Validations for dates and friend
-            if (amigoIdPub.HasValue && !amigosDto.Any(a => a.Id == amigoIdPub.Value))
-            {
-                ViewBag.ErrorAmigo = "El usuario seleccionado ya no forma parte de su lista de amigos.";
-            }
-            else if (fechaDesdePub.HasValue && fechaHastaPub.HasValue && fechaDesdePub > fechaHastaPub)
-            {
-                ViewBag.ErrorFechas = "La fecha inicial no puede ser posterior a la fecha final.";
-            }
-            else
-            {
-                var pubDtos = await _publicacionService.ObtenerPublicacionesAmigosAsync(userId, textoBusquedaPub, amigoIdPub, tipoContenidoPub, estadoEdicionPub, fechaDesdePub, fechaHastaPub);
-                vm.Publicaciones = _mapper.Map<List<LinkUpPro.Application.ViewModels.Publicacion.PublicacionViewModel>>(pubDtos);
-            }
+                foreach (var a in amigosDto)
+                {
+                    vm.Amigos.Add(new AmigoViewModel
+                    {
+                        Id = a.Id,
+                        Nombre = a.Nombre,
+                        Apellido = a.Apellido,
+                        NombreUsuario = a.NombreUsuario,
+                        FotoPerfilUrl = a.FotoPerfilUrl,
+                        AmigosEnComun = await _amigoService.GetAmigosEnComunCountAsync(userId, a.Id)
+                    });
+                }
 
-            // Publicaciones disponibles should be the total active publications of friends regardless of text/date filters
-            var todasPubs = await _publicacionService.ObtenerPublicacionesAmigosAsync(userId);
-            vm.PublicacionesDisponibles = todasPubs.Count;
+                // Validations for dates and friend
+                if (amigoIdPub.HasValue && !amigosDto.Any(a => a.Id == amigoIdPub.Value))
+                {
+                    ViewBag.ErrorAmigo = "El usuario seleccionado ya no forma parte de su lista de amigos.";
+                }
+                else if (fechaDesdePub.HasValue && fechaHastaPub.HasValue && fechaDesdePub > fechaHastaPub)
+                {
+                    ViewBag.ErrorFechas = "La fecha inicial no puede ser posterior a la fecha final.";
+                }
+                else
+                {
+                    var pubDtos = await _publicacionService.ObtenerPublicacionesAmigosAsync(userId, textoBusquedaPub, amigoIdPub, tipoContenidoPub, estadoEdicionPub, fechaDesdePub, fechaHastaPub);
+                    vm.Publicaciones = _mapper.Map<List<LinkUpPro.Application.ViewModels.Publicacion.PublicacionViewModel>>(pubDtos);
+                }
 
-            return View(vm);
+                // Publicaciones disponibles should be the total active publications of friends regardless of text/date filters
+                var todasPubs = await _publicacionService.ObtenerPublicacionesAmigosAsync(userId);
+                vm.PublicacionesDisponibles = todasPubs.Count;
+
+                return View(vm);
+            }
+            catch
+            {
+                TempData["ErrorMessage"] = "Ocurrió un error inesperado al cargar la lista de amigos.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> AmigosEnComun(int id)
         {
-            var userId = GetCurrentUserId();
-            var mutualFriends = await _amigoService.GetAmigosEnComunAsync(userId, id);
-            return View(mutualFriends);
+            try
+            {
+                var userId = GetCurrentUserId();
+                var mutualFriends = await _amigoService.GetAmigosEnComunAsync(userId, id);
+                return View(mutualFriends);
+            }
+            catch
+            {
+                TempData["ErrorMessage"] = "Ocurrió un error inesperado al cargar los amigos en común.";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> Eliminar(int id)
         {
-            var userId = GetCurrentUserId();
-            var amigos = await _amigoService.GetAmigosAsync(userId);
-            var amigo = amigos.FirstOrDefault(a => a.Id == id);
-
-            if (amigo == null)
+            try
             {
-                TempData["ErrorMessage"] = "La amistad seleccionada ya no se encuentra disponible.";
+                var userId = GetCurrentUserId();
+                var amigos = await _amigoService.GetAmigosAsync(userId);
+                var amigo = amigos.FirstOrDefault(a => a.Id == id);
+
+                if (amigo == null)
+                {
+                    TempData["ErrorMessage"] = "La amistad seleccionada ya no se encuentra disponible.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var vm = new AmigoViewModel 
+                { 
+                    Id = amigo.Id, 
+                    Nombre = amigo.Nombre,
+                    Apellido = amigo.Apellido,
+                    NombreUsuario = amigo.NombreUsuario
+                }; 
+                return View(vm);
+            }
+            catch
+            {
+                TempData["ErrorMessage"] = "Ocurrió un error al procesar la solicitud.";
                 return RedirectToAction(nameof(Index));
             }
-
-            var vm = new AmigoViewModel 
-            { 
-                Id = amigo.Id, 
-                Nombre = amigo.Nombre,
-                Apellido = amigo.Apellido,
-                NombreUsuario = amigo.NombreUsuario
-            }; 
-            return View(vm);
         }
 
         [HttpPost, ActionName("Eliminar")]
