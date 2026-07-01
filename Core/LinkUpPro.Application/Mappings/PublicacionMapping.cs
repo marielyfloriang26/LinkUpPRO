@@ -27,7 +27,8 @@ public class PublicacionMapping : Profile
             .ForMember(dest => dest.Comentarios, opt => opt.MapFrom(src => src.Comentarios))
             .ForMember(dest => dest.ReaccionUsuarioAutenticado, opt => opt.MapFrom((src, dest, destMember, context) => 
             {
-                var userId = context.Items.ContainsKey("UsuarioId") ? (int)context.Items["UsuarioId"] : 1;
+              //  var userId = context.Items.ContainsKey("UsuarioId") ? (int)context.Items["UsuarioId"] : 1;
+                int userId = (context.TryGetItems(out var items) && items.TryGetValue("UsuarioId", out var idObj)) ? (int)idObj : 1;
                 return src.Reacciones.FirstOrDefault(r => r.UsuarioId == userId)?.TipoReaccion;
             }));
 

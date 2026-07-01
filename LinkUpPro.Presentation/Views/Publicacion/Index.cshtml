@@ -19,7 +19,13 @@
     
     <!-- FEED CENTRAL -->
     <main class="lup-feed">
-        
+        @if (TempData["MensajeExito"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle-fill"></i> @TempData["MensajeExito"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
         @{
     // Guarda si hay publicaciones para que el componente de abajo lo sepa
     ViewData["HayPublicaciones"] = Model != null && Model.Any();
@@ -94,13 +100,6 @@
                             </div>
                     </div>
 
-                    @if (TempData["MensajeExito"] != null)
-                    {
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="bi bi-check-circle-fill"></i> @TempData["MensajeExito"]
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    }
                         @if (isOwner)
                         {
                             <div class="dropdown ms-auto">
