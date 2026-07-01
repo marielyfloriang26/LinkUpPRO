@@ -1,12 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "bd/PVcjs1EM=",
+  "dgSpecHash": "DuzMKX03YX4=",
   "success": true,
-  "projectFilePath": "C:\\Users\\jerem\\OneDrive\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj",
-  "expectedPackageFiles": [
-    "C:\\Users\\jerem\\.nuget\\packages\\microsoft.netcore.app.ref\\9.0.13\\microsoft.netcore.app.ref.9.0.13.nupkg.sha512",
-    "C:\\Users\\jerem\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\9.0.13\\microsoft.windowsdesktop.app.ref.9.0.13.nupkg.sha512",
-    "C:\\Users\\jerem\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\9.0.13\\microsoft.aspnetcore.app.ref.9.0.13.nupkg.sha512"
-  ],
+  "projectFilePath": "C:\\Users\\Mariely Florian\\Documents\\GitHub\\LinkUpPro\\Core\\LinkUpPro.Application\\LinkUpPro.Application.csproj",
+  "expectedPackageFiles": [],
   "logs": []
 }
