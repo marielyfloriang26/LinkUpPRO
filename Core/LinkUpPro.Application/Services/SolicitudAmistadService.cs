@@ -86,26 +86,38 @@ public class SolicitudAmistadService : ISolicitudAmistadService
             throw new ApiException("No se puede aceptar la solicitud porque uno de los usuarios se encuentra inactivo.");
         }
 
-        solicitud.Estado = "Aceptada";
-        solicitud.FechaRespuesta = DateTime.UtcNow;
-        await _solicitudRepository.UpdateAsync(solicitud);
+        try
+        {
+            await _solicitudRepository.BeginTransactionAsync();
 
-        var amistadInactiva = await _amistadRepository.GetAmistadEntreUsuariosAsync(solicitud.EmisorId, solicitud.ReceptorId);
-        if (amistadInactiva != null)
-        {
-            amistadInactiva.Estado = "Activa";
-            await _amistadRepository.UpdateAsync(amistadInactiva);
-        }
-        else
-        {
-            var nuevaAmistad = new Amistad
+            solicitud.Estado = "Aceptada";
+            solicitud.FechaRespuesta = DateTime.UtcNow;
+            await _solicitudRepository.UpdateAsync(solicitud);
+
+            var amistadInactiva = await _amistadRepository.GetAmistadEntreUsuariosAsync(solicitud.EmisorId, solicitud.ReceptorId);
+            if (amistadInactiva != null)
             {
-                UsuarioId1 = solicitud.EmisorId,
-                UsuarioId2 = solicitud.ReceptorId,
-                FechaAmistad = DateTime.UtcNow,
-                Estado = "Activa"
-            };
-            await _amistadRepository.AddAsync(nuevaAmistad);
+                amistadInactiva.Estado = "Activa";
+                await _amistadRepository.UpdateAsync(amistadInactiva);
+            }
+            else
+            {
+                var nuevaAmistad = new Amistad
+                {
+                    UsuarioId1 = solicitud.EmisorId,
+                    UsuarioId2 = solicitud.ReceptorId,
+                    FechaAmistad = DateTime.UtcNow,
+                    Estado = "Activa"
+                };
+                await _amistadRepository.AddAsync(nuevaAmistad);
+            }
+
+            await _solicitudRepository.CommitTransactionAsync();
+        }
+        catch
+        {
+            await _solicitudRepository.RollbackTransactionAsync();
+            throw;
         }
     }
 

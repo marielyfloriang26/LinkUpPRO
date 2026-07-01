@@ -116,7 +116,9 @@
                                     <div class="flex-grow-1">
                                         <h6 class="mb-0 fw-bold text-dark">@sol.NombreCompleto</h6>
                                         <small class="text-muted d-block">@@@sol.NombreUsuario</small>
-                                        <small class="text-primary fw-bold mt-1 d-block"><i class="bi bi-people-fill me-1"></i>@sol.AmigosEnComun amigos en común</small>
+                                        <a asp-controller="Amigos" asp-action="AmigosEnComun" asp-route-id="@sol.UsuarioId" class="text-primary fw-bold mt-1 d-block text-decoration-none">
+                                            <i class="bi bi-people-fill me-1"></i>@sol.AmigosEnComun amigos en común
+                                        </a>
                                     </div>
                                     <div class="d-flex gap-2">
                                         <a asp-action="Aceptar" asp-route-id="@sol.Id" class="lup-btn lup-btn--sm" style="background: var(--lup-green); color: #fff;">Aceptar</a>
@@ -149,6 +151,9 @@
                                     <div class="flex-grow-1">
                                         <h6 class="mb-0 fw-bold text-dark">@sol.NombreCompleto</h6>
                                         <small class="text-muted d-block">@@@sol.NombreUsuario</small>
+                                        <a asp-controller="Amigos" asp-action="AmigosEnComun" asp-route-id="@sol.UsuarioId" class="text-primary fw-bold mt-1 d-block text-decoration-none" style="font-size: 0.875em;">
+                                            <i class="bi bi-people-fill me-1"></i>@sol.AmigosEnComun amigos en común
+                                        </a>
                                         <small class="text-secondary d-block mt-1"><i class="bi bi-clock me-1"></i>Enviada: @sol.FechaEnvio.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</small>
                                     </div>
                                     <div class="d-flex gap-2">

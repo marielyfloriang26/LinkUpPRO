@@ -43,4 +43,28 @@ public class RepositoryAsync<T> : IRepositoryAsync<T> where T : class
         _dbContext.Set<T>().Remove(entity);
         await _dbContext.SaveChangesAsync();
     }
+
+    public async Task BeginTransactionAsync()
+    {
+        if (_dbContext.Database.CurrentTransaction == null)
+        {
+            await _dbContext.Database.BeginTransactionAsync();
+        }
+    }
+
+    public async Task CommitTransactionAsync()
+    {
+        if (_dbContext.Database.CurrentTransaction != null)
+        {
+            await _dbContext.Database.CurrentTransaction.CommitAsync();
+        }
+    }
+
+    public async Task RollbackTransactionAsync()
+    {
+        if (_dbContext.Database.CurrentTransaction != null)
+        {
+            await _dbContext.Database.CurrentTransaction.RollbackAsync();
+        }
+    }
 }

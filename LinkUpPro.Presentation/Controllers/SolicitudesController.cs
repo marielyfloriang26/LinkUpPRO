@@ -14,10 +14,12 @@ namespace LinkUpPro.Presentation.Controllers
     public class SolicitudesController : Controller
     {
         private readonly ISolicitudAmistadService _solicitudService;
+        private readonly IAmigoService _amigoService;
 
-        public SolicitudesController(ISolicitudAmistadService solicitudService)
+        public SolicitudesController(ISolicitudAmistadService solicitudService, IAmigoService amigoService)
         {
             _solicitudService = solicitudService;
+            _amigoService = amigoService;
         }
 
         private int GetCurrentUserId()
@@ -28,72 +30,104 @@ namespace LinkUpPro.Presentation.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var userId = GetCurrentUserId();
-            var pendientesDto = await _solicitudService.GetSolicitudesRecibidasAsync(userId);
-            var enviadasDto = await _solicitudService.GetSolicitudesEnviadasAsync(userId);
-
-            var vm = new SolicitudesIndexViewModel
+            try
             {
-                Pendientes = pendientesDto
-                    .Where(s => s.Estado == "En espera de respuesta")
-                    .OrderByDescending(s => s.FechaEnvio)
-                    .Select(s => new SolicitudAmistadViewModel
+                var userId = GetCurrentUserId();
+                var pendientesDto = await _solicitudService.GetSolicitudesRecibidasAsync(userId);
+                var enviadasDto = await _solicitudService.GetSolicitudesEnviadasAsync(userId);
+
+                var vm = new SolicitudesIndexViewModel
                 {
-                    Id = s.Id,
-                    UsuarioId = s.Emisor.Id,
-                    Nombre = s.Emisor.Nombre,
-                    Apellido = s.Emisor.Apellido,
-                    NombreUsuario = s.Emisor.NombreUsuario,
-                    FotoPerfilUrl = s.Emisor.FotoPerfilUrl,
-                    FechaEnvio = s.FechaEnvio,
-                    Estado = s.Estado
-                }).ToList(),
-                Enviadas = enviadasDto
-                    .Where(s => !s.OcultaEnHistorial && s.Estado != "Cancelada")
-                    .OrderByDescending(s => s.FechaEnvio)
-                    .Select(s => new SolicitudAmistadViewModel
+                    Pendientes = new List<SolicitudAmistadViewModel>(),
+                    Enviadas = new List<SolicitudAmistadViewModel>()
+                };
+
+                foreach (var s in pendientesDto.Where(s => s.Estado == "En espera de respuesta").OrderByDescending(s => s.FechaEnvio))
                 {
-                    Id = s.Id,
-                    UsuarioId = s.Receptor.Id,
-                    Nombre = s.Receptor.Nombre,
-                    Apellido = s.Receptor.Apellido,
-                    NombreUsuario = s.Receptor.NombreUsuario,
-                    FotoPerfilUrl = s.Receptor.FotoPerfilUrl,
-                    FechaEnvio = s.FechaEnvio,
-                    FechaRespuesta = s.FechaRespuesta,
-                    Estado = s.Estado
-                }).ToList()
-            };
-            return View(vm);
+                    vm.Pendientes.Add(new SolicitudAmistadViewModel
+                    {
+                        Id = s.Id,
+                        UsuarioId = s.Emisor.Id,
+                        Nombre = s.Emisor.Nombre,
+                        Apellido = s.Emisor.Apellido,
+                        NombreUsuario = s.Emisor.NombreUsuario,
+                        FotoPerfilUrl = s.Emisor.FotoPerfilUrl,
+                        FechaEnvio = s.FechaEnvio,
+                        Estado = s.Estado,
+                        AmigosEnComun = await _amigoService.GetAmigosEnComunCountAsync(userId, s.Emisor.Id)
+                    });
+                }
+
+                foreach (var s in enviadasDto.Where(s => !s.OcultaEnHistorial && s.Estado != "Cancelada").OrderByDescending(s => s.FechaEnvio))
+                {
+                    vm.Enviadas.Add(new SolicitudAmistadViewModel
+                    {
+                        Id = s.Id,
+                        UsuarioId = s.Receptor.Id,
+                        Nombre = s.Receptor.Nombre,
+                        Apellido = s.Receptor.Apellido,
+                        NombreUsuario = s.Receptor.NombreUsuario,
+                        FotoPerfilUrl = s.Receptor.FotoPerfilUrl,
+                        FechaEnvio = s.FechaEnvio,
+                        FechaRespuesta = s.FechaRespuesta,
+                        Estado = s.Estado,
+                        AmigosEnComun = await _amigoService.GetAmigosEnComunCountAsync(userId, s.Receptor.Id)
+                    });
+                }
+                return View(vm);
+            }
+            catch
+            {
+                TempData["ErrorMessage"] = "Ocurrió un error inesperado al cargar las solicitudes.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> Nueva(string query)
         {
-            var userId = GetCurrentUserId();
-            var usuariosDto = await _solicitudService.BuscarUsuariosParaAgregarAsync(userId, query);
-
-            var usuariosDisponibles = usuariosDto.Select(u => new UsuarioDisponibleViewModel
+            try
             {
-                Id = u.Id,
-                Nombre = u.Nombre,
-                Apellido = u.Apellido,
-                NombreUsuario = u.NombreUsuario,
-                FotoPerfilUrl = u.FotoPerfilUrl,
-                AmigosEnComun = 0 // Needs calculation injected into BuscarUsuariosParaAgregarAsync or looped here. (Can be ignored safely until View is built or updated later)
-            }).ToList();
+                var userId = GetCurrentUserId();
+                var usuariosDto = await _solicitudService.BuscarUsuariosParaAgregarAsync(userId, query);
 
-            ViewBag.SearchQuery = query;
-            return View(usuariosDisponibles);
+                var usuariosDisponibles = new List<UsuarioDisponibleViewModel>();
+                foreach(var u in usuariosDto)
+                {
+                    usuariosDisponibles.Add(new UsuarioDisponibleViewModel
+                    {
+                        Id = u.Id,
+                        Nombre = u.Nombre,
+                        Apellido = u.Apellido,
+                        NombreUsuario = u.NombreUsuario,
+                        FotoPerfilUrl = u.FotoPerfilUrl,
+                        AmigosEnComun = await _amigoService.GetAmigosEnComunCountAsync(userId, u.Id)
+                    });
+                }
+
+                ViewBag.SearchQuery = query;
+                return View(usuariosDisponibles);
+            }
+            catch
+            {
+                TempData["ErrorMessage"] = "Ocurrió un error inesperado al buscar usuarios.";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Enviar(int id)
+        public async Task<IActionResult> Enviar(int? id)
         {
+            if (id == null || id == 0)
+            {
+                TempData["ErrorMessage"] = "Debe seleccionar un usuario para enviar la solicitud de amistad.";
+                return RedirectToAction(nameof(Nueva));
+            }
+
             try
             {
-                await _solicitudService.SendSolicitudAsync(GetCurrentUserId(), id);
+                await _solicitudService.SendSolicitudAsync(GetCurrentUserId(), id.Value);
                 TempData["SuccessMessage"] = "La solicitud de amistad fue enviada correctamente.";
             }
             catch (ApiException ex)
@@ -110,16 +144,24 @@ namespace LinkUpPro.Presentation.Controllers
         [HttpGet]
         public async Task<IActionResult> Aceptar(int id)
         {
-            var userId = GetCurrentUserId();
-            var pendientes = await _solicitudService.GetSolicitudesRecibidasAsync(userId);
-            var sol = pendientes.FirstOrDefault(s => s.Id == id);
-            if (sol == null)
+            try
             {
-                TempData["ErrorMessage"] = "Esta solicitud ya no se encuentra disponible para ser aceptada.";
+                var userId = GetCurrentUserId();
+                var pendientes = await _solicitudService.GetSolicitudesRecibidasAsync(userId);
+                var sol = pendientes.FirstOrDefault(s => s.Id == id);
+                if (sol == null)
+                {
+                    TempData["ErrorMessage"] = "Esta solicitud ya no se encuentra disponible para ser aceptada.";
+                    return RedirectToAction(nameof(Index));
+                }
+                var vm = new LinkUpPro.Presentation.ViewModels.Solicitud.SolicitudAmistadViewModel { Id = sol.Id, NombreUsuario = sol.Emisor.NombreUsuario };
+                return View(vm);
+            }
+            catch
+            {
+                TempData["ErrorMessage"] = "Ocurrió un error al procesar la solicitud.";
                 return RedirectToAction(nameof(Index));
             }
-            var vm = new LinkUpPro.Presentation.ViewModels.Solicitud.SolicitudAmistadViewModel { Id = sol.Id, NombreUsuario = sol.Emisor.NombreUsuario };
-            return View(vm);
         }
 
         [HttpPost, ActionName("Aceptar")]
@@ -145,12 +187,20 @@ namespace LinkUpPro.Presentation.Controllers
         [HttpGet]
         public async Task<IActionResult> Rechazar(int id)
         {
-            var userId = GetCurrentUserId();
-            var pendientes = await _solicitudService.GetSolicitudesRecibidasAsync(userId);
-            var sol = pendientes.FirstOrDefault(s => s.Id == id);
-            if (sol == null) return RedirectToAction(nameof(Index));
-            var vm = new LinkUpPro.Presentation.ViewModels.Solicitud.SolicitudAmistadViewModel { Id = sol.Id, NombreUsuario = sol.Emisor.NombreUsuario };
-            return View(vm);
+            try
+            {
+                var userId = GetCurrentUserId();
+                var pendientes = await _solicitudService.GetSolicitudesRecibidasAsync(userId);
+                var sol = pendientes.FirstOrDefault(s => s.Id == id);
+                if (sol == null) return RedirectToAction(nameof(Index));
+                var vm = new LinkUpPro.Presentation.ViewModels.Solicitud.SolicitudAmistadViewModel { Id = sol.Id, NombreUsuario = sol.Emisor.NombreUsuario };
+                return View(vm);
+            }
+            catch
+            {
+                TempData["ErrorMessage"] = "Ocurrió un error al procesar la solicitud.";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         [HttpPost, ActionName("Rechazar")]
@@ -176,12 +226,20 @@ namespace LinkUpPro.Presentation.Controllers
         [HttpGet]
         public async Task<IActionResult> Cancelar(int id)
         {
-            var userId = GetCurrentUserId();
-            var enviadas = await _solicitudService.GetSolicitudesEnviadasAsync(userId);
-            var sol = enviadas.FirstOrDefault(s => s.Id == id);
-            if (sol == null) return RedirectToAction(nameof(Index));
-            var vm = new LinkUpPro.Presentation.ViewModels.Solicitud.SolicitudAmistadViewModel { Id = sol.Id, NombreUsuario = sol.Receptor.NombreUsuario };
-            return View(vm);
+            try
+            {
+                var userId = GetCurrentUserId();
+                var enviadas = await _solicitudService.GetSolicitudesEnviadasAsync(userId);
+                var sol = enviadas.FirstOrDefault(s => s.Id == id);
+                if (sol == null) return RedirectToAction(nameof(Index));
+                var vm = new LinkUpPro.Presentation.ViewModels.Solicitud.SolicitudAmistadViewModel { Id = sol.Id, NombreUsuario = sol.Receptor.NombreUsuario };
+                return View(vm);
+            }
+            catch
+            {
+                TempData["ErrorMessage"] = "Ocurrió un error al procesar la solicitud.";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         [HttpPost, ActionName("Cancelar")]
@@ -207,12 +265,20 @@ namespace LinkUpPro.Presentation.Controllers
         [HttpGet]
         public async Task<IActionResult> EliminarHistorial(int id)
         {
-            var userId = GetCurrentUserId();
-            var enviadas = await _solicitudService.GetSolicitudesEnviadasAsync(userId);
-            var sol = enviadas.FirstOrDefault(s => s.Id == id);
-            if (sol == null) return RedirectToAction(nameof(Index));
-            var vm = new LinkUpPro.Presentation.ViewModels.Solicitud.SolicitudAmistadViewModel { Id = sol.Id, NombreUsuario = sol.Receptor.NombreUsuario };
-            return View(vm);
+            try
+            {
+                var userId = GetCurrentUserId();
+                var enviadas = await _solicitudService.GetSolicitudesEnviadasAsync(userId);
+                var sol = enviadas.FirstOrDefault(s => s.Id == id);
+                if (sol == null) return RedirectToAction(nameof(Index));
+                var vm = new LinkUpPro.Presentation.ViewModels.Solicitud.SolicitudAmistadViewModel { Id = sol.Id, NombreUsuario = sol.Receptor.NombreUsuario };
+                return View(vm);
+            }
+            catch
+            {
+                TempData["ErrorMessage"] = "Ocurrió un error al procesar la solicitud.";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         [HttpPost, ActionName("EliminarHistorial")]

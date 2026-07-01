@@ -30,7 +30,26 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     @using Microsoft.AspNetCore.Identity
                     @using LinkUpPro.Domain.Entities
+                    @using LinkUpPro.Application.Interfaces.Services
                     @inject SignInManager<Usuario> SignInManager
+                    @inject ISolicitudAmistadService SolicitudService
+
+                    @{
+                        int pendingSolicitudes = 0;
+                        try
+                        {
+                            if (SignInManager.IsSignedIn(User))
+                            {
+                                var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+                                var recibidas = await SolicitudService.GetSolicitudesRecibidasAsync(userId);
+                                pendingSolicitudes = recibidas.Count(s => s.Estado == "En espera de respuesta");
+                            }
+                        }
+                        catch
+                        {
+                            // Fail silently for UI badge
+                        }
+                    }
 
                     <ul class="navbar-nav flex-grow-1 align-items-center">
                         @if (SignInManager.IsSignedIn(User))
@@ -48,6 +67,12 @@
                             <li class="nav-item ms-lg-2">
                                 <a class="nav-link text-dark position-relative" asp-area="" asp-controller="Solicitudes" asp-action="Index">
                                     <i class="bi bi-person-plus me-1"></i>Solicitudes
+                                    @if (pendingSolicitudes > 0)
+                                    {
+                                        <span class="badge rounded-pill bg-danger text-xs align-middle ms-1" style="font-size: 0.65rem;">
+                                            @pendingSolicitudes
+                                        </span>
+                                    }
                                 </a>
                             </li>
                             <li class="nav-item ms-lg-2">
