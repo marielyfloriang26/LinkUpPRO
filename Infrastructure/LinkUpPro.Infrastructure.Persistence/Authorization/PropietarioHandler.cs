@@ -1,7 +1,7 @@
 using LinkUpPro.Application.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using LinkUpPro.Application.Interfaces;
+using LinkUpPro.Domain.Common;
 
 public class PropietarioHandler : AuthorizationHandler<PropietarioRequirement, IEntidadPropietaria>
 {
