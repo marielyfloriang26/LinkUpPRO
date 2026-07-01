@@ -82,7 +82,7 @@
 
         <div class="lup-composer d-flex justify-content-between align-items-center mb-0">
             <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-person-lines-fill me-2 text-primary"></i>Solicitudes</h5>
-            <a asp-action="Nueva" class="lup-btn lup-btn--primary lup-btn--sm"><i class="bi bi-search me-1"></i> Buscar nuevos amigos</a>
+            <a asp-action="Nueva" class="lup-btn lup-btn--primary lup-btn--sm"><i class="bi bi-person-plus me-1"></i> Nueva solicitud de amistad</a>
         </div>
 
         <ul class="nav nav-pills mt-3 mb-3 d-flex gap-2" id="solicitudesTab" role="tablist">
@@ -119,6 +119,7 @@
                                         <a asp-controller="Amigos" asp-action="AmigosEnComun" asp-route-id="@sol.UsuarioId" class="text-primary fw-bold mt-1 d-block text-decoration-none">
                                             <i class="bi bi-people-fill me-1"></i>@sol.AmigosEnComun amigos en común
                                         </a>
+                                        <small class="text-secondary d-block mt-1"><i class="bi bi-clock me-1"></i>Enviada: @sol.FechaEnvio.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</small>
                                     </div>
                                     <div class="d-flex gap-2">
                                         <a asp-action="Aceptar" asp-route-id="@sol.Id" class="lup-btn lup-btn--sm" style="background: var(--lup-green); color: #fff;">Aceptar</a>
@@ -155,6 +156,10 @@
                                             <i class="bi bi-people-fill me-1"></i>@sol.AmigosEnComun amigos en común
                                         </a>
                                         <small class="text-secondary d-block mt-1"><i class="bi bi-clock me-1"></i>Enviada: @sol.FechaEnvio.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</small>
+                                        @if (sol.Estado == "Aceptada" || sol.Estado == "Rechazada")
+                                        {
+                                            <small class="text-secondary d-block mt-1"><i class="bi bi-calendar-check me-1"></i>Respuesta: @(sol.FechaRespuesta?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? "N/A")</small>
+                                        }
                                     </div>
                                     <div class="d-flex gap-2">
                                         @if (sol.Estado == "En espera de respuesta")
@@ -164,7 +169,7 @@
                                         else
                                         {
                                             <span class="badge @(sol.Estado == "Aceptada" ? "bg-success" : (sol.Estado == "Rechazada" ? "bg-danger" : "bg-secondary")) align-self-center me-2">@sol.Estado</span>
-                                            <a asp-action="EliminarHistorial" asp-route-id="@sol.Id" class="lup-icon-btn align-self-center" title="Eliminar del historial"><i class="bi bi-trash3"></i></a>
+                                            <a asp-action="EliminarHistorial" asp-route-id="@sol.Id" class="lup-btn lup-btn--outline lup-btn--sm align-self-center" title="Eliminar del historial"><i class="bi bi-trash3 me-1"></i>Eliminar del historial</a>
                                         }
                                     </div>
                                 </div>
