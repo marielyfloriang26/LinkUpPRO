@@ -31,10 +31,12 @@ namespace LinkUpPro.Presentation
             builder.Services.AddTransient<IFileService, FileService>();
             builder.Services.AddTransient<IComentarioService, ComentarioService>();
             builder.Services.AddTransient<IReaccionService, ReaccionService>();
+            builder.Services.AddTransient<IPerfilService, PerfilService>();
 
             builder.Services.AddAutoMapper(cfg => 
             {
                 cfg.AddProfile<LinkUpPro.Application.Mappings.PublicacionMapping>();
+                cfg.AddProfile<LinkUpPro.Application.Mappings.PerfilMapping>(); 
             });
 
             builder.Services.AddSharedInfrastructure();
