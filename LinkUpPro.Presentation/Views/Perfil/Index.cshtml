@@ -1,0 +1,68 @@
+@model LinkUpPro.Application.ViewModels.MiPerfil.PerfilViewModel
+
+@{
+    ViewData["Title"] = "Mi Perfil";
+}
+
+<link rel="stylesheet" href="~/css/publicaciones.css" asp-append-version="true" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<div class="lup-layout">
+    <!-- SIDEBAR IZQUIERDO -->
+    @await Html.PartialAsync("~/Views/Publicacion/_SidebarLeft.cshtml")
+
+    <!-- SECCIÓN CENTRAL DE PERFIL -->
+    <main class="lup-feed">
+        <div class="card border-0 shadow-sm p-4" style="border-radius: 16px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);">
+            <h3 class="fw-bold mb-4" style="color: #2D275A;">Mi Perfil</h3>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 8px;">
+                    <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <!-- FOTO DE PERFIL ACTUAL -->
+            <div class="text-center mb-4">
+                <img src="@(string.IsNullOrEmpty(Model.FotoPerfilUrl) ? "https://cdn-icons-png.flaticon.com/512/149/149071.png" : Model.FotoPerfilUrl)"
+                     alt="Avatar" class="rounded-circle shadow-sm" style="width: 120px; height: 120px; object-fit: cover; border: 4px solid #fff;">
+            </div>
+
+            <!-- DETALLES DEL USUARIO (SOLO LECTURA) -->
+            <div class="row mb-3">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold text-secondary mb-1" style="font-size: 0.85rem;">Nombre de Usuario</label>
+                    <div class="p-2 bg-light border text-dark" style="border-radius: 8px; font-size: 0.95rem; border: 1px solid #dee2e6;">@Model.NombreUsuario</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold text-secondary mb-1" style="font-size: 0.85rem;">Correo Electrónico</label>
+                    <div class="p-2 bg-light border text-dark" style="border-radius: 8px; font-size: 0.95rem; border: 1px solid #dee2e6;">@Model.Correo</div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold text-secondary mb-1" style="font-size: 0.85rem;">Nombre</label>
+                    <div class="p-2 bg-light border text-dark" style="border-radius: 8px; font-size: 0.95rem; border: 1px solid #dee2e6;">@Model.Nombre</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold text-secondary mb-1" style="font-size: 0.85rem;">Apellido</label>
+                    <div class="p-2 bg-light border text-dark" style="border-radius: 8px; font-size: 0.95rem; border: 1px solid #dee2e6;">@Model.Apellido</div>
+                </div>
+            </div>
+
+            <div class="mb-4 col-md-6">
+                <label class="form-label fw-bold text-secondary mb-1" style="font-size: 0.85rem;">Teléfono</label>
+                <div class="p-2 bg-light border text-dark" style="border-radius: 8px; font-size: 0.95rem; border: 1px solid #dee2e6;">@Model.Telefono</div>
+            </div>
+
+            <!-- BOTONES DE ACCIÓN -->
+            <div class="d-flex justify-content-between mt-4">
+                <a asp-controller="Publicacion" asp-action="Index" class="btn btn-light fw-bold px-4" style="border-radius: 8px; border: 1px solid #dee2e6;">Volver atrás</a>
+                <a asp-controller="Perfil" asp-action="Editar" class="btn btn-primary fw-bold px-5 text-white" style="background: #5B4CFF; border: none; border-radius: 8px;">Editar Información</a>
+            </div>
+        </div>
+    </main>
+</div>

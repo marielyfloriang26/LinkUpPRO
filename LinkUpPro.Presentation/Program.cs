@@ -32,12 +32,20 @@ builder.Services.AddTransient<LinkUpPro.Application.Interfaces.Shared.IEmailServ
 builder.Services.AddTransient<LinkUpPro.Application.Interfaces.Services.Interfaces.IEmailService, EmailService>();
 builder.Services.AddTransient<IUploadFileService, UploadFileService>();
 
-builder.Services.AddTransient<IPublicacionRepository, PublicacionRepository>();
-builder.Services.AddTransient<IPublicacionService, PublicacionService>();
-builder.Services.AddTransient<IFileService, FileService>();
-builder.Services.AddTransient<IComentarioService, ComentarioService>();
-builder.Services.AddTransient<IReaccionService, ReaccionService>();
+            builder.Services.AddTransient<IPublicacionRepository, PublicacionRepository>();
+            builder.Services.AddTransient<IPublicacionService, PublicacionService>();
+            builder.Services.AddTransient<IFileService, FileService>();
+            builder.Services.AddTransient<IComentarioService, ComentarioService>();
+            builder.Services.AddTransient<IReaccionService, ReaccionService>();
+            builder.Services.AddTransient<IPerfilService, PerfilService>();
 
+            builder.Services.AddAutoMapper(cfg => 
+            {
+                cfg.AddProfile<LinkUpPro.Application.Mappings.PublicacionMapping>();
+                cfg.AddProfile<LinkUpPro.Application.Mappings.PerfilMapping>(); 
+            });
+
+            builder.Services.AddSharedInfrastructure();
 builder.Services.AddAutoMapper(cfg => 
 {
     cfg.AddProfile<LinkUpPro.Application.Mappings.PublicacionMapping>();
