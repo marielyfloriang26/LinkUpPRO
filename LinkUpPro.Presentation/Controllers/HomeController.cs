@@ -17,7 +17,7 @@ namespace LinkUpPro.Presentation.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("Index", "Publicacion");
         }
 
         public IActionResult Privacy()
