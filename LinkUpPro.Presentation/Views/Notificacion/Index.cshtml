@@ -1,0 +1,87 @@
+@model List<LinkUpPro.Application.ViewModels.Notificacion.NotificacionViewModel>
+
+@{
+    ViewData["Title"] = "Notificaciones";
+}
+
+<link rel="stylesheet" href="~/css/publicaciones.css" asp-append-version="true" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<div class="lup-layout">
+    <!-- SIDEBAR IZQUIERDO -->
+    @await Html.PartialAsync("~/Views/Shared/_SidebarLeft.cshtml")
+
+    <!-- SECCION CENTRAL DE NOTIFICACIONES -->
+    <main class="lup-feed">
+        <div class="card border-0 shadow-sm p-4" style="border-radius: 16px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold m-0" style="color: #2D275A;">Notificaciones</h3>
+                @if (Model != null && Model.Any(n => !n.Leida))
+                {
+                    <form asp-controller="Notificacion" asp-action="MarcarTodasComoLeidas" method="post" class="m-0">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-outline-primary fw-bold" style="border-radius: 8px; border-color: #5B4CFF; color: #5B4CFF;">
+                            <i class="bi bi-check-all me-1"></i> Marcar todas como leídas
+                        </button>
+                    </form>
+                }
+            </div>
+
+            @if (TempData["MensajeError"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert" style="border-radius: 8px;">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["MensajeError"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @if (Model == null || !Model.Any())
+            {
+                <!-- Estado Vacío -->
+                <div class="text-center py-5">
+                    <div class="mb-3 text-muted" style="font-size: 3rem;">
+                        <i class="bi bi-bell-slash"></i>
+                    </div>
+                    <h5 class="fw-bold text-secondary">No tienes notificaciones</h5>
+                    <p class="text-muted small">Te avisaremos cuando alguien comente, reaccione o responda en tus publicaciones.</p>
+                </div>
+            }
+            else
+            {
+                <div class="list-group list-group-flush" style="border-radius: 12px; overflow: hidden;">
+                    @foreach (var noti in Model)
+                    {
+                        <!-- Clickeable para ir al contenido -->
+                        <a href="@Url.Action("IrAlContenido", "Notificacion", new { id = noti.Id })" 
+                           class="list-group-item list-group-item-action d-flex align-items-center border-0 py-3 px-3 mb-2 shadow-xs position-relative" 
+                           style="border-radius: 12px; border: 1px solid #f1f2f6; transition: all 0.2s; background: @(noti.Leida ? "#fff" : "#F4F3FF");">
+                            
+                            <!-- Foto de perfil del remitente -->
+                            <img src="@(string.IsNullOrEmpty(noti.RemitenteFotoPerfilUrl) ? "https://cdn-icons-png.flaticon.com/512/149/149071.png" : noti.RemitenteFotoPerfilUrl)" 
+                                 alt="@noti.RemitenteNombreUsuario" class="rounded-circle me-3 border" style="width: 48px; height: 48px; object-fit: cover;">
+
+                            <!-- Texto del mensaje -->
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold text-dark" style="font-size: 0.9rem;">@@@noti.RemitenteNombreUsuario</span>
+                                    <span class="text-muted" style="font-size: 0.75rem;">@noti.FechaNotificacion.ToLocalTime().ToString("dd MMM · HH:mm")</span>
+                                </div>
+                                <p class="mb-1 text-secondary" style="font-size: 0.88rem;">@noti.Mensaje</p>
+                                <span class="badge" style="font-size: 0.68rem; background: @(noti.TipoActividad == "Reaccion" ? "#E3F2FD; color: #0D47A1;" : noti.TipoActividad == "Respuesta" ? "#E8F5E9; color: #1B5E20;" : "#EDE7F6; color: #4A148C;")">
+                                    @noti.TipoActividad
+                                </span>
+                            </div>
+
+                            <!-- Indicador visual de no leída -->
+                            @if (!noti.Leida)
+                            {
+                                <span class="position-absolute top-50 end-0 translate-middle-y me-3 rounded-circle" 
+                                      style="width: 10px; height: 10px; background-color: #5B4CFF;" title="No leída"></span>
+                            }
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+    </main>
+</div>

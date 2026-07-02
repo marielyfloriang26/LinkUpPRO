@@ -2,6 +2,7 @@
 @using LinkUpPro.Application.Interfaces.Repositories
 @using LinkUpPro.Application.Interfaces.Services
 @inject IRepositoryAsync<Publicacion> PublicacionRepo
+@inject IRepositoryAsync<Notificacion> NotificacionRepo
 @inject ISolicitudAmistadService SolicitudService
 @{
     var currentUserIdString = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -9,6 +10,7 @@
     
     int cantPublicaciones = 0;
     int cantSolicitudes = 0;
+    int cantNotificaciones = 0;
     if (currentUserId > 0)
     {
         // Cuenta solo publicaciones que no hayan sido eliminadas
@@ -17,6 +19,11 @@
         try {
             var recibidas = SolicitudService.GetSolicitudesRecibidasAsync(currentUserId).GetAwaiter().GetResult();
             cantSolicitudes = recibidas.Count;
+        } catch { }
+        try {
+            // Contar notificaciones no leidas del usuario actual
+            var todasNotif = NotificacionRepo.GetAllAsync().GetAwaiter().GetResult();
+            cantNotificaciones = todasNotif.Count(n => n.UsuarioId == currentUserId && !n.Leida);
         } catch { }
     }
         // Detecta controlador y accion actual para aplicar la clase active
@@ -72,10 +79,10 @@
 
             <a asp-controller="Notificacion" asp-action="Index" class="lup-quick-nav__item @(isNotificaciones ? "lup-quick-nav__item--active" : "")">
                 <i class="bi bi-bell-fill"></i> Notificaciones
-                @if (ViewBag.CantidadNotificaciones != null && ViewBag.CantidadNotificaciones > 0)
+                @if (cantNotificaciones > 0)
                 {
                     <span class="badge rounded-pill bg-primary text-xs align-middle ms-1" style="font-size: 0.65rem;">
-                        @ViewBag.CantidadNotificaciones
+                        @cantNotificaciones
                     </span>
                 }
             </a>
@@ -121,4 +128,4 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>

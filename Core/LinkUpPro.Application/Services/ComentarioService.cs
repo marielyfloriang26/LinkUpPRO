@@ -15,17 +15,19 @@ public class ComentarioService : IComentarioService
     private readonly IPublicacionRepository _publicacionRepository;
     private readonly IRepositoryAsync<Usuario> _usuarioRepository;
     private readonly IMapper _mapper;
+    private readonly INotificacionService _notificacionService;
 
     public ComentarioService(
         IRepositoryAsync<Comentario> comentarioRepository,
         IPublicacionRepository publicacionRepository,
         IRepositoryAsync<Usuario> usuarioRepository,
-        IMapper mapper)
+        IMapper mapper, INotificacionService notificacionService)
     {
         _comentarioRepository = comentarioRepository;
         _publicacionRepository = publicacionRepository;
         _usuarioRepository = usuarioRepository;
         _mapper = mapper;
+        _notificacionService = notificacionService;
     }
 
     public async Task CrearAsync(CrearComentarioDto dto)
@@ -67,6 +69,37 @@ public class ComentarioService : IComentarioService
         nuevoComentario.FechaCreacion = DateTime.UtcNow;
 
         await _comentarioRepository.AddAsync(nuevoComentario);
+
+        // Dispara Notificacion
+        if (nuevoComentario.ComentarioPadreId.HasValue)
+        {
+            // Es una respuesta a otro comentario
+            var comentarioPadre = await _comentarioRepository.GetByIdAsync(nuevoComentario.ComentarioPadreId.Value);
+            if (comentarioPadre != null && comentarioPadre.UsuarioId != nuevoComentario.UsuarioId)
+            {
+                var msg = $"{usuario.UserName} respondió tu comentario.";
+                await _notificacionService.CrearNotificacionAsync(
+                    comentarioPadre.UsuarioId, 
+                    nuevoComentario.UsuarioId, 
+                    nuevoComentario.PublicacionId, 
+                    "Respuesta", 
+                    msg);
+            }
+        }
+        else
+        {
+            // Es un comentario principal en una publi
+            if (publicacion.UsuarioId != nuevoComentario.UsuarioId)
+            {
+                var msg = $"{usuario.UserName} comentó tu publicación.";
+                await _notificacionService.CrearNotificacionAsync(
+                    publicacion.UsuarioId, 
+                    nuevoComentario.UsuarioId, 
+                    nuevoComentario.PublicacionId, 
+                    "Comentario", 
+                    msg);
+            }
+        }
     }
 
     public async Task EditarAsync(int id, string contenido, int usuarioId)

@@ -8,13 +8,17 @@ public class ReaccionService : IReaccionService
 {
     private readonly IRepositoryAsync<Reaccion> _reaccionRepository;
     private readonly IPublicacionRepository _publicacionRepository;
+    private readonly IRepositoryAsync<Usuario> _usuarioRepository;
+    private readonly INotificacionService _notificacionService;
 
     public ReaccionService(
         IRepositoryAsync<Reaccion> reaccionRepository,
-        IPublicacionRepository publicacionRepository)
+        IPublicacionRepository publicacionRepository, INotificacionService notificacionService,IRepositoryAsync<Usuario> usuarioRepository)
     {
         _reaccionRepository = reaccionRepository;
         _publicacionRepository = publicacionRepository;
+        _notificacionService = notificacionService;
+        _usuarioRepository = usuarioRepository;
     }
 
     public async Task ReaccionarAsync(int publicacionId, int usuarioId, string tipoReaccion)
@@ -38,6 +42,20 @@ public class ReaccionService : IReaccionService
             {
                 reaccionExistente.TipoReaccion = tipoReaccion;
                 await _reaccionRepository.UpdateAsync(reaccionExistente);
+
+                // Notificar cambio de reacción
+                if (publicacion.UsuarioId != usuarioId)
+                {
+                    var usuario = await _usuarioRepository.GetByIdAsync(usuarioId);
+                    var reaccionTxt = tipoReaccion == "Like" ? "Me gusta" : "No me gusta";
+                    var msg = $"{usuario.UserName} reaccionó con {reaccionTxt} a tu publicación.";
+                    await _notificacionService.CrearNotificacionAsync(
+                        publicacion.UsuarioId, 
+                        usuarioId, 
+                        publicacionId, 
+                        "Reaccion", 
+                        msg);
+                }
             }
         }
         else
@@ -50,6 +68,20 @@ public class ReaccionService : IReaccionService
                 TipoReaccion = tipoReaccion
             };
             await _reaccionRepository.AddAsync(nuevaReaccion);
+
+            // Notificar nueva reacción
+            if (publicacion.UsuarioId != usuarioId)
+            {
+                var usuario = await _usuarioRepository.GetByIdAsync(usuarioId);
+                var reaccionTxt = tipoReaccion == "Like" ? "Me gusta" : "No me gusta";
+                var msg = $"{usuario.UserName} reaccionó con {reaccionTxt} a tu publicación.";
+                await _notificacionService.CrearNotificacionAsync(
+                    publicacion.UsuarioId, 
+                    usuarioId, 
+                    publicacionId, 
+                    "Reaccion", 
+                    msg);
+            }
         }
     }
 
