@@ -108,19 +108,15 @@
                                 </button>
                                 <ul class="lup-dropdown">
                                     <li>
-                                        <a href="#" class="lup-dropdown__item">
+                                        <a asp-controller="Publicacion" asp-action="Editar" asp-route-id="@post.Id" class="lup-dropdown__item">
                                             <i class="bi bi-pencil-fill"></i> Editar
                                         </a>
                                     </li>
                                     <li>
-                                        <form asp-controller="Publicacion" asp-action="Eliminar" method="post"
-                                              onsubmit="return confirm('¿Eliminar esta publicación?');">
-                                            <input type="hidden" name="id" value="@post.Id" />
-                                            @Html.AntiForgeryToken()
-                                            <button type="submit" class="lup-dropdown__item lup-dropdown__item--danger">
-                                                <i class="bi bi-trash3-fill"></i> Eliminar
-                                            </button>
-                                        </form>
+                                        <a asp-controller="Publicacion" asp-action="Eliminar" asp-route-id="@post.Id" class="lup-dropdown__item lup-dropdown__item--danger">
+                                            <i class="bi bi-trash3-fill"></i> Eliminar
+                                        </a>
+                                        
                                     </li>
                                 </ul>
                             </div>

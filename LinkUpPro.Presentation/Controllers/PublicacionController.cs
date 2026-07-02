@@ -133,6 +133,26 @@ public class PublicacionController : Controller
         }
     }
 
+    [HttpGet]
+    public async Task<IActionResult> Editar(int id)
+    {
+        var publicacionDto = await _publicacionService.ObtenerPorIdAsync(id);
+        if (publicacionDto == null)
+        {
+            return NotFound();
+        }
+
+        // Validacion de permisos de autor
+        var authResult = await _authorizationService.AuthorizeAsync(User, publicacionDto, "PropietarioPolicy");
+        if (!authResult.Succeeded)
+        {
+            return Forbid();
+        }
+
+        var vm = _mapper.Map<GuardarPublicacionViewModel>(publicacionDto);
+        return View(vm);
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Editar(GuardarPublicacionViewModel vm, string TipoContenido)
