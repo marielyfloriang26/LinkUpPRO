@@ -17,7 +17,7 @@
         var action = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
         bool isHome = controller.Equals("Publicacion", StringComparison.OrdinalIgnoreCase);
         bool isAmigos = controller.Equals("Amigos", StringComparison.OrdinalIgnoreCase) && action.Equals("Index", StringComparison.OrdinalIgnoreCase);
-        bool isSolicitudes = controller.Equals("Amigos", StringComparison.OrdinalIgnoreCase) && action.Equals("Solicitudes", StringComparison.OrdinalIgnoreCase);
+        bool isSolicitudes = controller.Equals("Solicitudes", StringComparison.OrdinalIgnoreCase) && action.Equals("Index", StringComparison.OrdinalIgnoreCase);
         bool isNotificaciones = controller.Equals("Notificacion", StringComparison.OrdinalIgnoreCase);
         bool isBattleship = controller.Equals("Battleship", StringComparison.OrdinalIgnoreCase);
         bool isPerfil = controller.Equals("Perfil", StringComparison.OrdinalIgnoreCase);
@@ -53,7 +53,7 @@
                 <i class="bi bi-people-fill"></i> Amigos
             </a>
             
-            <a asp-controller="Amigos" asp-action="Solicitudes" class="lup-quick-nav__item position-relative @(isSolicitudes ? "lup-quick-nav__item--active" : "")">
+            <a asp-controller="Solicitudes" asp-action="Index" class="lup-quick-nav__item position-relative @(isSolicitudes ? "lup-quick-nav__item--active" : "")">
                 <i class="bi bi-person-plus-fill"></i> Solicitudes
                 @if (ViewBag.CantidadSolicitudes > 0)
                 {
