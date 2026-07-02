@@ -231,6 +231,8 @@ public class AccountController : Controller
         var result = await _userManager.ConfirmEmailAsync(user, token);
         if (result.Succeeded)
         {
+            user.EsActivo = true;
+            await _userManager.UpdateAsync(user);
             TempData["Success"] = "Su cuenta fue activada correctamente. Ya puede iniciar sesión.";
             return RedirectToAction("Login");
         }
