@@ -1,27 +1,24 @@
 <aside class="lup-sidebar lup-sidebar--right">
-        <div class="lup-widget">
-            <h6 class="lup-widget__title">Personas que quizás conozcas</h6>
-            @for (int i = 0; i < 3; i++)
-            {
-                <div class="lup-suggestion">
-                    <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                         alt="Sugerencia" class="lup-avatar lup-avatar--sm">
-                    <div class="lup-suggestion__info">
-                        <p class="lup-suggestion__name">Usuario sugerido</p>
-                        <p class="lup-suggestion__role">Profesional · LinkUpPro</p>
-                    </div>
-                    <button class="lup-btn lup-btn--outline lup-btn--xs">
-                        <i class="bi bi-person-plus-fill"></i> Conectar
-                    </button>
-                </div>
-            }
-        </div>
+    <!-- Tarjeta Crece Tu Red -->
+    <div class="card border-0 shadow-sm p-4 text-center" style="border-radius: 16px; background: #ffffff;">
+        <h6 class="fw-bold text-uppercase mb-3" style="font-size: 0.85rem; letter-spacing: 0.08em; color: #6C757D;">
+            Crece tu red
+        </h6>
+        <p class="text-muted mb-4" style="font-size: 0.9rem; line-height: 1.5; color: #555555 !important;">
+            Encuentra colegas, amigos y profesionales en LinkUpPro para compartir tus experiencias.
+        </p>
+        <a asp-controller="Solicitudes" asp-action="Nueva" class="btn btn-primary w-100 fw-bold py-2" 
+           style="border-radius: 24px; background-color: #5B4CFF; border: none; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(91, 76, 255, 0.2);">
+            Buscar personas
+        </a>
+    </div>
 
-        <div class="lup-widget lup-widget--muted">
-            <p class="lup-widget__footer-links">
-                <a href="#">Privacidad</a> · <a href="#">Términos</a> · <a href="#">Ayuda</a>
-                <br>
-                <span>© 2025 LinkUpPro</span>
-            </p>
-        </div>
-    </aside>
+    <!-- Enlaces de Pie de Página -->
+    <div class="lup-widget lup-widget--muted mt-3">
+        <p class="lup-widget__footer-links">
+            <a href="#">Privacidad</a> · <a href="#">Términos</a> · <a href="#">Ayuda</a>
+            <br>
+            <span>© 2026 LinkUpPro</span>
+        </p>
+    </div>
+</aside>

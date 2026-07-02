@@ -45,13 +45,11 @@ builder.Services.AddPersistenceInfrastructure(builder.Configuration);
             {
                 cfg.AddProfile<LinkUpPro.Application.Mappings.PublicacionMapping>();
                 cfg.AddProfile<LinkUpPro.Application.Mappings.PerfilMapping>(); 
+                cfg.AddProfile<LinkUpPro.Application.Mappings.NotificacionMapping>();
             });
 
             builder.Services.AddSharedInfrastructure();
-builder.Services.AddAutoMapper(cfg => 
-{
-    cfg.AddProfile<LinkUpPro.Application.Mappings.PublicacionMapping>();
-});
+
 builder.Services.AddApplicationLayer();
 builder.Services.AddSharedInfrastructure();
 

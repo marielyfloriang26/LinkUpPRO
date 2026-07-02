@@ -26,12 +26,14 @@ public class ReaccionController : Controller
         {
             await _reaccionService.ReaccionarAsync(publicacionId, usuarioId, tipoReaccion);
            
-            return Redirect($"/Publicacion/Index#post-{publicacionId}");
+            string referer = Request.Headers["Referer"].ToString();
+            return Redirect(string.IsNullOrEmpty(referer) ? $"/Publicacion/Index#post-{publicacionId}" : referer);
         }
         catch (Exception ex)
         {
             TempData["MensajeError"] = ex.Message;
-            return RedirectToAction("Index", "Publicacion");
+            string referer = Request.Headers["Referer"].ToString();
+            return Redirect(string.IsNullOrEmpty(referer) ? "/Publicacion/Index" : referer);
         }
     }
 
@@ -45,12 +47,14 @@ public class ReaccionController : Controller
         {
             await _reaccionService.EliminarReaccionAsync(publicacionId, usuarioId);
             
-            return Redirect($"/Publicacion/Index#post-{publicacionId}");
+            string referer = Request.Headers["Referer"].ToString();
+            return Redirect(string.IsNullOrEmpty(referer) ? $"/Publicacion/Index#post-{publicacionId}" : referer);
         }
         catch (Exception ex)
         {
             TempData["MensajeError"] = ex.Message;
-            return RedirectToAction("Index", "Publicacion");
+            string referer = Request.Headers["Referer"].ToString();
+            return Redirect(string.IsNullOrEmpty(referer) ? "/Publicacion/Index" : referer);
         }
     }
 }

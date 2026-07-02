@@ -89,7 +89,9 @@
                         <a href="#" class="lup-post__author-name">@post.AutorNombreCompleto</a>
                         <div class="lup-post__meta">
                             <span>@post.FechaCreacion.ToLocalTime().ToString("dd MMM · HH:mm")</span>
-                            <span class="lup-post__privacy">@(post.Privacidad == "Publico" ? "🌎" : "🔒")</span>
+                            <span class="lup-post__privacy" title="@(post.Privacidad == "SoloAmigos" ? "Solo Amigos" : "Solo yo")">
+                            @(post.Privacidad == "SoloAmigos" ? "👥" : "🔒")
+                        </span>
                             
                             @if (post.FechaModificacion.HasValue)
                             {
