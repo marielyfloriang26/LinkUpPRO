@@ -34,17 +34,23 @@ public class AccountController : Controller
 
     [HttpGet]
     [AllowAnonymous]
-    public IActionResult Login() 
+    public IActionResult Login(string? returnUrl = null) 
     {
         if (User.Identity!.IsAuthenticated) return RedirectToAction("Index", "Publicacion");
+        if (!string.IsNullOrEmpty(returnUrl))
+        {
+            ModelState.AddModelError("", "Debe iniciar sesión para acceder a esta sección.");
+        }
+        ViewData["ReturnUrl"] = returnUrl;
         return View(new LoginViewModel());
     }
 
     [HttpPost]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Login(LoginViewModel vm)
+    public async Task<IActionResult> Login(LoginViewModel vm, string? returnUrl = null)
     {
+        ViewData["ReturnUrl"] = returnUrl;
         if (!ModelState.IsValid) return View(vm);
 
         var user = await _userManager.FindByNameAsync(vm.NombreUsuario);
@@ -62,7 +68,12 @@ public class AccountController : Controller
 
         var result = await _signInManager.PasswordSignInAsync(user.UserName, vm.Password, vm.MantenerSesion, lockoutOnFailure: true);
 
-        if (result.Succeeded) return RedirectToAction("Index", "Publicacion");
+        if (result.Succeeded)
+        {
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                return Redirect(returnUrl);
+            return RedirectToAction("Index", "Publicacion");
+        }
         
         if (result.IsLockedOut)
         {

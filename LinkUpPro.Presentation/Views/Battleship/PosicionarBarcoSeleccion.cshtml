@@ -1,0 +1,72 @@
+@model LinkUpPro.Application.ViewModels.Battleship.SeleccionarBarcoViewModel
+
+@{
+    ViewData["Title"] = "Seleccionar Barco";
+}
+
+<div class="container mt-4">
+    <h2>Fase 1: Posicionamiento de Barcos</h2>
+    
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    @if (Model.BarcosDisponibles.Any())
+    {
+        <p>Selecciona un barco para posicionarlo en tu tablero:</p>
+        
+        <form asp-action="SeleccionarCeldaParaBarco" method="post">
+            <input type="hidden" asp-for="PartidaId" />
+            
+            <div class="list-group mb-4" style="max-width: 400px;">
+                @foreach (var size in Model.BarcosDisponibles)
+                {
+                    <label class="list-group-item d-flex align-items-center">
+                        <input class="form-check-input me-3" type="radio" name="barcoSize" value="@size" required>
+                        <div class="d-flex bg-secondary p-1 rounded" style="width: @(size * 30)px; height: 30px;">
+                            @for (int i = 0; i < size; i++)
+                            {
+                                <div class="bg-dark m-1" style="width: 20px; height: 20px; border-radius: 50%;"></div>
+                            }
+                        </div>
+                        <span class="ms-3">Barco de @size posiciones</span>
+                    </label>
+                }
+            </div>
+
+            <button type="submit" class="btn btn-success">Posicionar barco</button>
+        </form>
+    }
+    else
+    {
+        <div class="alert alert-info text-center fs-5 mb-4">
+            El otro jugador aún no termina de configurar sus barcos
+        </div>
+        <div class="text-center">
+            <h4 class="mb-3">Mi Tablero de Posicionamiento</h4>
+            <div class="d-inline-block border bg-light p-2 mx-auto">
+                @for (int i = 1; i <= 12; i++)
+                {
+                    <div class="d-flex">
+                        @for (int j = 1; j <= 12; j++)
+                        {
+                            var casilla = Model.MisCasillas.FirstOrDefault(c => c.Fila == i && c.Columna == j);
+                            if (casilla != null && casilla.TieneBarco)
+                            {
+                                <div class="bg-secondary border text-center" style="width: 40px; height: 40px; margin: 1px;">🚢</div>
+                            }
+                            else
+                            {
+                                <div class="bg-white border" style="width: 40px; height: 40px; margin: 1px;"></div>
+                            }
+                        }
+                    </div>
+                }
+            </div>
+            <div class="mt-4">
+                <a asp-action="Index" class="btn btn-secondary">Volver atrás</a>
+            </div>
+        </div>
+    }
+</div>

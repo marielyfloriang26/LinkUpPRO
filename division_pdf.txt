@@ -1,0 +1,470 @@
+--- PAGE 1 ---
+• Division de funcionalidades 
+Persona 1 — Login y Registro, Seguridad 
+Persona 2 — Publicaciones, Notificaciones y Mi Perfil  
+Persona 3 — Amigos, Solicitudes de Amistad y Battleship 
+ 
+ 
+ 
+Arquitectura ONION 
+ 
+ 
+ 
+ 
+ 
+
+--- PAGE 2 ---
+ 
+ 
+ 
+ 
+ 
+
+--- PAGE 3 ---
+Modelo de la Base de Datos / Tabla: Usuarios 
+Columna 
+Tipo de Dato 
+(SQL) 
+Restricciones 
+Descripción 
+Id 
+INT 
+PK, Identity 
+Identificador único del 
+usuario. 
+Nombre 
+VARCHAR(50) 
+Not Null 
+Nombre de pila del usuario. 
+Apellido 
+VARCHAR(50) 
+Not Null 
+Apellido del usuario. 
+Correo 
+VARCHAR(100) 
+Not Null, Unique 
+Dirección de correo (usada 
+para login y notificaciones). 
+NombreUsuario 
+VARCHAR(30) 
+Not Null, Unique 
+Nombre de usuario único 
+dentro de la plataforma. 
+PasswordHash 
+VARCHAR(255) 
+Not Null 
+Contraseña encriptada de 
+forma segura mediante 
+Identity. 
+FotoPerfilUrl 
+VARCHAR(255) 
+Null 
+Ruta en disco o servidor de 
+la imagen del avatar. 
+EsActivo 
+BIT 
+Not Null, Default(0) 
+Indica si la cuenta fue 
+activada mediante enlace 
+de correo. 
+CodigoVerificacion 
+VARCHAR(100) 
+Null 
+Token temporal para 
+validación de cuenta o 
+cambio de clave. 
+IntentosFallidos 
+INT 
+Not Null, Default(0) 
+Contador de accesos 
+erróneos para bloqueo de 
+seguridad. 
+BloqueoHasta 
+DATETIME 
+Null 
+Fecha límite de la 
+penalización por intentos 
+fallidos. 
+FechaRegistro 
+DATETIME 
+Not Null, 
+Default((GETUTCDATE())) 
+Fecha de creación del 
+registro almacenada en 
+formato UTC. 
+
+--- PAGE 4 ---
+Tabla: Publicaciones 
+Columna 
+Tipo de Dato 
+(SQL) 
+Restricciones 
+Descripción 
+Id 
+INT 
+PK, Identity 
+Identificador 
+de la 
+publicación. 
+UsuarioId 
+INT 
+Not Null, FK -> 
+Usuarios(Id) 
+ID del autor 
+de la 
+publicación. 
+ContenidoTexto 
+TEXT 
+Not Null 
+Texto del 
+post (con 
+codificación 
+anti-XSS 
+aplicada). 
+ImagenUrl 
+VARCHAR(255) 
+Null 
+Ruta física 
+de la 
+imagen 
+adjunta (si 
+aplica). 
+YouTubeVideoUrl 
+VARCHAR(255) 
+Null 
+Enlace o 
+identificador 
+del video 
+incrustado 
+de 
+YouTube. 
+Privacidad 
+VARCHAR(15) 
+Not Null, 
+Default('Publico') 
+Control de 
+visibilidad: 
+'Publico', 
+'Amigos', 
+'SoloYo'. 
+FechaCreacion 
+DATETIME 
+Not Null, 
+Default(GETUTCDATE()) 
+Registro 
+cronológico 
+del post en 
+formato 
+UTC. 
+ 
+
+--- PAGE 5 ---
+Tabla: Comentarios 
+Columna 
+Tipo de 
+Dato 
+(SQL) 
+Restricciones 
+Descripción 
+Id 
+INT 
+PK, Identity 
+Identificador 
+único del 
+comentario. 
+PublicacionId 
+INT 
+Not Null, FK -> 
+Publicaciones(Id) 
+Post al que 
+pertenece el 
+comentario. 
+UsuarioId 
+INT 
+Not Null, FK -> 
+Usuarios(Id) 
+Usuario que 
+redactó el 
+comentario. 
+Contenido 
+TEXT 
+Not Null 
+Texto del 
+comentario. 
+ComentarioPadreId 
+INT 
+Null, FK -> 
+Comentarios(Id) 
+ID del 
+comentario 
+superior 
+(Autorrelación 
+para 
+respuestas 
+anidadas). 
+FechaCreacion 
+DATETIME 
+Not Null, 
+Default(GETUTCDATE()) 
+Fecha del 
+comentario 
+en formato 
+UTC. 
+ 
+ 
+ 
+ 
+ 
+ 
+
+--- PAGE 6 ---
+Tabla: Reacciones 
+Columna 
+Tipo de Dato (SQL) 
+Restricciones 
+Descripción 
+Id 
+INT 
+PK, Identity 
+Identificador de la reaccion. 
+UsuarioId 
+INT 
+Not Null, FK -> 
+Usuarios(Id) 
+Usuario que genera la 
+reaccion. 
+PublicacionId 
+INT 
+Null, FK -> 
+Publicaciones(Id) 
+Vinculación si la reacción es 
+sobre un post. 
+ComentarioId 
+INT 
+Null, FK -> 
+Comentarios(Id) 
+Vinculación si la reacción es 
+sobre un comentario. 
+TipoReaccion 
+VARCHAR(10) 
+Not Null 
+Tipo de interacción 
+restringida: 'Like' o 'Dislike'. 
+ 
+Tabla: SolicitudesAmistad 
+Columna 
+Tipo de Dato 
+(SQL) 
+Restricciones 
+Descripción 
+Id 
+INT 
+PK, Identity 
+Identificador de la 
+solicitud. 
+EmisorId 
+INT 
+Not Null, FK -> 
+Usuarios(Id) 
+Usuario que envía la 
+invitación de amistad. 
+ReceptorId 
+INT 
+Not Null, FK -> 
+Usuarios(Id) 
+Usuario que recibe la 
+invitación. 
+Estado 
+VARCHAR(15) 
+Not Null, 
+Default('Pendiente') 
+Flujo: 'Pendiente', 
+'Aceptada', 
+'Rechazada', 
+'Cancelada'. 
+FechaEnvio 
+DATETIME 
+Not Null, 
+Default(GETUTCDATE()) 
+Fecha de envío en 
+formato UTC. 
+ 
+
+--- PAGE 7 ---
+Tabla: Amistades 
+Columna 
+Tipo de Dato (SQL) 
+Restricciones 
+Descripción 
+Id 
+INT 
+PK, Identity 
+Identificador del vínculo. 
+UsuarioId1 
+INT 
+Not Null, FK -> Usuarios(Id) 
+Primer miembro de la relación 
+bilateral. 
+UsuarioId2 
+INT 
+Not Null, FK -> Usuarios(Id) 
+Segundo miembro de la relación 
+bilateral. 
+FechaAmistad 
+DATETIME 
+Not Null, 
+Default(GETUTCDATE()) 
+Fecha exacta de consolidación 
+del vínculo en UTC. 
+ 
+Tabla: Notificaciones 
+Columna 
+Tipo de Dato (SQL) 
+Restricciones 
+Descripción 
+Id 
+INT 
+PK, Identity 
+Identificador de la 
+alerta. 
+UsuarioId 
+INT 
+Not Null, FK -> 
+Usuarios(Id) 
+Destinatario que 
+recibirá la alerta. 
+Mensaje 
+VARCHAR(255) 
+Not Null 
+Contenido textual 
+informativo del 
+evento. 
+Leida 
+BIT 
+Not Null, Default(0) 
+Estado de 
+visualización para 
+contadores de 
+menú (true o false). 
+FechaNotificacion 
+DATETIME 
+Not Null, 
+Default(GETUTCDATE()) 
+Fecha del registro 
+de la alerta en 
+UTC. 
+
+--- PAGE 8 ---
+Tabla: PartidasBattleship 
+Columna 
+Tipo de Dato 
+(SQL) 
+Restricciones 
+Descripción 
+Id 
+INT 
+PK, Identity 
+Identificador único de 
+la partida. 
+Jugador1Id 
+INT 
+Not Null, FK -> 
+Usuarios(Id) 
+ID del jugador que 
+inició la partida. 
+Jugador2Id 
+INT 
+Not Null, FK -> 
+Usuarios(Id) 
+ID del jugador que 
+aceptó el reto. 
+TurnoUsuarioId 
+INT 
+Not Null, FK -> 
+Usuarios(Id) 
+ID del jugador que 
+posee el turno de 
+ataque actual. 
+EstadoPartida 
+VARCHAR(20) 
+Not Null, 
+Default('Configurando') 
+Estados: 
+'Configurando', 
+'EnProgreso', 
+'Finalizada'. 
+GanadorId 
+INT 
+Null, FK -> Usuarios(Id) 
+ID del vencedor (Null 
+si sigue activa o 
+quedó en empate). 
+UltimoMovimiento 
+DATETIME 
+Not Null, 
+Default(GETUTCDATE()) 
+Clave para auditar y 
+aplicar la derrota por 
+abandono de 48 
+horas. 
+FechaInicio 
+DATETIME 
+Not Null, 
+Default(GETUTCDATE()) 
+Fecha de creación de 
+la partida en UTC. 
+ 
+ 
+ 
+ 
+
+--- PAGE 9 ---
+Tabla: CasillasTablero (Detalle del Tablero 12x12) 
+Columna 
+Tipo de 
+Dato 
+(SQL) 
+Restricciones 
+Descripción 
+Id 
+INT 
+PK, Identity 
+Identificador de la 
+coordenada. 
+PartidaId 
+INT 
+Not Null, FK -> 
+PartidasBattleship(Id) 
+Partida vinculada. 
+UsuarioId 
+INT 
+Not Null, FK -> 
+Usuarios(Id) 
+Dueño de este tablero 
+específico. 
+Fila 
+INT 
+Not Null 
+Coordenada horizontal 
+(Rango numérico estricto 
+del 1 al 12). 
+Columna 
+INT 
+Not Null 
+Coordenada vertical 
+(Rango numérico estricto 
+del 1 al 12). 
+TieneBarco 
+BIT 
+Not Null, Default(0) 
+Determina si hay un 
+segmento de navío 
+posicionado en la celda. 
+Impactada 
+BIT 
+Not Null, Default(0) 
+Indica si la coordenada ya 
+recibió un disparo del 
+rival. 
+ 
+

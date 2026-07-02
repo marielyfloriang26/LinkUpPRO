@@ -1,0 +1,60 @@
+@model LinkUpPro.Application.ViewModels.Battleship.IniciarPartidaViewModel
+
+@{
+    ViewData["Title"] = "Iniciar Partida";
+}
+
+<div class="container mt-4">
+    <h2>Iniciar Nueva Partida</h2>
+    
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <form asp-action="IniciarPartida" method="get" class="mb-4">
+        <div class="input-group">
+            <input asp-for="TerminoBusqueda" class="form-control" placeholder="Buscar por nombre de usuario..." />
+            <button type="submit" class="btn btn-outline-secondary">Buscar</button>
+            <a asp-action="IniciarPartida" class="btn btn-outline-secondary">Limpiar</a>
+        </div>
+    </form>
+
+    <form asp-action="IniciarPartidaConfirm" method="post">
+        @if (Model.Amigos.Any())
+        {
+            <div class="list-group mb-4">
+                @foreach (var amigo in Model.Amigos)
+                {
+                    <label class="list-group-item d-flex align-items-center">
+                        <input class="form-check-input me-3" type="radio" name="amigoSeleccionadoId" value="@amigo.Id" required>
+                        @if (!string.IsNullOrEmpty(amigo.FotoPerfilUrl))
+                        {
+                            <img src="@amigo.FotoPerfilUrl" alt="Foto de @amigo.NombreUsuario" class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <div class="bg-secondary rounded-circle me-3 d-flex align-items-center justify-content-center text-white" style="width: 40px; height: 40px;">
+                                @amigo.NombreUsuario.Substring(0, 1).ToUpper()
+                            </div>
+                        }
+                        <div>
+                            <strong>@amigo.NombreUsuario</strong><br/>
+                            <small class="text-muted">@amigo.NombreCompleto</small>
+                        </div>
+                    </label>
+                }
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-secondary">Volver atrás</a>
+                <button type="submit" class="btn btn-primary">Iniciar partida</button>
+            </div>
+        }
+        else
+        {
+            <p>No se encontraron usuarios disponibles con el nombre ingresado.</p>
+            <a asp-action="Index" class="btn btn-secondary">Volver atrás</a>
+        }
+    </form>
+</div>

@@ -1,0 +1,56 @@
+@model LinkUpPro.Application.ViewModels.Battleship.TableroViewModel
+
+@{
+    ViewData["Title"] = "Resultado de la partida";
+}
+
+<div class="container mt-4 text-center">
+    <h2>Tablero de Ataque (Resultado)</h2>
+
+    @if (ViewBag.GanadorId != null && ViewBag.GanadorId == ViewBag.UsuarioId)
+    {
+        <h3 class="text-success">¡Ganaste!</h3>
+    }
+    else if (ViewBag.GanadorId != null)
+    {
+        <h3 class="text-danger">Perdiste</h3>
+    }
+    else
+    {
+        <h3>Partida Finalizada</h3>
+    }
+
+    <div class="d-inline-block border bg-light p-2 mx-auto">
+        @for (int i = 1; i <= 12; i++)
+        {
+            <div class="d-flex">
+                @for (int j = 1; j <= 12; j++)
+                {
+                    var casilla = Model.CasillasOponente.FirstOrDefault(c => c.Fila == i && c.Columna == j);
+                    
+                    if (casilla != null)
+                    {
+                        if (casilla.TieneBarco)
+                        {
+                            <div class="bg-danger border" style="width: 40px; height: 40px; margin: 1px;"></div>
+                        }
+                        else
+                        {
+                            <div class="bg-success border" style="width: 40px; height: 40px; margin: 1px;"></div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="bg-white border" style="width: 40px; height: 40px; margin: 1px;"></div>
+                    }
+                }
+            </div>
+        }
+    </div>
+    
+    <div class="mt-4">
+        <a asp-action="VerTableroRival" asp-route-partidaId="@Model.PartidaId" class="btn btn-primary">Ver tablero del otro jugador</a>
+        <a asp-action="VerMiTablero" asp-route-partidaId="@Model.PartidaId" class="btn btn-secondary">Ver tablero de posicionamiento</a>
+        <a asp-action="Index" class="btn btn-outline-secondary">Volver atrás</a>
+    </div>
+</div>

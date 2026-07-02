@@ -1,0 +1,44 @@
+@model LinkUpPro.Application.ViewModels.Battleship.SeleccionarBarcoViewModel
+
+@{
+    ViewData["Title"] = "Elegir Celda Inicial";
+}
+
+<div class="container mt-4">
+    <h2>Selecciona la celda inicial</h2>
+    
+    <p>Haz clic en una celda para comenzar a posicionar el barco de @ViewBag.BarcoSize posiciones.</p>
+
+    <div class="d-inline-block border bg-light p-2">
+        @for (int i = 1; i <= 12; i++)
+        {
+            <div class="d-flex">
+                @for (int j = 1; j <= 12; j++)
+                {
+                    bool ocupada = Model.MisCasillas.Any(c => c.Fila == i && c.Columna == j && c.TieneBarco);
+                    
+                    if (ocupada)
+                    {
+                        <div class="bg-secondary border text-center" style="width: 40px; height: 40px; margin: 1px;">
+                            🚢
+                        </div>
+                    }
+                    else
+                    {
+                        <a asp-action="ElegirDireccionBarco" 
+                           asp-route-partidaId="@Model.PartidaId" 
+                           asp-route-barcoSize="@ViewBag.BarcoSize" 
+                           asp-route-fila="@i" 
+                           asp-route-columna="@j" 
+                           class="bg-white border text-center" style="width: 40px; height: 40px; margin: 1px; display: block; text-decoration: none;">
+                        </a>
+                    }
+                }
+            </div>
+        }
+    </div>
+    
+    <div class="mt-4">
+        <a asp-action="PosicionarBarcoSeleccion" asp-route-partidaId="@Model.PartidaId" class="btn btn-secondary">Volver atrás</a>
+    </div>
+</div>

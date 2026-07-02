@@ -1,0 +1,53 @@
+@model LinkUpPro.Application.ViewModels.Battleship.TableroViewModel
+
+@{
+    ViewData["Title"] = "Mi Tablero";
+}
+
+<div class="container mt-4 text-center">
+    <h2>Mi Tablero de Posicionamiento</h2>
+
+    <div class="d-inline-block border bg-light p-2 mx-auto">
+        @for (int i = 1; i <= 12; i++)
+        {
+            <div class="d-flex">
+                @for (int j = 1; j <= 12; j++)
+                {
+                    var casilla = Model.MisCasillas.FirstOrDefault(c => c.Fila == i && c.Columna == j);
+                    
+                    if (casilla != null && casilla.TieneBarco)
+                    {
+                        if (casilla.Impactada)
+                        {
+                            <div class="bg-danger border text-center" style="width: 40px; height: 40px; margin: 1px;">🚢</div>
+                        }
+                        else
+                        {
+                            <div class="bg-secondary border text-center" style="width: 40px; height: 40px; margin: 1px;">🚢</div>
+                        }
+                    }
+                    else if (casilla != null && casilla.Impactada && !casilla.TieneBarco)
+                    {
+                        <div class="bg-success border" style="width: 40px; height: 40px; margin: 1px;"></div>
+                    }
+                    else
+                    {
+                        <div class="bg-white border" style="width: 40px; height: 40px; margin: 1px;"></div>
+                    }
+                }
+            </div>
+        }
+    </div>
+    
+    <div class="mt-4">
+        @if (Model.EstadoPartida == "Finalizada")
+        {
+            <a asp-action="Resultado" asp-route-partidaId="@Model.PartidaId" class="btn btn-primary">Volver a resultado</a>
+        }
+        else
+        {
+            <a asp-action="Jugar" asp-route-partidaId="@Model.PartidaId" class="btn btn-primary">Volver al ataque</a>
+        }
+        <a asp-action="Index" class="btn btn-secondary">Volver al inicio</a>
+    </div>
+</div>

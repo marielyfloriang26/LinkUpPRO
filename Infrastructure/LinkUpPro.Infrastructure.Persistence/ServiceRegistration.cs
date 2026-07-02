@@ -74,6 +74,7 @@ public static class ServiceRegistration
         services.AddTransient(typeof(IRepositoryAsync<>), typeof(RepositoryAsync<>));
         services.AddTransient<IAmistadRepository, AmistadRepository>();
         services.AddTransient<ISolicitudAmistadRepository, SolicitudAmistadRepository>();
+        services.AddTransient<IBattleshipRepository, BattleshipRepository>();
     }
 }
 

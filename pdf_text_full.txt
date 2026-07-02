@@ -1,0 +1,3137 @@
+--- PAGE 1 ---
+ 
+         
+   
+Mini proyecto: LinkUp Pro 
+[2026] Documento Funcional  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Versión 2.0 
+17 de Junio, 2026 
+​
+​
+​
+​
+​
+ 
+© Itla 2026​​
+​
+​
+​
+ 
+Autopista Las Américas, Km. 27, PCSD,  
+La Caleta, Boca Chica 11606.​
+​
+​
+ 
+Tel. 809-738-4852 
+
+--- PAGE 2 ---
+ 
+ 
+ 
+Índice 
+ 
+ 
+ 
+Índice​
+2 
+Objetivo general​
+3 
+Funcionalidad​
+3 
+Login y registro​
+3 
+Publicaciones (Home)​
+14 
+Notificaciones de interacción​
+28 
+Amigos​
+31 
+Solicitudes de amistad​
+47 
+Battleship​
+62 
+Mi Perfil​
+81 
+Seguridad​
+88 
+Requerimientos técnicos​
+98 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+--- PAGE 3 ---
+ 
+Objetivo general 
+Desarrollar una aplicación web de red social que permita a los usuarios registrarse, 
+activar su cuenta mediante correo electrónico, iniciar sesión de forma segura y 
+gestionar la información de su perfil. 
+La plataforma debe permitir crear, editar y eliminar publicaciones compuestas por 
+texto acompañado de una imagen o un video de YouTube. Los usuarios podrán 
+interactuar con las publicaciones mediante comentarios, respuestas anidadas y 
+reacciones de “Me gusta” o “No me gusta”. 
+El sistema también debe permitir enviar, aceptar, rechazar y eliminar solicitudes de 
+amistad, administrar la lista de amigos y consultar las publicaciones realizadas por 
+estos. 
+Además, los usuarios podrán iniciar partidas de Battleship con sus amigos, 
+posicionar sus barcos, realizar ataques por turnos, rendirse y consultar tanto las 
+partidas activas como el historial de resultados. 
+La aplicación debe garantizar que cada usuario solo pueda modificar el contenido 
+creado por él, proteger el acceso a las funcionalidades internas y mantener la 
+integridad de las relaciones, publicaciones y partidas registradas en el sistema. 
+Funcionalidad 
+Login y registro 
+El sistema debe permitir que los usuarios se registren, activen su cuenta mediante 
+correo electrónico, inicien sesión de forma segura y restablezca su contraseña 
+cuando sea necesario. 
+La pantalla de inicio de sesión será la pantalla inicial de la aplicación para los 
+usuarios que no estén autenticados. 
+Si un usuario autenticado intenta acceder directamente a esta pantalla, el sistema 
+debe redirigir automáticamente al Home de la red social.​
+ 
+
+--- PAGE 4 ---
+ 
+Pantalla de inicio de sesión 
+La pantalla debe contener un formulario con los siguientes campos: 
+Campo 
+Tipo de dato 
+Requerido 
+Descripción 
+Nombre de 
+usuario 
+Texto / string 
+Sí 
+Nombre de 
+usuario registrado 
+en el sistema. 
+Contraseña 
+Password / string 
+Sí 
+Contraseña 
+asociada a la 
+cuenta. 
+Mantener sesión 
+iniciada 
+Booleano / 
+checkbox 
+No 
+Permite conservar 
+la sesión después 
+de cerrar el 
+navegador. 
+Debajo del formulario debe existir un botón con el texto Iniciar sesión. 
+También deben mostrarse las siguientes opciones: 
+●​ Registrarse: envía al usuario a la pantalla de creación de cuenta. 
+●​ Restablecer contraseña: permite solicitar un enlace para crear una nueva 
+contraseña. 
+●​ Reenviar correo de activación: permite solicitar un nuevo enlace cuando la 
+cuenta todavía está inactiva. 
+Mostrar u ocultar la contraseña 
+El campo Contraseña debe incluir un control que permita mostrar u ocultar 
+temporalmente su contenido. 
+El campo debe mostrarse oculto por defecto. 
+Cuando el usuario presione el control para mostrar la contraseña: 
+●​ El valor debe visualizarse como texto. 
+●​ El contenido del campo no debe modificarse. 
+●​ El control debe cambiar para indicar que la contraseña está visible. 
+
+--- PAGE 5 ---
+ 
+Al presionarlo nuevamente, la contraseña debe volver a ocultarse. 
+Esta funcionalidad también debe estar disponible en los campos de contraseña y 
+confirmación utilizados durante el registro y el restablecimiento de contraseña. 
+Validaciones de inicio de sesión 
+Al presionar el botón Iniciar sesión, el sistema debe realizar las siguientes 
+validaciones: 
+●​ El nombre de usuario es requerido. 
+●​ La contraseña es requerida. 
+●​ El nombre de usuario debe corresponder a una cuenta registrada. 
+●​ La contraseña debe ser correcta. 
+●​ La cuenta debe encontrarse activa. 
+●​ La cuenta no debe encontrarse bloqueada temporalmente. 
+●​ El usuario no debe estar autenticado previamente. 
+Si el nombre de usuario o la contraseña son incorrectos, el sistema debe mostrar: 
+“El nombre de usuario o la contraseña son incorrectos.” 
+El mensaje no debe especificar cuál de los datos es incorrecto. 
+Si la cuenta existe, pero todavía no ha sido activada, el sistema debe rechazar el 
+inicio de sesión y mostrar: 
+“Su cuenta se encuentra inactiva. Debe activarla mediante el enlace 
+enviado a su correo electrónico.” 
+Si las credenciales son correctas y la cuenta está activa, el sistema debe autenticar 
+al usuario y redirigirlo al Home de la red social. 
+Bloqueo temporal por intentos fallidos 
+El sistema debe controlar los intentos fallidos de inicio de sesión para evitar 
+ataques contra las cuentas registradas. 
+Una cuenta debe bloquearse temporalmente cuando se registren cinco intentos 
+consecutivos de inicio de sesión con una contraseña incorrecta. 
+El bloqueo debe tener una duración de 15 minutos. 
+
+--- PAGE 6 ---
+ 
+Mientras la cuenta se encuentre bloqueada: 
+●​ No debe permitirse iniciar sesión, aunque se introduzca la contraseña 
+correcta. 
+●​ Los intentos adicionales no deben aumentar la duración del bloqueo. 
+●​ No debe revelarse información adicional sobre la cuenta. 
+●​ El usuario podrá solicitar el restablecimiento de su contraseña. 
+El sistema debe mostrar: 
+“La cuenta se encuentra bloqueada temporalmente debido a varios 
+intentos fallidos. Inténtelo nuevamente en 15 minutos o restablezca su 
+contraseña.” 
+Cuando finalice el período de bloqueo, el usuario podrá intentar iniciar sesión 
+nuevamente. 
+Un inicio de sesión exitoso debe restablecer a cero la cantidad de intentos fallidos. 
+El contador debe aplicarse únicamente cuando el nombre de usuario corresponda a 
+una cuenta registrada. 
+Opción Mantener sesión iniciada 
+El formulario de inicio de sesión debe incluir una casilla con el texto Mantener 
+sesión iniciada. 
+Si el usuario no selecciona esta opción: 
+●​ La sesión debe cerrarse al cerrar el navegador. 
+●​ También debe cerrarse después de 30 minutos consecutivos de inactividad. 
+Si el usuario selecciona esta opción: 
+●​ La sesión podrá conservarse después de cerrar el navegador. 
+●​ La sesión tendrá una duración máxima de siete días. 
+●​ Cada nueva autenticación debe reemplazar el período anterior. 
+●​ Al cumplirse los siete días, el usuario deberá iniciar sesión nuevamente. 
+La pantalla debe indicar que esta opción solo debe utilizarse en dispositivos 
+personales. 
+
+--- PAGE 7 ---
+ 
+Mensaje informativo sugerido: 
+“Seleccione esta opción únicamente si está utilizando un dispositivo 
+personal.” 
+Cerrar sesión manualmente debe invalidar la sesión, aunque se haya seleccionado 
+la opción "Mantener sesión iniciada". 
+Cierre automático por inactividad 
+Cuando el usuario no haya seleccionado Mantener sesión iniciada, el sistema debe 
+cerrar su sesión después de 30 minutos consecutivos sin realizar solicitudes o 
+acciones dentro de la aplicación. 
+Después del cierre automático, el sistema debe redirigir al usuario a la pantalla de 
+inicio de sesión y mostrar: 
+“Su sesión finalizó por inactividad. Inicie sesión nuevamente para 
+continuar.” 
+Las acciones realizadas dentro de la aplicación deben renovar el tiempo de actividad 
+de la sesión. 
+La sesión no debe renovarse únicamente porque una pantalla permanezca abierta 
+sin interacción. 
+Registro de usuario 
+Al presionar la opción Registrarse, el sistema debe enviar al usuario a una pantalla 
+con un formulario para crear una cuenta. 
+El formulario debe contener los siguientes campos: 
+Campo 
+Tipo de 
+dato 
+Requerido 
+Descripción 
+Nombre 
+Texto / 
+string 
+Sí 
+Nombre del usuario. 
+Apellido 
+Texto / 
+string 
+Sí 
+Apellido del usuario. 
+
+--- PAGE 8 ---
+ 
+Campo 
+Tipo de 
+dato 
+Requerido 
+Descripción 
+Teléfono 
+Texto / 
+string 
+Sí 
+Número telefónico con formato de 
+República Dominicana. 
+Correo 
+electrónico 
+Email / 
+string 
+Sí 
+Correo utilizado para activar y 
+recuperar la cuenta. 
+Foto de perfil 
+File / 
+imagen 
+Sí 
+Imagen que identificará 
+visualmente al usuario. 
+Nombre de 
+usuario 
+Texto / 
+string 
+Sí 
+Identificador único utilizado para 
+iniciar sesión. 
+Contraseña 
+Password / 
+string 
+Sí 
+Contraseña de acceso a la cuenta. 
+Confirmar 
+contraseña 
+Password / 
+string 
+Sí 
+Confirmación de la contraseña 
+ingresada. 
+Los campos Contraseña y Confirmar contraseña deben incluir controles 
+independientes para mostrar u ocultar sus valores. 
+Indicador de fortaleza de contraseña 
+Debajo del campo Contraseña debe mostrarse un indicador visual que evalúe su 
+fortaleza mientras el usuario escribe. 
+El indicador debe tomar en cuenta los siguientes criterios: 
+●​ Tener al menos ocho caracteres. 
+●​ Contener una letra mayúscula. 
+●​ Contener una letra minúscula. 
+●​ Contener al menos un número. 
+●​ Contener al menos un carácter especial. 
+La fortaleza debe clasificarse de la siguiente manera: 
+
+--- PAGE 9 ---
+ 
+Nivel 
+Condición 
+Débil 
+Cumple dos criterios o menos. 
+Media 
+Cumple tres o cuatro criterios. 
+Fuerte 
+Cumple los cinco criterios. 
+Cada nivel debe diferenciarse visualmente y mostrar el texto Débil, Media o Fuerte. 
+El indicador es informativo y no sustituye las validaciones realizadas en el servidor. 
+Solo debe permitirse registrar la cuenta cuando la contraseña cumpla todas las 
+reglas de seguridad establecidas. 
+Validaciones para registrar un usuario 
+El formulario debe cumplir las siguientes validaciones: 
+●​ Todos los campos son requeridos. 
+●​ El nombre y el apellido no deben contener únicamente espacios. 
+●​ El teléfono debe tener un formato válido de República Dominicana. 
+●​ El correo electrónico debe tener un formato válido. 
+●​ El correo electrónico no debe estar registrado en otra cuenta. 
+●​ El nombre de usuario debe ser único. 
+●​ La validación del nombre de usuario y del correo debe ignorar diferencias 
+entre mayúsculas y minúsculas. 
+●​ La foto de perfil debe ser una imagen válida. 
+●​ La contraseña debe cumplir las reglas de seguridad establecidas. 
+●​ La contraseña y su confirmación deben coincidir. 
+Ejemplos de teléfonos válidos: 
+●​ 809-555-1234 
+●​ 829-555-1234 
+
+--- PAGE 10 ---
+ 
+●​ 849-555-1234 
+Si el nombre de usuario ya está registrado, el sistema debe mostrar: 
+“Este nombre de usuario ya se encuentra registrado.” 
+Si el correo electrónico está asociado a otra cuenta, debe mostrar: 
+“Este correo electrónico ya se encuentra registrado.” 
+Si las contraseñas no coinciden, debe mostrar: 
+“La contraseña y su confirmación no coinciden.” 
+Al final del formulario deben existir dos botones: 
+●​ Volver atrás: regresa a la pantalla de inicio de sesión sin crear la cuenta. 
+●​ Registrarse: crea la cuenta cuando los datos son válidos. 
+Activación de la cuenta 
+Cuando el formulario de registro sea válido, el sistema debe: 
+1.​ Crear la cuenta en estado inactivo. 
+2.​ Generar un token de activación asociado al usuario. 
+3.​ Enviar un correo electrónico a la dirección registrada. 
+4.​ Incluir en el correo un enlace que contenga el token. 
+5.​ Redirigir al usuario a una pantalla informativa. 
+La pantalla debe mostrar: 
+“Su cuenta fue creada correctamente. Hemos enviado un enlace de 
+activación a su correo electrónico.” 
+El usuario no podrá iniciar sesión mientras su cuenta permanece inactiva. 
+Al acceder al enlace recibido, el sistema debe validar que el token: 
+●​ Existe. 
+●​ Corresponde al usuario. 
+●​ Sea válido. 
+●​ No haya sido utilizado anteriormente. 
+
+--- PAGE 11 ---
+ 
+Si el token es válido, el sistema debe activar la cuenta, invalidar el token utilizado y 
+redirigir al usuario a la pantalla de inicio de sesión. 
+Mensaje sugerido: 
+“Su cuenta fue activada correctamente. Ya puede iniciar sesión.” 
+Si el token no es válido o ya fue utilizado, el sistema debe mostrar: 
+“El enlace de activación no es válido o ya fue utilizado.” 
+Reenvío del correo de activación 
+La pantalla de inicio de sesión debe incluir una opción con el texto Reenviar correo 
+de activación. 
+Al seleccionarla, el sistema debe enviar al usuario a una pantalla con un formulario 
+que contenga el campo Nombre de usuario. 
+Debajo del formulario deben existir los siguientes botones: 
+●​ Volver atrás: regresa a la pantalla de inicio de sesión. 
+●​ Reenviar enlace: procesa la solicitud. 
+Al presionar Reenviar enlace, el sistema debe: 
+●​ Validar que el nombre de usuario haya sido ingresado. 
+●​ Verificar si corresponde a una cuenta registrada. 
+●​ Comprobar que la cuenta permanece inactiva. 
+●​ Invalidar los tokens de activación anteriores. 
+●​ Generar un nuevo token. 
+●​ Enviar un nuevo enlace al correo electrónico registrado. 
+El sistema debe impedir que un usuario realice múltiples solicitudes consecutivas 
+durante un período menor de cinco minutos. 
+Independientemente de que la cuenta exista o se encuentre activa, el sistema debe 
+mostrar: 
+“Si la cuenta existe y todavía no ha sido activada, recibirá un nuevo 
+enlace de activación.” 
+
+--- PAGE 12 ---
+ 
+Si la cuenta ya está activa, el sistema no debe modificar su estado ni enviar un 
+nuevo correo. 
+Restablecimiento de contraseña 
+Al presionar la opción Restablecer contraseña, el sistema debe enviar al usuario a 
+una pantalla con un formulario que contenga el campo Nombre de usuario. 
+Debajo del formulario deben existir los siguientes botones: 
+●​ Volver atrás: regresa a la pantalla de inicio de sesión. 
+●​ Enviar enlace: procesa la solicitud. 
+Solicitud de restablecimiento 
+Al presionar Enviar enlace, el sistema debe validar que el nombre de usuario haya 
+sido ingresado. 
+Si existe una cuenta asociada, el sistema debe: 
+1.​ Generar un token de restablecimiento. 
+2.​ Asociar el token al usuario. 
+3.​ Enviar al correo registrado un enlace que contenga el token. 
+4.​ Mostrar un mensaje informativo. 
+Independientemente de que el nombre de usuario exista, el sistema debe mostrar: 
+“Si el nombre de usuario corresponde a una cuenta registrada, recibirá 
+un enlace para restablecer su contraseña.” 
+Solicitar un restablecimiento de contraseña no debe activar, desactivar ni 
+desbloquear inmediatamente la cuenta. 
+Registro de la nueva contraseña 
+Al acceder al enlace recibido, el usuario debe visualizar un formulario con los 
+siguientes campos: 
+
+--- PAGE 13 ---
+ 
+Campo 
+Tipo de dato 
+Requerido 
+Descripción 
+Nueva contraseña 
+Password / 
+string 
+Sí 
+Nueva contraseña que 
+tendrá la cuenta. 
+Confirmar 
+contraseña 
+Password / 
+string 
+Sí 
+Confirmación de la nueva 
+contraseña. 
+Ambos campos deben permitir mostrar u ocultar su contenido. 
+Debajo de Nueva contraseña debe mostrarse el mismo indicador visual de fortaleza 
+utilizado en el registro. 
+El formulario debe cumplir las siguientes validaciones: 
+●​ Ambos campos son requeridos. 
+●​ Las contraseñas deben coincidir. 
+●​ La nueva contraseña debe cumplir todas las reglas de seguridad. 
+●​ El token debe existir. 
+●​ El token debe corresponder al usuario. 
+●​ El token debe ser válido. 
+●​ El token no debe haber sido utilizado anteriormente. 
+Si los datos son válidos, el sistema debe: 
+1.​ Actualizar la contraseña. 
+2.​ Invalidar el token utilizado. 
+3.​ Restablecer los intentos fallidos. 
+4.​ Eliminar cualquier bloqueo temporal de la cuenta. 
+5.​ Invalidar las sesiones anteriores del usuario. 
+6.​ Redirigirlo a la pantalla de inicio de sesión. 
+Mensaje sugerido: 
+“Su contraseña fue restablecida correctamente. Ya puede iniciar sesión.” 
+El restablecimiento de contraseña no debe modificar el estado de activación de la 
+cuenta. Si la cuenta estaba inactiva, debe continuar inactiva hasta completar el 
+proceso de activación. 
+
+--- PAGE 14 ---
+ 
+Publicaciones (Home) 
+Una vez que el usuario haya iniciado sesión correctamente, el sistema debe 
+redirigirlo al Home de la red social. 
+Esta pantalla funcionará como la página principal del usuario autenticado. Desde 
+ella podrá crear publicaciones, consultar sus publicaciones anteriores e interactuar 
+mediante comentarios, respuestas y reacciones. 
+Solo los usuarios autenticados y con cuentas activas podrán acceder al Home. 
+Menú principal 
+El sistema debe mostrar un menú de navegación en todas las pantallas internas de 
+la aplicación. 
+El menú debe contener las siguientes opciones: 
+Opción 
+Descripción 
+Home 
+Envía al usuario al listado de sus publicaciones. 
+Amigos 
+Permite consultar los amigos agregados y sus 
+publicaciones. 
+Solicitudes de amistad 
+Permite gestionar las solicitudes recibidas y enviadas. 
+Notificaciones 
+Permite consultar las interacciones recibidas en 
+publicaciones, comentarios y respuestas. 
+Battleship 
+Permite acceder a las partidas activas y al historial de 
+partidas. 
+Mi perfil 
+Permite consultar y modificar la información del 
+usuario autenticado. 
+Cerrar sesión 
+Finaliza la sesión y redirige a la pantalla de inicio de 
+sesión. 
+La opción Solicitudes de amistad debe mostrar la cantidad de solicitudes 
+pendientes de respuesta recibidas por el usuario autenticado. 
+
+--- PAGE 15 ---
+ 
+Este contador debe: 
+●​ Incluir únicamente solicitudes recibidas. 
+●​ Incluir únicamente solicitudes con estado en espera de respuesta. 
+●​ No incluir las solicitudes enviadas. 
+●​ No mostrarse cuando la cantidad sea cero. 
+●​ Actualizarse al cargar o recargar una pantalla. 
+La opción Notificaciones debe mostrar la cantidad de notificaciones no leídas. 
+Este contador no tiene que actualizarse en tiempo real. Su valor debe actualizarse 
+cuando el usuario navegue hacia otra pantalla o recargue la pantalla actual. 
+Listado de publicaciones 
+El Home debe mostrar todas las publicaciones creadas por el usuario autenticado, 
+independientemente de que su privacidad sea Solo amigos o Solo yo. 
+Las publicaciones deben organizarse desde la más reciente hasta la más antigua, 
+utilizando su fecha y hora de creación. 
+De cada publicación se debe mostrar: 
+Campo 
+Descripción 
+Foto de perfil 
+Miniatura de la foto del usuario que creó la 
+publicación. 
+Nombre de usuario 
+Nombre del autor de la publicación. 
+Fecha de 
+publicación 
+Fecha y hora en que fue creada. 
+Contenido 
+Texto registrado en la publicación. 
+
+--- PAGE 16 ---
+ 
+Campo 
+Descripción 
+Imagen o video 
+Contenido multimedia asociado. 
+Privacidad 
+Indica si la publicación es Sólo amigos o Solo yo. 
+Estado de 
+comentarios 
+Indica si la publicación permite nuevos 
+comentarios. 
+Reacciones 
+Cantidad de reacciones “Me gusta” y “No me 
+gusta”. 
+Comentarios 
+Comentarios y respuestas asociados a la 
+publicación. 
+Si la publicación fue modificada, el sistema debe mostrar el indicador Editada, sin 
+reemplazar su fecha original de creación. 
+Si el usuario todavía no ha creado publicaciones, el sistema debe mostrar: 
+“Todavía no ha realizado ninguna publicación.” 
+Buscador y filtros 
+Encima del listado debe existir una sección para buscar y filtrar las publicaciones 
+creadas por el usuario autenticado. 
+Esta sección debe contener los siguientes campos: 
+
+--- PAGE 17 ---
+ 
+Campo 
+Tipo de 
+dato 
+Requerido 
+Descripción 
+Texto de 
+búsqueda 
+Texto / 
+string 
+No 
+Permite buscar coincidencias dentro del 
+contenido de las publicaciones. 
+Tipo de 
+contenido 
+Select / 
+string 
+No 
+Permite filtrar por Imagen o Video de 
+YouTube. 
+Fecha desde 
+Fecha / 
+Date 
+No 
+Fecha inicial del período de búsqueda. 
+Fecha hasta 
+Fecha / 
+Date 
+No 
+Fecha final del período de búsqueda. 
+Estado de 
+edición 
+Select / 
+string 
+No 
+Permite mostrar todas, solamente 
+editadas o solamente no editadas. 
+El filtro Tipo de contenido debe contener: 
+●​ Todos. 
+●​ Imagen. 
+●​ Video de YouTube. 
+El filtro Estado de edición debe contener: 
+●​ Todas. 
+●​ Editadas. 
+●​ No editadas. 
+Debajo de los filtros deben existir dos botones: 
+●​ Buscar: aplica los criterios seleccionados. 
+●​ Limpiar filtros: elimina los criterios y muestra nuevamente todas las 
+publicaciones. 
+Reglas del buscador y los filtros 
+●​ La búsqueda por texto no debe distinguir entre mayúsculas y minúsculas. 
+●​ Debe ignorar espacios innecesarios al inicio y al final. 
+●​ Los filtros pueden combinarse. 
+
+--- PAGE 18 ---
+ 
+●​ Si se utilizan ambas fechas, Fecha desde no puede ser posterior a Fecha 
+hasta. 
+●​ Fecha desde debe incluir las publicaciones realizadas a partir de esa fecha. 
+●​ Fecha hasta debe incluir las publicaciones realizadas hasta el final de esa 
+fecha. 
+●​ Los resultados deben mantenerse organizados desde el más reciente hasta 
+el más antiguo. 
+●​ Solo deben consultarse publicaciones pertenecientes al usuario autenticado. 
+Si Fecha desde es posterior a Fecha hasta, el sistema debe mostrar: 
+“La fecha inicial no puede ser posterior a la fecha final.” 
+Si no existen publicaciones que cumplan los criterios, debe mostrar: 
+“No se encontraron publicaciones que coincidan con los criterios 
+seleccionados.” 
+Creación de publicaciones 
+En la parte superior del Home debe existir un formulario para crear una publicación. 
+El formulario debe contener los siguientes campos: 
+Tipo de dato 
+Requerido 
+Descripción 
+Texto / string 
+Sí 
+Texto principal de la publicación. 
+Select / string 
+Sí 
+Permite seleccionar Imagen o Video de 
+YouTube. 
+File / imagen 
+Condicional 
+Imagen asociada a la publicación. 
+Texto / URL 
+Condicional 
+Enlace del video que será reproducido 
+dentro de la aplicación. 
+Select / string 
+Sí 
+Determina quién puede visualizar la 
+publicación. 
+Booleano / checkbox 
+Sí 
+Indica si otros usuarios pueden agregar 
+comentarios y respuestas. 
+
+--- PAGE 19 ---
+ 
+El campo Privacidad debe contener: 
+●​ Solo amigos. 
+●​ Solo yo. 
+Por defecto, la privacidad debe estar configurada como Solo amigos. 
+El campo Permitir comentarios debe aparecer marcado por defecto. 
+Debajo del formulario debe existir un botón con el texto Publicar. 
+Tipo de contenido 
+El sistema solo debe permitir las siguientes estructuras: 
+●​ Texto acompañado de una imagen. 
+●​ Texto acompañado de un video de YouTube. 
+No debe permitirse crear una publicación que contenga solamente texto, solamente 
+una imagen o solamente un video. 
+Cuando el usuario seleccione Imagen: 
+●​ Debe mostrarse el campo para cargar la imagen. 
+●​ Debe ocultarse el campo Enlace de YouTube. 
+●​ Debe eliminarse cualquier enlace ingresado previamente. 
+Cuando seleccione Video de YouTube: 
+●​ Debe mostrarse el campo Enlace de YouTube. 
+●​ Debe ocultarse el campo para cargar la imagen. 
+●​ Debe eliminarse cualquier archivo seleccionado previamente. 
+Privacidad de las publicaciones 
+Toda publicación debe tener uno de los siguientes niveles de privacidad: 
+Privacidad 
+Descripción 
+Solo amigos 
+La publicación puede ser visualizada por su autor y 
+por los usuarios que actualmente sean sus amigos. 
+
+--- PAGE 20 ---
+ 
+Privacidad 
+Descripción 
+Solo yo 
+La publicación solo puede ser visualizada por su 
+autor. 
+Las publicaciones con privacidad Sólo amigos deben aparecer en: 
+●​ El Home del autor. 
+●​ El listado de publicaciones de sus amigos. 
+●​ El perfil del autor cuando sea consultado por uno de sus amigos. 
+Las publicaciones Solo yo deben mostrarse únicamente en el Home de su autor.  
+Si una amistad es eliminada, ambos usuarios deben dejar de visualizar las 
+publicaciones con privacidad Sólo amigos del otro usuario. 
+La privacidad debe validarse en el servidor. No es suficiente ocultar la publicación 
+visualmente. 
+Si un usuario intenta acceder directamente mediante la URL a una publicación que 
+no tiene permiso para visualizar, el sistema debe impedir el acceso y mostrar: 
+“No posee permisos para visualizar esta publicación.” 
+Permitir o desactivar comentarios 
+El autor podrá decidir si una publicación acepta nuevos comentarios y respuestas. 
+Cuando Permitir comentarios se encuentre activo: 
+●​ El autor y sus amigos podrán agregar comentarios, siempre que tengan 
+acceso a la publicación. 
+●​ Los usuarios podrán responder a comentarios y respuestas existentes. 
+Cuando se encuentre desactivado: 
+●​ No debe mostrarse el formulario para agregar comentarios. 
+●​ No debe mostrarse la opción Responder. 
+●​ Los comentarios y respuestas existentes deben continuar visibles. 
+●​ Los autores de comentarios existentes podrán editarlos o eliminarlos. 
+●​ Las reacciones deben continuar disponibles. 
+
+--- PAGE 21 ---
+ 
+El sistema debe mostrar: 
+“Los comentarios están desactivados para esta publicación.” 
+El autor puede activar o desactivar los comentarios al editar la publicación. 
+Desactivar los comentarios no debe eliminar comentarios ni respuestas existentes. 
+Validaciones para crear una publicación 
+El formulario debe cumplir las siguientes validaciones: 
+●​ El contenido es requerido. 
+●​ El contenido no debe contener únicamente espacios. 
+●​ El contenido debe tener un máximo de 1,000 caracteres. 
+●​ El tipo de contenido es requerido. 
+●​ La privacidad es requerida. 
+●​ La privacidad debe ser Solo amigos o Solo yo. 
+●​ Si se selecciona Imagen, debe cargarse una imagen. 
+●​ Si se selecciona Video de YouTube, debe proporcionar un enlace válido. 
+●​ No debe permitirse enviar simultáneamente una imagen y un enlace de 
+YouTube. 
+●​ El archivo debe ser una imagen válida. 
+●​ La imagen debe tener formato .jpg, .jpeg, .png o .webp. 
+●​ La imagen no debe superar los 5 MB. 
+●​ El enlace debe corresponder a un video válido de YouTube. 
+●​ El usuario debe encontrarse autenticado y activo. 
+Si el contenido está vacío, el sistema debe mostrar: 
+“Debe ingresar el contenido de la publicación.” 
+Si se selecciona Imagen y no se carga un archivo, debe mostrar: 
+“Debe seleccionar una imagen para crear la publicación.” 
+Si el archivo no es una imagen válida, debe mostrar: 
+“El archivo seleccionado no tiene un formato de imagen válido.” 
+Si se selecciona Video de YouTube y el enlace no es válido, debe mostrar: 
+
+--- PAGE 22 ---
+ 
+“Debe ingresar un enlace válido de YouTube.” 
+Cuando los datos sean válidos, el sistema debe: 
+1.​ Registrar la publicación asociada al usuario autenticado. 
+2.​ Guardar la fecha y hora actuales. 
+3.​ Guardar la imagen o el enlace de YouTube. 
+4.​ Guardar la privacidad seleccionada. 
+5.​ Guardar sí permite comentarios. 
+6.​ Redirigir al usuario al Home. 
+7.​ Mostrar la publicación al inicio del listado. 
+Mensaje sugerido: 
+“La publicación fue creada correctamente.” 
+Reproducción de videos de YouTube 
+Cuando una publicación contenga un video de YouTube, el sistema debe mostrarlo 
+incrustado dentro de la publicación. 
+El usuario debe poder reproducir, pausar y controlar el video sin abandonar la 
+aplicación. 
+El sistema no debe mostrar únicamente el enlace ni obligar al usuario a ser 
+redirigido hacia YouTube. 
+El enlace debe procesarse para obtener el identificador del video y generar una 
+dirección válida para su reproducción incrustada. 
+Edición de publicaciones 
+Cada publicación del usuario autenticado debe mostrar un botón con el texto Editar. 
+Esta opción solo debe estar disponible para el autor. 
+Al presionar el botón, el sistema debe enviar al usuario un formulario con los datos 
+actuales de la publicación. 
+El usuario podrá modificar: 
+●​ El contenido. 
+
+--- PAGE 23 ---
+ 
+●​ El tipo de contenido. 
+●​ La imagen. 
+●​ El enlace de YouTube. 
+●​ La privacidad. 
+●​ La opción Permitir comentarios. 
+Si la publicación contiene una imagen, debe mostrarse la imagen actual. No debe 
+exigirse cargarla nuevamente, excepto cuando el usuario decida reemplazar o 
+cambiar el tipo de contenido. 
+Si contiene un video, debe mostrarse su enlace actual. 
+Si el usuario cambia de Imagen a Vídeo de YouTube, la imagen anterior debe dejar 
+de estar asociada a la publicación. 
+Si cambia de Vídeo de YouTube a Imagen, el enlace anterior debe eliminarse. 
+Cambiar la privacidad no debe eliminar los comentarios, respuestas ni reacciones 
+existentes. 
+Si una publicación cambia de Solo amigos a Solo yo: 
+●​ Debe dejar de aparecer inmediatamente en los listados de amigos. 
+●​ Los comentarios y reacciones existentes deben conservarse. 
+●​ Solamente el autor podrá visualizarlos mientras la publicación permanezca 
+privada. 
+Si posteriormente cambia nuevamente a Solo amigos, las interacciones anteriores 
+volverán a estar visibles para los usuarios que tengan acceso. 
+La edición no debe modificar: 
+●​ El autor. 
+●​ La fecha original de creación. 
+●​ Los comentarios. 
+●​ Las respuestas. 
+●​ Las reacciones. 
+El sistema debe registrar la fecha de modificación y mostrar el indicador Editada. 
+Al final del formulario deben existir: 
+
+--- PAGE 24 ---
+ 
+●​ Volver atrás: regresa al Home sin guardarlo. 
+●​ Guardar cambios: actualiza la publicación. 
+Si la operación se realiza correctamente, el sistema debe mostrar: 
+“La publicación fue actualizada correctamente.” 
+Si un usuario intenta editar una publicación creada por otra persona, el sistema 
+debe impedirlo y mostrar: 
+“No posee permisos para editar esta publicación.” 
+Eliminación de publicaciones 
+Cada publicación del usuario autenticado debe mostrar un botón con el texto 
+Eliminar. 
+Al presionarlo, el sistema debe mostrar: 
+“¿Está seguro que desea eliminar esta publicación?” 
+Debajo deben existir dos botones: 
+●​ Cancelar: regresa al Home sin eliminar. 
+●​ Aceptar: confirma la eliminación. 
+Solo el autor puede eliminar su publicación. 
+La eliminación debe realizarse de manera lógica. La publicación no debe volver a 
+mostrarse en: 
+●​ El Home del autor. 
+●​ El listado de publicaciones de amigos. 
+●​ El perfil del autor. 
+●​ Los resultados del buscador. 
+Los comentarios, respuestas y reacciones deben conservarse internamente, pero no 
+podrán visualizarse mientras la publicación permanezca eliminada. 
+Las notificaciones generadas anteriormente deben conservarse. Si el usuario intenta 
+acceder desde una notificación a una publicación eliminada, el sistema debe 
+mostrar: 
+
+--- PAGE 25 ---
+ 
+“Esta publicación ya no se encuentra disponible.” 
+Si la operación se completa correctamente, debe mostrar: 
+“La publicación fue eliminada correctamente.” 
+Comentarios 
+Cada publicación que permita comentarios debe incluir un formulario con un campo 
+de texto y un botón Comentar. 
+El comentario debe cumplir las siguientes validaciones: 
+●​ El contenido es requerido. 
+●​ No debe contener únicamente espacios. 
+●​ Debe tener un máximo de 500 caracteres. 
+●​ La publicación debe existir y encontrarse activa. 
+●​ La publicación debe permitir comentarios. 
+●​ El usuario debe estar autenticado y activo. 
+●​ El usuario debe tener permiso para visualizar la publicación. 
+Cuando sea válido, el sistema debe registrar: 
+●​ El contenido. 
+●​ El usuario que realizó el comentario. 
+●​ La publicación correspondiente. 
+●​ La fecha y hora de creación. 
+De cada comentario se debe mostrar: 
+●​ Miniatura de la foto de perfil del autor. 
+●​ Nombre de usuario. 
+●​ Contenido. 
+●​ Fecha y hora. 
+●​ Opción Responder, si los comentarios están habilitados. 
+●​ Opciones Editar y Eliminar, cuando pertenezca al usuario autenticado. 
+Los comentarios deben mostrarse desde el más antiguo hasta el más reciente.​
+​
+ 
+
+--- PAGE 26 ---
+ 
+Respuestas y conversaciones anidadas 
+Cada comentario y respuesta debe incluir la opción Responder, siempre que la 
+publicación permita comentarios. 
+Al seleccionarla, el sistema debe mostrar un formulario asociado al contenido 
+seleccionado. 
+La respuesta debe cumplir las mismas validaciones de contenido utilizadas para los 
+comentarios. 
+El sistema debe conservar la relación entre cada respuesta y el comentario o 
+respuesta a la cual pertenece. 
+Las respuestas deben mostrarse debajo del contenido respondido, utilizando una 
+indentación que permita identificar la conversación. 
+De cada respuesta se debe mostrar: 
+●​ Miniatura de la foto de perfil. 
+●​ Nombre de usuario. 
+●​ Contenido. 
+●​ Fecha y hora. 
+●​ Opción Responder. 
+●​ Opciones Editar y Eliminar, cuando corresponda. 
+Edición de comentarios y respuestas 
+El usuario autenticado podrá editar únicamente los comentarios y respuestas 
+creados por él. 
+La edición debe cumplir las mismas validaciones realizadas durante su creación. 
+La edición no debe modificar: 
+●​ El autor. 
+●​ La publicación relacionada. 
+●​ El contenido principal al cual responde. 
+●​ La fecha original de creación. 
+Después de la modificación, debe mostrarse el indicador Editado. 
+
+--- PAGE 27 ---
+ 
+Si un usuario intenta modificar contenido creado por otra persona, el sistema debe 
+mostrar: 
+“No posee permisos para editar este contenido.” 
+Eliminación de comentarios y respuestas 
+El usuario podrá eliminar únicamente los comentarios y respuestas creados por él. 
+Antes de completar la eliminación, el sistema debe solicitar confirmación. 
+Si el comentario o respuesta no tiene contenido dependiente, debe dejar de 
+mostrarse. 
+Si tiene respuestas asociadas, debe conservarse su posición y sustituir su contenido 
+por: 
+“Este comentario fue eliminado.” 
+Las respuestas asociadas deben continuar visibles para conservar la estructura de 
+la conversación. 
+Eliminar un comentario o respuesta no debe eliminar la publicación ni el contenido 
+creado por otros usuarios. 
+Reacciones 
+Cada publicación debe permitir registrar una de las siguientes reacciones: 
+●​ Me gusta. 
+●​ No me gusta. 
+Inicialmente, si el usuario no ha reaccionado, deben mostrarse ambos botones. 
+Cada usuario solo puede tener una reacción activa por publicación. 
+Cuando el usuario seleccione una reacción: 
+●​ El sistema debe registrarla. 
+●​ Debe mostrar la reacción actual del usuario. 
+●​ La opción contraria debe permanecer disponible. 
+●​ Debe mostrarse una opción para eliminar la reacción. 
+
+--- PAGE 28 ---
+ 
+●​ Deben actualizarse los contadores. 
+Ejemplo: 
+Tu reacción: Me gusta 
+Si el usuario selecciona la reacción contraria, el sistema debe actualizar la reacción 
+existente. No debe crear una segunda reacción. 
+Eliminar una reacción 
+Cuando el usuario tenga una reacción registrada, debe mostrarse una opción con el 
+texto Eliminar reacción. 
+Al seleccionarla, el sistema debe: 
+●​ Eliminar la relación entre el usuario y la reacción. 
+●​ Actualizar el contador correspondiente. 
+●​ Volver a mostrar los botones Me gusta y No me gusta. 
+●​ No eliminar las reacciones realizadas por otros usuarios. 
+Eliminar una reacción no debe generar una notificación. 
+Las reacciones sólo pueden realizarse cuando el usuario tenga permiso para 
+visualizar la publicación. 
+Notificaciones de interacción 
+El sistema debe generar notificaciones cuando otro usuario realice alguna de las 
+siguientes acciones: 
+●​ Comente una publicación. 
+●​ Respondió un comentario o respuesta. 
+●​ Registre una reacción en una publicación. 
+●​ Cambie su reacción entre Me gusta y No me gusta. 
+El sistema no debe generar notificaciones por acciones realizadas por el propio 
+usuario sobre su contenido. 
+Las notificaciones no tienen que mostrarse en tiempo real. El sistema no debe 
+requerir AJAX, WebSockets ni actualización automática. 
+
+--- PAGE 29 ---
+ 
+Las notificaciones deben guardarse en la base de datos y consultarse cuando el 
+usuario ingrese a la sección Notificaciones. 
+Destinatarios 
+●​ Cuando un usuario comente una publicación, se debe notificar al autor de la 
+publicación. 
+●​ Cuando un usuario responda un comentario o una respuesta, se debe 
+notificar al autor del contenido respondido. 
+●​ Cuando un usuario reacciona a una publicación, se debe notificar al autor de 
+la publicación. 
+●​ Si el destinatario y el usuario que realiza la acción son la misma persona, no 
+debe generarse la notificación. 
+Sección Notificaciones 
+Al ingresar a esta opción, el sistema debe mostrar todas las notificaciones del 
+usuario autenticado, organizadas desde la más reciente hasta la más antigua. 
+De cada notificación se debe mostrar: 
+Campo 
+Descripción 
+Foto de perfil 
+Miniatura del usuario que realizó la 
+acción. 
+Nombre de 
+usuario 
+Usuario que generó la interacción. 
+Tipo de actividad Comentario, respuesta o reacción. 
+Descripción 
+Resumen de la acción realizada. 
+
+--- PAGE 30 ---
+ 
+Campo 
+Descripción 
+Fecha 
+Fecha y hora en que ocurrió la 
+interacción. 
+Estado 
+Indica si está leída o no leída. 
+Ejemplos: 
+“Juan123 comentó tu publicación.” 
+“María45 respondió tu comentario.” 
+“Pedro89 reaccionó con Me gusta a tu publicación.” 
+Cada notificación debe permitir acceder al contenido relacionado, siempre que 
+todavía exista y el usuario tenga permiso para visualizarlo. 
+Si el contenido fue eliminado, debe mostrar: 
+“El contenido relacionado con esta notificación ya no se encuentra 
+disponible.” 
+Estado de las notificaciones 
+Toda notificación debe crearse en estado No leída. 
+Cada notificación debe incluir una opción para marcar como leída. 
+La sección debe incluir un botón con el texto Marcar todas como leídas. 
+Al presionarlo, todas las notificaciones no leídas del usuario autenticado deben 
+cambiar a estado Leída. 
+El contador del menú debe incluir únicamente notificaciones no leídas y actualizarse 
+al cargar o recargar una pantalla. 
+Las notificaciones pertenecen únicamente al usuario destinatario. Ningún usuario 
+debe poder consultar o modificar las notificaciones de otra persona. 
+
+--- PAGE 31 ---
+ 
+Reglas de negocio de las publicaciones 
+●​ Solo los usuarios autenticados y activos pueden acceder al Home. 
+●​ Cada usuario solo puede editar o eliminar sus propias publicaciones. 
+●​ Cada usuario solo puede editar o eliminar sus comentarios y respuestas. 
+●​ Una publicación debe contener texto y exactamente un contenido 
+multimedia. 
+●​ Toda publicación debe tener una privacidad definida. 
+●​ Las publicaciones Solo yo únicamente pueden ser visualizadas por su autor. 
+●​ Las publicaciones Solo amigos pueden ser visualizadas por el autor y sus 
+amigos actuales. 
+●​ El autor puede activar o desactivar los comentarios. 
+●​ Desactivar los comentarios no elimina las conversaciones existentes. 
+●​ Los videos de YouTube deben reproducirse dentro de la aplicación. 
+●​ Los filtros pueden combinarse. 
+●​ Cada usuario solo puede registrar una reacción por publicación. 
+●​ El usuario puede cambiar o eliminar su reacción. 
+●​ Las notificaciones deben almacenarse y consultarse desde su sección 
+correspondiente. 
+●​ Las notificaciones no deben actualizarse en tiempo real. 
+●​ Ninguna acción debe permitirse solamente por conocer directamente la URL. 
+●​ Los cambios de privacidad deben reflejarse en el Home y Amigos. 
+Amigos 
+Al ingresar a la opción Amigos desde el menú principal, el sistema debe enviar al 
+usuario a una pantalla donde pueda consultar las publicaciones de sus amigos y 
+administrar sus relaciones de amistad. 
+La pantalla debe contener las siguientes secciones: 
+●​ Resumen de amistades. 
+●​ Publicaciones de amigos. 
+●​ Listado de amigos. 
+Solo los usuarios autenticados, activos y con una sesión vigente podrán acceder a 
+esta funcionalidad.​
+ 
+
+--- PAGE 32 ---
+ 
+Resumen de amistades 
+En la parte superior de la pantalla, el sistema debe mostrar los siguientes 
+indicadores: 
+Indicador 
+Descripción 
+Total de amigos 
+Cantidad de amistades activas del usuario 
+autenticado cuyos usuarios se encuentren activos. 
+Publicaciones disponibles Cantidad total de publicaciones Solo amigos, activas 
+y visibles creadas por sus amigos activos. 
+Los indicadores deben calcularse utilizando la información existente al momento de 
+cargar la pantalla. 
+No es necesario utilizar AJAX ni actualizar los indicadores en tiempo real. Los 
+valores deben actualizarse cuando el usuario navegue hacia la pantalla o la 
+recargue. 
+Publicaciones de amigos 
+El sistema debe mostrar las publicaciones creadas por los amigos actuales del 
+usuario autenticado. 
+Las publicaciones deben organizarse desde la más reciente hasta la más antigua, 
+utilizando su fecha y hora de creación. 
+Sólo deben mostrarse las publicaciones que cumplan todas las siguientes 
+condiciones: 
+●​ El autor debe tener una amistad activa con el usuario autenticado. 
+●​ La cuenta del autor debe encontrarse activa. 
+●​ La publicación debe estar activa. 
+●​ La privacidad debe ser solo amigos. 
+●​ La publicación no debe encontrarse eliminada. 
+No deben mostrarse: 
+●​ Publicaciones con privacidad Solo yo. 
+●​ Publicaciones eliminadas. 
+
+--- PAGE 33 ---
+ 
+●​ Publicaciones pertenecientes a usuarios que ya no sean amigos. 
+●​ Publicaciones creadas por cuentas inactivas. 
+De cada publicación se debe mostrar: 
+Campo 
+Descripción 
+Foto de perfil 
+Miniatura de la foto del amigo que creó la 
+publicación. 
+Nombre y apellido 
+Nombre completo del autor. 
+Nombre de usuario 
+Nombre de usuario del amigo y enlace hacia su 
+perfil. 
+Fecha de 
+publicación 
+Fecha y hora en que fue creada. 
+Contenido 
+Texto registrado en la publicación. 
+Imagen o video 
+Contenido multimedia asociado. 
+Indicador de edición 
+Indica si la publicación fue modificada. 
+Estado de 
+comentarios 
+Indica si permite agregar comentarios y 
+respuestas. 
+Reacciones 
+Cantidad de reacciones Me gusta y No me gusta. 
+Comentarios 
+Comentarios y respuestas asociados a la 
+publicación. 
+Si el usuario no tiene amistades activas, el sistema debe mostrar: 
+“Todavía no tiene amigos agregados.” 
+Si tiene amigos, pero ninguno posee publicaciones visibles, debe mostrar: 
+“Sus amigos todavía no han realizado publicaciones disponibles para 
+usted.”​
+​
+ 
+
+--- PAGE 34 ---
+ 
+Buscador y filtros de publicaciones 
+Encima del listado de publicaciones debe mostrarse un formulario para buscar y 
+filtrar las publicaciones de los amigos. 
+El formulario debe contener los siguientes campos: 
+Campo 
+Tipo de 
+dato 
+Requerido 
+Descripción 
+Texto de 
+búsqueda 
+Texto / 
+string 
+No 
+Permite buscar coincidencias dentro del 
+contenido de las publicaciones. 
+Amigo 
+Select / 
+string 
+No 
+Permite mostrar únicamente las 
+publicaciones de un amigo específico. 
+Tipo de 
+contenido 
+Select / 
+string 
+No 
+Permite filtrar por Imagen o Video de 
+YouTube. 
+Fecha desde 
+Fecha / 
+Date 
+No 
+Fecha inicial del período de búsqueda. 
+Fecha hasta 
+Fecha / 
+Date 
+No 
+Fecha final del período de búsqueda. 
+Estado de 
+edición 
+Select / 
+string 
+No 
+Permite filtrar publicaciones editadas o no 
+editadas. 
+El campo Amigo debe cargarse únicamente con los amigos activos del usuario 
+autenticado. 
+El filtro Tipo de contenido debe contener: 
+●​ Todos. 
+●​ Imagen. 
+●​ Video de YouTube. 
+El filtro Estado de edición debe contener: 
+●​ Todas. 
+●​ Editadas. 
+
+--- PAGE 35 ---
+ 
+●​ No editadas. 
+Debajo de los filtros deben existir dos botones: 
+●​ Buscar: aplica los criterios seleccionados. 
+●​ Limpiar filtros: elimina los criterios y muestra todas las publicaciones 
+disponibles. 
+Validaciones de los filtros 
+●​ La búsqueda por texto no debe distinguir entre mayúsculas y minúsculas. 
+●​ Deben ignorarse los espacios innecesarios al inicio y al final. 
+●​ Los filtros pueden combinarse. 
+●​ El amigo seleccionado debe mantener una amistad activa con el usuario 
+autenticado. 
+●​ Fecha desde no puede ser posterior a Fecha hasta. 
+●​ Fecha desde debe incluir las publicaciones realizadas a partir de esa fecha. 
+●​ Fecha hasta debe incluir las publicaciones realizadas hasta el final de esa 
+fecha. 
+●​ Los resultados deben mantenerse ordenados desde el más reciente hasta el 
+más antiguo. 
+●​ Aplicar filtros no debe permitir visualizar publicaciones sin autorización. 
+Si Fecha desde es posterior a Fecha hasta, el sistema debe mostrar: 
+“La fecha inicial no puede ser posterior a la fecha final.” 
+Si el amigo seleccionado ya no mantiene una amistad activa con el usuario 
+autenticado, debe mostrar: 
+“El usuario seleccionado ya no forma parte de su lista de amigos.” 
+Si no existen publicaciones que cumplan los criterios, debe mostrar: 
+“No se encontraron publicaciones que coincidan con los criterios 
+seleccionados.” 
+Privacidad de las publicaciones 
+En la pantalla Amigos solamente deben mostrarse publicaciones con privacidad 
+Sólo amigos. 
+
+--- PAGE 36 ---
+ 
+Las publicaciones con privacidad solo yo únicamente pueden ser visualizadas por su 
+autor. 
+Antes de mostrar una publicación, el sistema debe validar en el servidor: 
+●​ Que la publicación exista. 
+●​ Que no se encuentre eliminada. 
+●​ Que su privacidad sea solo amigos. 
+●​ Que el autor tenga una cuenta activa. 
+●​ Que exista una amistad activa entre el autor y el usuario autenticado. 
+Si el autor cambia la privacidad de Solo amigos a Solo yo, la publicación debe dejar 
+de mostrarse a sus amigos cuando vuelvan a cargar la pantalla. 
+Los cambios no tienen que reflejarse en tiempo real. 
+Si un usuario intenta acceder mediante la URL a una publicación para la cual no 
+tiene autorización, el sistema debe impedirlo y mostrar: 
+“No posee permisos para visualizar esta publicación.” 
+Interacciones con publicaciones de amigos 
+El usuario autenticado podrá realizar las siguientes acciones: 
+●​ Agregar comentarios. 
+●​ Responder comentarios y respuestas. 
+●​ Editar sus propios comentarios y respuestas. 
+●​ Eliminar sus propios comentarios y respuestas. 
+●​ Reaccionar con Me gusta o No me gusta. 
+●​ Cambiar su reacción. 
+●​ Eliminar su reacción. 
+El usuario no podrá: 
+●​ Editar publicaciones creadas por sus amigos. 
+●​ Eliminar publicaciones creadas por sus amigos. 
+●​ Editar comentarios o respuestas de otros usuarios. 
+●​ Eliminar comentarios o respuestas de otros usuarios. 
+●​ Interactuar con publicaciones que no tenga permiso para visualizar. 
+
+--- PAGE 37 ---
+ 
+Antes de registrar cualquier comentario, respuesta o reacción, el sistema debe 
+comprobar nuevamente: 
+●​ Que la publicación continúe activa. 
+●​ Que la privacidad continúe siendo solo amigos. 
+●​ Que la amistad continúe activa. 
+●​ Que las cuentas involucradas continúen activas. 
+●​ Que la publicación permita la acción solicitada. 
+Esta validación debe realizarse aunque la publicación estuviera visible cuando el 
+usuario abrió la pantalla. 
+Comentarios y respuestas 
+Cuando una publicación permite comentarios, debe mostrarse un formulario para 
+agregar un comentario. 
+El comentario debe cumplir las siguientes validaciones: 
+●​ El contenido es requerido. 
+●​ No debe contener únicamente espacios. 
+●​ Debe tener un máximo de 500 caracteres. 
+●​ La publicación debe existir y encontrarse activa. 
+●​ La publicación debe tener privacidad Sólo amigos. 
+●​ La publicación debe permitir comentarios. 
+●​ Debe existir una amistad activa con el autor. 
+●​ El usuario autenticado y el autor deben tener cuentas activas. 
+Cuando el comentario sea válido, el sistema debe registrar: 
+●​ El contenido. 
+●​ El usuario que realizó el comentario. 
+●​ La publicación relacionada. 
+●​ La fecha y hora de creación. 
+Cada comentario y respuesta debe mostrar: 
+●​ Foto de perfil del autor. 
+●​ Nombre de usuario. 
+●​ Contenido. 
+
+--- PAGE 38 ---
+ 
+●​ Fecha y hora de creación. 
+●​ Indicador Editado, cuando corresponda. 
+●​ Opción Responder, si los comentarios están habilitados. 
+●​ Opciones Editar y Eliminar, cuando pertenezcan al usuario autenticado. 
+Las respuestas deben mostrarse debajo del comentario o respuesta 
+correspondiente, utilizando una indentación que permita identificar el hilo. 
+Visibilidad de los autores de comentarios 
+Una publicación puede contener comentarios realizados por usuarios que sean 
+amigos del autor, pero que no sean amigos del usuario que actualmente visualiza la 
+publicación. 
+En esos casos: 
+●​ El comentario debe continuar visible. 
+●​ Deben mostrarse la foto y el nombre de usuario de quien comentó. 
+●​ El nombre y la foto no deben funcionar como enlace hacia su perfil. 
+●​ Visualizar un comentario no concede permiso para consultar el perfil de su 
+autor. 
+El nombre de usuario y la foto solo deben funcionar como enlace cuando exista una 
+amistad activa entre el usuario autenticado y el autor del comentario. 
+Publicaciones con comentarios desactivados 
+Si el autor desactivó los comentarios: 
+●​ No debe mostrarse el formulario para comentar. 
+●​ No debe mostrarse la opción Responder. 
+●​ Los comentarios y respuestas existentes deben continuar visibles. 
+●​ Los autores podrán editar o eliminar sus comentarios y respuestas 
+existentes. 
+●​ Las reacciones deben continuar disponibles. 
+El sistema debe mostrar: 
+“Los comentarios están desactivados para esta publicación.” 
+Desactivar los comentarios no debe eliminar ninguna conversación existente. 
+
+--- PAGE 39 ---
+ 
+Reacciones 
+Cada publicación debe permitir registrar una de las siguientes reacciones: 
+●​ Me gusta. 
+●​ No me gusta. 
+Cada usuario solo puede tener una reacción activa por publicación. 
+Si el usuario no ha reaccionado, deben mostrarse ambos botones. 
+Cuando registre una reacción, el sistema debe: 
+●​ Guardar la reacción asociada al usuario y a la publicación. 
+●​ Mostrar la reacción actual. 
+●​ Mantener disponible la reacción contraria. 
+●​ Mostrar una opción para eliminar la reacción. 
+●​ Actualizar los contadores. 
+Ejemplo: 
+“Tu reacción: Me gusta.” 
+Si el usuario selecciona la reacción contraria, el sistema debe actualizar la reacción 
+existente y no crear una segunda reacción. 
+Al seleccionar Eliminar reacción, el sistema debe: 
+●​ Eliminar la reacción del usuario. 
+●​ Actualizar el contador correspondiente. 
+●​ Volver a mostrar los botones Me gusta y No me gusta. 
+●​ Conservar las reacciones realizadas por los demás usuarios. 
+Solo debe permitirse reaccionar cuando la publicación continúe visible y la amistad 
+permanezca activa. 
+Notificaciones por interacciones 
+Cuando el usuario interactúe con una publicación de un amigo, el sistema debe 
+generar la notificación correspondiente. 
+Deben generarse notificaciones cuando el usuario: 
+
+--- PAGE 40 ---
+ 
+●​ Comente una publicación. 
+●​ Respondió un comentario o respuesta. 
+●​ Registre una reacción. 
+●​ Cambie una reacción. 
+Eliminar una reacción no debe generar una notificación. 
+Las notificaciones deben cumplir estas reglas: 
+●​ Un comentario debe notificar al autor de la publicación. 
+●​ Una respuesta debe notificar al autor del contenido respondido. 
+●​ Una reacción debe notificar al autor de la publicación. 
+●​ No debe generarse una notificación cuando el destinatario sea el mismo 
+usuario que realizó la acción. 
+●​ Las notificaciones deben almacenarse en la base de datos. 
+●​ No deben actualizarse en tiempo real. 
+●​ Deben visualizarse al ingresar a Notificaciones o recargar una pantalla. 
+Eliminar una amistad no debe borrar las notificaciones existentes. 
+Una notificación no concede acceso al contenido relacionado. Al ingresar desde ella, 
+el sistema debe validar nuevamente la amistad y la privacidad. 
+Si el usuario ya no tiene acceso, debe mostrar: 
+“El contenido relacionado con esta notificación ya no se encuentra 
+disponible para usted.” 
+Reproducción de videos de YouTube 
+Cuando una publicación contenga un video de YouTube, debe mostrarse incrustado 
+dentro del listado. 
+El usuario debe poder reproducir, pausar y controlar el video sin abandonar la 
+aplicación. 
+El sistema no debe obligarlo a acceder a YouTube para reproducirlo.​
+​
+​
+ 
+
+--- PAGE 41 ---
+ 
+Perfil del amigo 
+Al hacer clic sobre el nombre de usuario o la foto de un amigo, el sistema debe 
+enviar al usuario a una pantalla con la información del amigo seleccionado. 
+Esta pantalla debe mostrar: 
+Campo 
+Descripción 
+Foto de perfil 
+Imagen actual del amigo. 
+Nombre y apellido 
+Nombre completo del amigo. 
+Nombre de usuario 
+Identificador utilizado dentro de la red social. 
+Amigos en común 
+Cantidad de amistades activas compartidas. 
+Publicaciones 
+Publicaciones visibles creadas por el amigo. 
+Sólo deben mostrarse publicaciones que: 
+●​ Pertenecen al amigo seleccionado. 
+●​ Tengan privacidad Sólo amigos. 
+●​ Se encuentren activas. 
+●​ No están eliminadas. 
+Las publicaciones deben organizarse desde la más reciente hasta la más antigua. 
+Antes de mostrar el perfil, el sistema debe comprobar que: 
+●​ Ambos usuarios existen. 
+●​ Ambas cuentas están activas. 
+●​ Existe una amistad activa entre ellos. 
+Si no existe una amistad activa, debe mostrar: 
+“No posee permisos para visualizar el perfil de este usuario.” 
+Desde el perfil, el usuario podrá comentar, responder y reaccionar siguiendo las 
+mismas reglas del listado general.​
+ 
+
+--- PAGE 42 ---
+ 
+Listado de amigos 
+La pantalla debe mostrar un listado con todas las amistades activas del usuario 
+autenticado. 
+De cada amigo se debe mostrar: 
+Campo 
+Descripción 
+Foto de perfil 
+Miniatura de la foto actual del amigo. 
+Nombre 
+Nombre del amigo. 
+Apellido 
+Apellido del amigo. 
+Nombre de usuario 
+Nombre de usuario y enlace hacia su perfil. 
+Amigos en común 
+Cantidad de amigos activos compartidos. 
+Acción 
+Permite eliminar la amistad. 
+Las amistades deben organizarse alfabéticamente por nombre y apellido. 
+El listado no debe incluir: 
+●​ Al usuario autenticado. 
+●​ Usuarios con cuentas inactivas. 
+●​ Usuarios con solicitudes pendientes. 
+●​ Solicitudes rechazadas. 
+●​ Solicitudes eliminadas. 
+●​ Amistades eliminadas. 
+Buscador de amigos 
+Encima del listado debe existir un buscador que permite localizar amigos por: 
+●​ Nombre. 
+●​ Apellido. 
+●​ Nombre de usuario. 
+El buscador debe contener: 
+
+--- PAGE 43 ---
+ 
+ 
+Campo 
+Descripción 
+Criterio de 
+búsqueda 
+Texto utilizado para localizar amigos. 
+Debajo deben existir: 
+●​ Buscar: aplica el criterio. 
+●​ Limpiar búsqueda: vuelve a mostrar a todos los amigos. 
+La búsqueda debe: 
+●​ Ignorar las diferencias entre mayúsculas y minúsculas. 
+●​ Ignorar espacios al inicio y al final. 
+●​ Buscar coincidencias parciales. 
+●​ Incluir únicamente amistades activas. 
+●​ Excluir cuentas inactivas. 
+Si no existen resultados, debe mostrar: 
+“No se encontraron amigos que coincidan con el criterio ingresado.” 
+Amigos en común 
+El sistema debe calcular la cantidad de amigos en común entre el usuario 
+autenticado y cada uno de sus amigos. 
+Se considera amigo en común al usuario que: 
+●​ Tenga una amistad activa con el usuario autenticado. 
+●​ Tenga una amistad activa con el amigo seleccionado. 
+●​ Mantenga su cuenta activa. 
+●​ No sea ninguno de los dos usuarios comparados. 
+La cantidad debe mostrarse tanto en el listado de amigos como en el perfil del 
+amigo. 
+Al hacer clic sobre la cantidad, el sistema debe mostrar un listado con: 
+●​ Foto de perfil. 
+
+--- PAGE 44 ---
+ 
+●​ Nombre y apellido. 
+●​ Nombre de usuario. 
+Como cada usuario mostrado también es amigo del usuario autenticado, su nombre 
+y foto podrán funcionar como enlace hacia su perfil. 
+Si no existen amigos en común, debe mostrarse: 
+“No tienen amigos en común.” 
+Estados de una amistad 
+Toda relación de amistad debe manejar uno de los siguientes estados: 
+Estado 
+Descripción 
+Activa 
+Ambos usuarios son amigos y pueden acceder a las 
+funcionalidades relacionadas. 
+Eliminada 
+La amistad fue terminada por uno de los usuarios y ya 
+no concede acceso. 
+Una amistad debe representar una única relación entre dos usuarios, 
+independientemente de quién haya enviado la solicitud original. 
+No debe existir más de una amistad activa entre los mismos dos usuarios. 
+Cuando una nueva solicitud sea aceptada entre usuarios que anteriormente fueron 
+amigos, el sistema debe reactivar la relación existente en lugar de crear una 
+amistad duplicada. 
+Eliminación de un amigo 
+Cada amigo debe tener un botón con el texto Eliminar amigo. 
+Al presionarlo, el sistema debe mostrar: 
+“¿Está seguro que desea eliminar de sus amigos al usuario [nombre de 
+usuario]?” 
+Debajo deben existir: 
+
+--- PAGE 45 ---
+ 
+●​ Cancelar: regresa sin realizar cambios. 
+●​ Aceptar: confirma la eliminación. 
+Antes de completar la operación, el sistema debe validar: 
+●​ Que ambos usuarios existan. 
+●​ Que ambas cuentas se encuentren activas. 
+●​ Que exista una amistad activa. 
+●​ Que el usuario autenticado forme parte de la relación. 
+●​ Que la relación no pertenezca a otros usuarios. 
+Si la amistad ya no existe, debe mostrar: 
+“La amistad seleccionada ya no se encuentra disponible.” 
+La eliminación debe realizarse de manera lógica, cambiando el estado de la relación 
+a eliminada. 
+Después de eliminarla: 
+●​ Ninguno debe aparecer en el listado de amigos del otro. 
+●​ Ninguno debe visualizar las publicaciones Solo amigos del otro. 
+●​ Ninguno podrá acceder al perfil del otro. 
+●​ Ninguno podrá realizar nuevas interacciones en publicaciones del otro. 
+●​ Ambos podrán enviarse una nueva solicitud posteriormente. 
+●​ Las publicaciones e interacciones existentes deben conservarse. 
+●​ Las notificaciones anteriores deben conservarse. 
+●​ Las partidas activas deben continuar bajo las reglas establecidas. 
+Mensaje sugerido: 
+“La amistad fue eliminada correctamente.” 
+Nuevas solicitudes después de eliminar una amistad 
+Después de eliminar una amistad, cualquiera de los dos usuarios podrá enviar una 
+nueva solicitud. 
+No debe permitirse crearla cuando: 
+●​ Ya exista una solicitud pendiente en cualquier dirección. 
+
+--- PAGE 46 ---
+ 
+●​ La amistad se ha reactivado. 
+●​ Uno de los usuarios está inactivo. 
+●​ El usuario intenta enviarte una solicitud a sí mismo. 
+Si la nueva solicitud es aceptada, la relación de amistad existente debe cambiar 
+nuevamente a Activa. 
+Las interacciones anteriores volverán a ser visibles cuando las publicaciones 
+continúen activas y tengan privacidad Sólo amigos. 
+Efecto sobre partidas de Battleship 
+Eliminar una amistad no debe cancelar ni eliminar partidas existentes. 
+Si ambos usuarios tienen una partida activa: 
+●​ La partida debe continuar hasta finalizar. 
+●​ Ambos deben conservar el acceso a ella. 
+●​ Cualquiera podrá rendirse. 
+●​ La partida debe permanecer posteriormente en el historial. 
+●​ No podrán iniciar otra partida entre ellos hasta restablecer la amistad. 
+La amistad debe ser obligatoria para crear una partida, pero no para continuar una 
+que ya estaba activa. 
+Conservación de interacciones 
+Eliminar una amistad no debe borrar: 
+●​ Publicaciones. 
+●​ Comentarios. 
+●​ Respuestas. 
+●​ Reacciones. 
+●​ Notificaciones. 
+●​ Partidas. 
+●​ Resultados históricos. 
+El acceso a estos datos dependerá del estado actual de la cuenta, la amistad y la 
+privacidad. 
+
+--- PAGE 47 ---
+ 
+Si una amistad se restablece, las interacciones anteriores volverán a mostrarse en 
+las publicaciones que continúen activas y configuradas como Solo amigos. 
+Reglas de negocio de Amigos 
+●​ Solo los usuarios autenticados y activos pueden acceder al módulo. 
+●​ Una amistad debe ser una relación única entre dos usuarios. 
+●​ No puede existir más de una amistad activa entre los mismos usuarios. 
+●​ Sólo deben mostrarse publicaciones activas con privacidad Sólo amigos. 
+●​ Las publicaciones Solo yo nunca deben mostrarse a los amigos. 
+●​ Los permisos deben validarse en el servidor. 
+●​ Los filtros no deben permitir evadir la privacidad. 
+●​ Los usuarios solo pueden modificar o eliminar sus propias interacciones. 
+●​ Los comentarios de otros usuarios pueden visualizarse sin conceder acceso a 
+sus perfiles. 
+●​ Eliminar una amistad debe realizarse de manera lógica. 
+●​ Las interacciones anteriores deben conservarse. 
+●​ Las partidas activas deben continuar después de eliminar la amistad. 
+●​ Los amigos en común deben calcularse utilizando únicamente amistades y 
+cuentas activas. 
+●​ Los indicadores, contadores y listados no tienen que actualizarse en tiempo 
+real. 
+●​ Todos los cambios deben reflejarse al navegar o recargar la pantalla. 
+Solicitudes de amistad 
+Al ingresar a la opción Solicitudes de amistad desde el menú principal, el sistema 
+debe enviar al usuario a una pantalla donde pueda consultar y administrar las 
+solicitudes recibidas y enviadas. 
+La pantalla debe contener las siguientes secciones: 
+●​ Solicitudes pendientes de responder. 
+●​ Solicitudes enviadas. 
+Solo los usuarios autenticados, activos y con una sesión vigente podrán acceder a 
+esta funcionalidad. 
+Contador de solicitudes pendientes 
+
+--- PAGE 48 ---
+ 
+La opción Solicitudes de amistad del menú principal debe mostrar la cantidad de 
+solicitudes recibidas que se encuentren en estado En espera de respuesta. 
+El contador debe: 
+●​ Incluir únicamente solicitudes recibidas. 
+●​ Excluir solicitudes enviadas. 
+●​ Excluir solicitudes aceptadas, rechazadas o canceladas. 
+●​ Excluir solicitudes relacionadas con cuentas inactivas. 
+●​ Actualizarse al navegar o recargar una pantalla. 
+●​ No mostrarse cuando la cantidad sea cero. 
+El contador no tiene que actualizarse en tiempo real. 
+Estados de una solicitud 
+Toda solicitud de amistad debe manejar uno de los siguientes estados: 
+Estado 
+Descripción 
+En espera de respuesta 
+La solicitud fue enviada, pero el receptor todavía no la 
+ha aceptado ni rechazado. 
+Aceptada 
+El receptor aceptó la solicitud y se creó o reactivó la 
+amistad. 
+Rechazada 
+El receptor rechazó la solicitud. 
+Cancelada 
+El emisor canceló la solicitud antes de recibir una 
+respuesta. 
+Las solicitudes aceptadas y rechazadas también deben manejar un indicador que 
+determine si permanecen visibles en el historial del emisor. 
+Ocultar una solicitud del historial no debe modificar su estado ni eliminarla 
+físicamente. 
+Solicitudes pendientes de responder 
+El primer listado debe mostrar las solicitudes enviadas al usuario autenticado que 
+se encuentren en estado En espera de respuesta. 
+
+--- PAGE 49 ---
+ 
+Sólo deben mostrarse solicitudes que cumplan estas condiciones: 
+●​ El usuario autenticado es el receptor. 
+●​ La cuenta del emisor está activa. 
+●​ La cuenta del receptor está activa. 
+●​ La solicitud no fue cancelada. 
+●​ La solicitud no fue aceptada ni rechazada. 
+●​ No existe una amistad activa entre ambos usuarios. 
+De cada solicitud se debe mostrar: 
+Campo 
+Descripción 
+Foto de perfil 
+Miniatura de la foto del usuario 
+solicitante. 
+Nombre y 
+apellido 
+Nombre completo del solicitante. 
+Nombre de 
+usuario 
+Nombre de usuario del solicitante. 
+Amigos en 
+común 
+Cantidad de amistades activas 
+compartidas. 
+Fecha de 
+solicitud 
+Fecha y hora en que fue enviada. 
+Acciones 
+Permite aceptar o rechazar la solicitud. 
+Las solicitudes deben mostrarse desde la más reciente hasta la más antigua. 
+Si no existen solicitudes pendientes, el sistema debe mostrar: 
+“No tiene solicitudes de amistad pendientes de responder.” 
+Amigos en común 
+La cantidad de amigos en común debe calcularse utilizando únicamente usuarios 
+que: 
+●​ Tengan una cuenta activa. 
+
+--- PAGE 50 ---
+ 
+●​ Mantengan una amistad activa con el emisor. 
+●​ Mantengan una amistad activa con el receptor. 
+●​ No sean el emisor ni el receptor de la solicitud. 
+Al hacer clic sobre la cantidad, el sistema debe mostrar un listado con: 
+●​ Foto de perfil. 
+●​ Nombre y apellido. 
+●​ Nombre de usuario. 
+Los usuarios mostrados son amigos del usuario autenticado, por lo que se podrá 
+acceder a sus perfiles. 
+Si no existen amigos en común, debe mostrarse: 
+“No tienen amigos en común.” 
+Aceptar una solicitud 
+Cada solicitud pendiente debe incluir un botón con el texto Aceptar. 
+Al presionarlo, el sistema debe enviar al usuario a una pantalla de confirmación con 
+el siguiente mensaje: 
+“¿Está seguro que desea aceptar la solicitud de amistad del usuario 
+[nombre de usuario]?” 
+Debajo del mensaje deben existir dos botones: 
+●​ Cancelar: regresa al listado sin realizar cambios. 
+●​ Aceptar: confirma la solicitud. 
+Antes de aceptar, el sistema debe validar: 
+●​ Que la solicitud exista. 
+●​ Que permanezca en espera de respuesta. 
+●​ Que el usuario autenticado sea el receptor. 
+●​ Que el emisor y el receptor sean usuarios diferentes. 
+●​ Que ambas cuentas están activas. 
+●​ Que la solicitud no haya sido cancelada. 
+●​ Que no exista una amistad activa entre ambos usuarios. 
+
+--- PAGE 51 ---
+ 
+Si las validaciones son correctas, el sistema debe realizar las siguientes acciones 
+como una única operación: 
+1.​ Cambiar la solicitud a estado Aceptada. 
+2.​ Registrar la fecha y hora de respuesta. 
+3.​ Crear una relación de amistad cuando nunca ha existido. 
+4.​ Reactivar la relación existente cuando la amistad anterior ha estado 
+eliminada. 
+5.​ Redirigir al usuario al listado de solicitudes. 
+No debe crearse más de una relación de amistad entre los mismos usuarios. 
+Una vez aceptada: 
+●​ Ambos usuarios deben aparecer en sus respectivos listados de amigos. 
+●​ Podrán visualizar sus publicaciones Solo amigos. 
+●​ Podrán consultar sus perfiles. 
+●​ Podrán comentar, responder y reaccionar en publicaciones visibles. 
+●​ Podrán iniciar partidas de Battleship. 
+●​ Las interacciones históricas volverán a mostrarse cuando las publicaciones 
+continúen activas y tengan privacidad Sólo amigos. 
+Mensaje sugerido: 
+“La solicitud fue aceptada correctamente.” 
+Si la solicitud ya fue respondida o cancelada, el sistema debe mostrar: 
+“Esta solicitud ya no se encuentra disponible para ser aceptada.” 
+Si una de las cuentas está inactiva, debe mostrar: 
+“No se puede aceptar la solicitud porque uno de los usuarios se 
+encuentra inactivo.” 
+Rechazar una solicitud 
+Cada solicitud pendiente debe incluir un botón con el texto Rechazar. 
+Al presionarlo, el sistema debe mostrar: 
+“¿Está seguro que desea rechazar la solicitud de amistad del usuario 
+
+--- PAGE 52 ---
+ 
+[nombre de usuario]?” 
+Debajo deben existir: 
+●​ Cancelar: regresa al listado sin realizar cambios. 
+●​ Rechazar: confirma la acción. 
+Antes de rechazar, el sistema debe validar: 
+●​ Que la solicitud exista. 
+●​ Que permanezca en espera de respuesta. 
+●​ Que el usuario autenticado sea el receptor. 
+●​ Que ambas cuentas están activas. 
+●​ Que la solicitud no haya sido cancelada. 
+●​ Que no haya sido respondida anteriormente. 
+Si las validaciones son correctas, el sistema debe: 
+1.​ Cambiar la solicitud a estado Rechazada. 
+2.​ Registrar la fecha y hora de respuesta. 
+3.​ Retirarla del listado de solicitudes pendientes. 
+4.​ Actualizar el contador cuando la pantalla vuelva a cargarse. 
+5.​ Redirigir al usuario al listado principal. 
+Mensaje sugerido: 
+“La solicitud fue rechazada correctamente.” 
+Rechazar una solicitud no debe crear ni modificar una relación de amistad. 
+Después del rechazo, cualquiera de los usuarios podrá enviar una nueva solicitud, 
+siempre que: 
+●​ Ambas cuentas están activas. 
+●​ No existe una amistad activa. 
+●​ No existe otra solicitud pendiente en ninguna dirección. 
+La nueva solicitud debe registrarse como un nuevo elemento. La solicitud rechazada 
+debe conservarse como parte del historial.​
+​
+ 
+
+--- PAGE 53 ---
+ 
+Solicitudes enviadas 
+El segundo listado debe mostrar las solicitudes enviadas por el usuario autenticado. 
+De cada solicitud se debe mostrar: 
+Campo 
+Descripción 
+Foto de perfil 
+Miniatura de la foto del usuario receptor. 
+Nombre y 
+apellido 
+Nombre completo del receptor. 
+Nombre de 
+usuario 
+Nombre de usuario del receptor. 
+Amigos en 
+común 
+Cantidad actual de amigos compartidos. 
+Fecha de 
+solicitud 
+Fecha y hora en que fue enviada. 
+Estado 
+En espera de respuesta, Aceptada o Rechazada. 
+Fecha de 
+respuesta 
+Fecha en que fue aceptada o rechazada, cuando 
+corresponda. 
+Acción 
+Permite cancelar la solicitud o eliminarla del historial. 
+Las solicitudes deben mostrarse desde la más reciente hasta la más antigua. 
+No deben mostrarse: 
+●​ Solicitudes canceladas. 
+●​ Solicitudes aceptadas o rechazadas ocultadas por el emisor. 
+●​ Solicitudes relacionadas con cuentas inactivas. 
+Si el usuario no tiene solicitudes enviadas visibles, el sistema debe mostrar: 
+“No ha enviado solicitudes de amistad.” 
+Cancelar una solicitud pendiente 
+
+--- PAGE 54 ---
+ 
+Cuando una solicitud enviada se encuentre en espera de respuesta, debe mostrarse 
+un botón con el texto Cancelar solicitud. 
+Al presionarlo, el sistema debe mostrar: 
+“¿Está seguro que desea cancelar la solicitud de amistad enviada a 
+[nombre de usuario]?” 
+Debajo deben existir: 
+●​ Volver atrás: regresa sin realizar cambios. 
+●​ Cancelar solicitud: confirma la cancelación. 
+Antes de cancelar, el sistema debe validar: 
+●​ Que la solicitud exista. 
+●​ Que el usuario autenticado sea el emisor. 
+●​ Que permanezca en espera de respuesta. 
+●​ Que ambas cuentas están activas. 
+●​ Que no haya sido aceptada ni rechazada anteriormente. 
+Si la operación es válida, el sistema debe: 
+1.​ Cambiar la solicitud a estado Cancelada. 
+2.​ Registrar la fecha y hora de cancelación. 
+3.​ Retirarla del listado de solicitudes enviadas. 
+4.​ Retirarla del listado de solicitudes recibidas del receptor. 
+5.​ Excluirla del contador de solicitudes pendientes. 
+6.​ Redirigir al usuario al listado principal. 
+Mensaje sugerido: 
+“La solicitud fue cancelada correctamente.” 
+Cancelar una solicitud no debe crear, eliminar ni modificar una amistad. 
+Después de la cancelación, cualquiera de los usuarios podrá enviar una nueva 
+solicitud. Esta debe registrarse como un nuevo elemento y la solicitud cancelada 
+debe conservarse internamente.​
+​
+ 
+
+--- PAGE 55 ---
+ 
+Eliminar una solicitud del historial 
+Cuando una solicitud se encuentre Aceptada o Rechazada, debe mostrarse un botón 
+con el texto Eliminar del historial. 
+Al presionarlo, el sistema debe mostrar: 
+“¿Está seguro que desea eliminar esta solicitud de su historial?” 
+Debajo deben existir: 
+●​ Cancelar: regresa sin realizar cambios. 
+●​ Eliminar: oculta la solicitud del historial. 
+Antes de completar la operación, el sistema debe validar: 
+●​ Que la solicitud exista. 
+●​ Que el usuario autenticado sea el emisor. 
+●​ Que la solicitud esté Aceptada o Rechazada. 
+●​ Que no haya sido ocultada anteriormente. 
+Esta acción debe realizarse de manera lógica. 
+Al confirmar, el sistema debe cambiar únicamente el indicador que determina si la 
+solicitud está visible para el emisor. 
+El estado original debe conservarse. 
+Solicitud aceptada 
+Eliminar una solicitud aceptada del historial: 
+●​ No debe cambiar su estado Aceptada. 
+●​ No debe eliminar la amistad. 
+●​ No debe retirar usuarios de sus listas de amigos. 
+●​ No debe afectar publicaciones, comentarios, reacciones o partidas. 
+●​ No debe eliminar físicamente la solicitud.​
+​
+​
+​
+ 
+
+--- PAGE 56 ---
+ 
+Solicitud rechazada 
+Eliminar una solicitud rechazada del historial: 
+●​ No debe cambiar su estado Rechazada. 
+●​ No se debe crear una amistad. 
+●​ No debe impedir enviar una nueva solicitud. 
+●​ No debe eliminar físicamente la solicitud. 
+Mensaje sugerido: 
+“La solicitud fue eliminada de su historial.” 
+Crear una nueva solicitud 
+Encima del listado de solicitudes enviadas debe existir un botón con el texto Nueva 
+solicitud de amistad. 
+Al presionarlo, el sistema debe enviar al usuario a una pantalla con un listado de 
+personas disponibles. 
+Sólo deben mostrarse usuarios que cumplan todas estas condiciones: 
+●​ Tener una cuenta activa. 
+●​ Ser diferentes del usuario autenticado. 
+●​ No mantener una amistad activa con el usuario autenticado. 
+●​ No tener una solicitud pendiente con el usuario autenticado en ninguna 
+dirección. 
+Un usuario con una amistad anterior en estado eliminada podrá aparecer, siempre 
+que no exista una nueva solicitud pendiente. 
+También podrá aparecer un usuario con solicitudes anteriores rechazadas o 
+canceladas, debido a que estas no impiden crear una nueva solicitud. 
+De cada usuario se debe mostrar: 
+ 
+Campo 
+Descripción 
+Foto de perfil 
+Miniatura de su foto actual. 
+
+--- PAGE 57 ---
+ 
+Campo 
+Descripción 
+Nombre y 
+apellido 
+Nombre completo del usuario. 
+Nombre de 
+usuario 
+Identificador utilizado dentro de la red 
+social. 
+Amigos en 
+común 
+Cantidad de amistades activas 
+compartidas. 
+Seleccionar 
+Radio button para seleccionar al usuario. 
+Solo debe permitirse seleccionar un usuario a la vez. 
+Si no existen usuarios disponibles, el sistema debe mostrar: 
+“No existen usuarios disponibles para enviar una solicitud de amistad.” 
+Buscador de usuarios 
+Encima del listado debe existir un buscador por nombre de usuario. 
+El formulario debe contener: 
+Campo 
+Tipo de 
+dato 
+Requerido 
+Descripción 
+Nombre de 
+usuario 
+Texto / 
+string 
+No 
+Permite localizar usuarios disponibles 
+mediante coincidencias parciales. 
+Debe incluir los siguientes botones: 
+●​ Buscar: aplica el criterio. 
+●​ Limpiar búsqueda: vuelve a mostrar todos los usuarios disponibles. 
+La búsqueda debe: 
+●​ Ignorar las diferencias entre mayúsculas y minúsculas. 
+●​ Ignorar espacios al inicio y al final. 
+●​ Permitir coincidencias parciales. 
+●​ Mantener todas las restricciones de elegibilidad. 
+
+--- PAGE 58 ---
+ 
+●​ Excluir cuentas inactivas. 
+●​ Excluir amigos actuales. 
+●​ Excluir usuarios con solicitudes pendientes en cualquier dirección. 
+Si no existen coincidencias, debe mostrar: 
+“No se encontraron usuarios disponibles con el nombre ingresado.” 
+Enviar una solicitud 
+Debajo del listado deben existir: 
+●​ Volver atrás: regresa a la pantalla principal de solicitudes. 
+●​ Enviar solicitud: registra la solicitud para el usuario seleccionado. 
+Al presionar Enviar solicitud, el sistema debe validar nuevamente: 
+●​ Que se haya seleccionado un usuario. 
+●​ Que el usuario seleccionado exista. 
+●​ Que ambas cuentas están activas. 
+●​ Que no sea el propio usuario autenticado. 
+●​ Que no exista una amistad activa. 
+●​ Que no exista una solicitud pendiente en ninguna dirección. 
+●​ Que el usuario seleccionado continúe disponible. 
+No debe confiarse únicamente en que el usuario aparecía en el listado. Todas las 
+reglas deben comprobarse nuevamente en el servidor. 
+Si no se seleccionó un usuario, debe mostrar: 
+“Debe seleccionar un usuario para enviar la solicitud de amistad.” 
+Si ya existe una solicitud pendiente enviada por el usuario autenticado, debe 
+mostrar: 
+“Ya envió una solicitud de amistad a este usuario y se encuentra 
+pendiente de respuesta.” 
+Si existe una solicitud pendiente enviada por el usuario seleccionado, debe mostrar: 
+“Este usuario ya le envió una solicitud de amistad. Debe aceptarla o 
+rechazarla desde sus solicitudes pendientes.” 
+
+--- PAGE 59 ---
+ 
+Si ya existe una amistad activa, debe mostrar: 
+“Este usuario ya forma parte de su lista de amigos.” 
+Si una de las cuentas está inactiva, debe mostrar: 
+“No se puede enviar la solicitud porque uno de los usuarios se encuentra 
+inactivo.” 
+Si las validaciones son correctas, el sistema debe: 
+1.​ Crear un nuevo registro de solicitud. 
+2.​ Asociar al emisor y al receptor. 
+3.​ Establecer el estado en espera de respuesta. 
+4.​ Registrar la fecha y hora actuales. 
+5.​ Establecer la solicitud como visible para el emisor. 
+6.​ Redirigir al listado principal. 
+Mensaje sugerido: 
+“La solicitud de amistad fue enviada correctamente.” 
+El contador del receptor debe actualizarse cuando cargue o recargue una pantalla. 
+No se requiere actualización en tiempo real. 
+Prevención de solicitudes duplicadas 
+No puede existir más de una solicitud en espera de respuesta entre los mismos dos 
+usuarios, sin importar quién sea el emisor. 
+Por ejemplo: 
+●​ Si A envió una solicitud pendiente a B, A no puede enviar otra. 
+●​ Mientras esa solicitud permanezca pendiente, B tampoco puede enviar una 
+nueva a A. 
+●​ B debe aceptar o rechazar la solicitud existente. 
+●​ Si A cancela la solicitud, cualquiera podrá crear una nueva. 
+●​ Si B la rechaza, cualquiera podrá crear una nueva. 
+●​ Si B la acepta, ninguno podrá crear otra mientras la amistad permanezca 
+activa. 
+La validación debe considerar a ambos usuarios como una misma pareja, 
+
+--- PAGE 60 ---
+ 
+independientemente de quién sea el emisor o el receptor. 
+La creación de solicitudes y amistades debe ejecutarse de manera que se eviten 
+duplicados cuando dos usuarios intenten realizar acciones simultáneamente. 
+Relación entre solicitudes y amistades 
+Las solicitudes y las amistades deben manejarse como registros diferentes. 
+Una solicitud representa la intención de establecer una amistad. 
+La amistad representa la relación vigente o eliminada entre dos usuarios. 
+Cuando se acepte una solicitud: 
+●​ Si nunca existió una amistad, debe crearse una. 
+●​ Si existe una amistad en estado Eliminada, debe reactivarse. 
+●​ Si ya existe una amistad activa, no debe crearse otra. 
+●​ La solicitud debe conservarse en estado Aceptada. 
+No puede existir más de una relación de amistad entre la misma pareja de usuarios. 
+Las solicitudes rechazadas y canceladas no deben modificar la relación de amistad. 
+Seguridad y autorización 
+El sistema debe garantizar que: 
+●​ Solo el receptor puede aceptar o rechazar una solicitud. 
+●​ Solo el emisor puede cancelar una solicitud pendiente. 
+●​ Solo el emisor puede eliminar del historial una solicitud enviada. 
+●​ Ningún usuario puede consultar solicitudes pertenecientes a otras personas. 
+●​ Conocer el identificador o la URL no concede permisos. 
+●​ Todas las operaciones validan nuevamente el estado actual. 
+●​ Ambas cuentas están activas antes de realizar cualquier acción. 
+Si un usuario intenta modificar una solicitud que no le pertenece, el sistema debe 
+mostrar: 
+“No posee permisos para realizar esta acción sobre la solicitud.”​
+ 
+
+--- PAGE 61 ---
+ 
+Reglas de consistencia 
+Las operaciones de aceptación, creación y reactivación de amistades deben 
+ejecutarse de manera completa. 
+Si alguna parte de la operación falla: 
+●​ No debe cambiarse parcialmente el estado de la solicitud. 
+●​ No debe crearse una amistad incompleta. 
+●​ No debe quedar una solicitud aceptada sin una amistad asociada. 
+●​ No debe quedar una amistad activa con una solicitud pendiente entre los 
+mismos usuarios. 
+Las validaciones contra solicitudes y amistades duplicadas deben realizarse 
+inmediatamente antes de guardar los cambios. 
+Reglas de negocio de solicitudes de amistad 
+●​ Los usuarios no pueden enviarse solicitudes a sí mismos. 
+●​ Solo las cuentas activas pueden enviar, recibir o responder solicitudes. 
+●​ No puede existir una solicitud pendiente en ambas direcciones. 
+●​ No puede crearse una solicitud cuando existe una amistad activa. 
+●​ Aceptar una solicitud crea o reactiva una única relación de amistad. 
+●​ Rechazar una solicitud no crea ni modifica una amistad. 
+●​ Cancelar una solicitud pendiente debe retirarla del listado del receptor. 
+●​ Las nuevas solicitudes deben registrarse independientemente de las 
+anteriores. 
+●​ Eliminar una solicitud aceptada no elimina la amistad. 
+●​ Eliminar el historial no modifica el estado de la solicitud. 
+●​ Las eliminaciones del historial deben realizarse de manera lógica. 
+●​ Los amigos en común deben calcularse utilizando cuentas y amistades 
+activas. 
+●​ Las solicitudes deben ordenarse desde la más reciente hasta la más antigua. 
+●​ El contador debe incluir únicamente solicitudes recibidas y pendientes. 
+●​ Las solicitudes relacionadas con cuentas inactivas deben conservarse, pero 
+no mostrarse. 
+●​ Los listados y contadores no tienen que actualizarse en tiempo real. 
+●​ Todas las restricciones deben validarse nuevamente en el servidor. 
+
+--- PAGE 62 ---
+ 
+Battleship 
+Al ingresar a la opción de Battleship desde el menú principal de la app, el usuario 
+será dirigido a una pantalla que mostrará dos listados: el primero con las partidas 
+activas (las partidas que está jugando el usuario logueado con otro usuario y que 
+aún no han terminado) y el segundo listado con el historial de partidas (un listado 
+con todas las partidas que el usuario logueado ha jugado y que ya finalizaron). 
+Comenzando por el primer listado, donde se muestran las partidas activas que está 
+jugando el usuario logueado, en este listado se debe visualizar el nombre de usuario 
+del amigo con el que se está jugando, la fecha en que se inició la partida, el tiempo 
+en horas que lleva la partida, un botón para entrar a la partida en curso y otro botón 
+para finalizar la partida(al hacer click sobre este botón se debe preguntar al usuario 
+en una nueva pantalla si está seguro que quiere rendirse, de aceptar termina la 
+partida y el ganador sería el otro jugador y si cancela es redireccionado a esta 
+pantalla de los listados nuevamente y nada pasa). Encima del listado de partidas 
+activas debe colocarse un botón para iniciar una nueva partida. 
+Al hacer clic en el botón para iniciar una nueva partida, se debe redirigir al usuario a 
+una pantalla que mostrará un listado con todos los usuarios que estén registrados y 
+activos en la app y que además sean amigos del usuario logueado. De cada usuario 
+se debe mostrar su foto de perfil, su nombre de usuario y un radio button para 
+seleccionarlo (solo se puede seleccionar un usuario a la vez). En la parte superior 
+del listado debe haber un buscador que permite buscar por nombre de usuario, y en 
+la parte inferior deben colocarse dos botones: uno para iniciar la partida y otro para 
+volver atrás. 
+En este listado también se debe tener en cuenta que no deben mostrarse los 
+usuarios con los que el usuario logueado ya tenga una partida activa de Battleship, 
+es decir, no debe ser posible iniciar una nueva partida con un amigo con quien aún 
+se esté jugando una partida previa. 
+Al hacer clic en el botón de iniciar partida, se debe validar que haya un usuario 
+seleccionado y que se cumplan todas las restricciones previamente descritas. Si se 
+cumplen todas las validaciones, la información se enviará al sistema, se creará la 
+partida entre el usuario logueado y el amigo seleccionado, y el usuario será 
+redirigido a la pantalla inicial de la partida, donde se configura la localización de los 
+barcos. Debajo del listado de amigos también debe haber un botón para volver 
+atrás, que al hacer clic redirige nuevamente a la pantalla principal con los listados. 
+
+--- PAGE 63 ---
+ 
+Una partida nueva tiene dos fases, la primera fase en la que cada usuario debe 
+ubicar todos sus barcos en el tablero, por lo cual, una vez creada la partida, el 
+usuario que creó la partida es dirigido a una pantalla para realizar esta primera fase. 
+En dicha pantalla se listan todos los barcos que aún no han sido posicionados. De 
+forma predeterminada, el usuario debe colocar un total de 5 barcos: un barco que 
+ocupa 2 posiciones, dos barcos que ocupan 3 posiciones cada uno, un barco que 
+ocupa 4 posiciones y un barco que ocupa 5 posiciones. 
+un ejemplo de como se podria ver este listado:​
+ 
+Aquí solo se deben listar los barcos que aún no han sido posicionados por el usuario 
+logueado. Una vez que el usuario seleccione uno de los barcos y presione el botón 
+de "Posicionar barco", se le debe redirigir a la pantalla donde podrá elegir la celda 
+inicial desde donde se quiere posicionar el barco. Antes de permitir el cambio de 
+pantalla, se debe validar que al menos un barco haya sido seleccionado del listado. 
+ 
+en la pantalla de posicionamiento de barco se debe mostrar un tablero de 12x12, 
+donde el usuario al hacer clic en una de las celdas del tablero se tomara esa 
+posición como el lugar desde donde se desea comenzar a posicionar el barco que 
+fue seleccionado en la pantalla previa, para ejemplificar mejor esta pantalla el 
+tablero se debe ver mas o menos de esta manera:​
+
+--- PAGE 64 ---
+ 
+​
+Una vez el usuario haga clic sobre una de las celdas del tablero, será enviado a una 
+pantalla donde deberá indicar en qué dirección se colocará el barco a partir de la 
+celda seleccionada. Para esto, habrá un campo tipo select con cuatro opciones 
+correspondientes a las direcciones posibles: hacia arriba, hacia abajo, hacia la 
+derecha o hacia la izquierda. 
+Después de seleccionar la dirección deseada, debajo del select debe haber un botón 
+con el texto "Posicionar" y un botón de volver atrás que envía al usuario a la 
+pantalla donde se visualiza el tablero para que pueda elegir otra celda . Al hacer 
+clic en el botón de posicionar, se debe validar que la dirección seleccionada, en 
+combinación con la celda elegida, no haga que alguna parte del barco quede fuera 
+del tablero. Por ejemplo, si se selecciona como punto de inicio la primera celda del 
+
+--- PAGE 65 ---
+ 
+tablero y se elige la dirección hacia la izquierda, esta colocación sería inválida 
+porque parte del barco quedaría fuera del área visible del tablero. 
+En este ejemplo, se ha seleccionado la primera celda del tablero como punto de 
+inicio para posicionar el barco: 
+  
+Y supongamos que se seleccionó el barco de 2 posiciones y se eligió una dirección 
+que lo ubique hacia arriba o hacia la izquierda; esto provocaría que una parte del 
+barco quede fuera del tablero, lo cual no debe permitirse. Si la dirección 
+seleccionada, combinada con la celda inicial elegida, provoca que una parte del 
+barco quede fuera del tablero, el sistema debe bloquear la acción y redirigir al 
+usuario nuevamente a la pantalla de selección de dirección. En dicha pantalla, se 
+debe mostrar un mensaje que indique claramente que la combinación actual no es 
+
+--- PAGE 66 ---
+ 
+válida y que debe modificar la celda o la dirección seleccionada para poder 
+continuar. 
+A continuación, se muestra un ejemplo de cómo quedaría posicionado el barco si se 
+permitiera esta combinación inválida: 
+​
+ 
+ 
+o así: 
+ 
+Pero si se selecciona la dirección de posicionamiento hacia la derecha o hacia abajo, 
+el barco quedaría correctamente ubicado dentro del tablero. En ese caso, se 
+posicionaría de la siguiente forma:​
+ 
+
+--- PAGE 67 ---
+ 
+o así:​
+ 
+Una vez seleccionada una posición y dirección válida, el barco se colocará en el 
+tablero según lo indicado y el usuario será redirigido nuevamente a la pantalla de 
+selección de barcos. En esta pantalla, ya no se mostrará el barco que fue 
+posicionado, por lo que el listado solo incluirá los barcos que aún faltan por colocar. 
+La pantalla se vería aproximadamente así:​
+ 
+Luego, el usuario seleccionará otro barco y el proceso se repetirá. Será redirigido 
+nuevamente a la pantalla donde se muestra el tablero, pero con una diferencia: las 
+celdas donde ya hay barcos posicionados no podrán ser seleccionadas. Estas celdas 
+deberán mostrarse de la siguiente manera: 
+
+--- PAGE 68 ---
+ 
+​
+​
+Al hacer click sobre esa celda  el app no hará nada porque la misma ya está 
+ocupada. 
+ 
+ 
+
+--- PAGE 69 ---
+ 
+Supongamos que se ha seleccionado el barco de 4 posiciones para posicionarlo, y el 
+usuario hace clic en la siguiente celda:​
+ 
+Luego, el usuario es redirigido a la pantalla donde se encuentra el selector para 
+elegir la dirección, y selecciona la opción hacia abajo. En ese caso, el tablero 
+quedaría de la siguiente forma:​
+
+--- PAGE 70 ---
+ 
+​
+ 
+Entonces, el usuario será redirigido nuevamente a la pantalla de selección de 
+barcos. En esta pantalla ya no se mostrarán los barcos que ya han sido 
+posicionados, por lo que el listado solo incluirá aquellos que aún faltan por colocar. 
+La pantalla se visualizará de la siguiente manera: 
+ 
+El proceso debe repetirse hasta que todos los barcos hayan sido posicionados en el 
+tablero, respetando las siguientes restricciones: ninguna parte del barco debe 
+quedar fuera del tablero y ningún barco puede superponerse sobre otro ya 
+colocado. A continuación, se presenta un ejemplo del segundo caso. Supongamos 
+que el tablero se encuentra en el siguiente estado: 
+
+--- PAGE 71 ---
+ 
+ 
+ 
+ 
+ 
+y el barco que se quiere posicionar es uno de tres posiciones y se elige la siguiente celda:​
+ 
+
+--- PAGE 72 ---
+ 
+ 
+El usuario es redirigido a la pantalla para elegir la dirección del barco. Si selecciona 
+la opción hacia arriba y esta provoca que el barco se ubique sobre otro ya 
+posicionado, el sistema debe mostrar el siguiente mensaje de error: "Debe cambiar 
+la celda seleccionada o la dirección, ya que con la combinación actual el barco 
+quedaría posicionado encima de otro barco." 
+ 
+Finalmente cuando se ha posicionado todos los barcos aquí hay dos posibilidades si 
+el otro usuario(el amigo) aun no ha posicionado todos los barcos se debe mostrar el 
+tablero del usuario que está logueado donde pueda ver como quedaron posicionado 
+su barco con un mensaje arriba que diga el otro jugador aún no termina de 
+configurar sus barcos, esto se veria mas o menos así:​
+ 
+
+--- PAGE 73 ---
+ 
+ 
+ 
+Debajo del tablero debe haber un botón con el texto "Volver atrás", que al hacer 
+clic sobre el mismo debe redirigir al usuario a la pantalla inicial del juego de 
+Battleship, donde se encuentran los listados de partidas activas y el historial de 
+partidas. 
+El otro escenario posible ocurre cuando el otro jugador ya ha posicionado todos sus 
+barcos, lo que significa que la segunda fase de la partida puede comenzar(la fase de 
+ataque). En este caso, el primer ataque lo realizará el usuario que inició la partida. 
+Para permitir el ataque, se debe mostrar un tablero al usuario, donde podrá 
+seleccionar una de las celdas para lanzar su ataque. En este tablero no se 
+
+--- PAGE 74 ---
+ 
+visualizará el posicionamiento de los barcos del usuario logueado; en su lugar, se 
+mostrará un tablero que indique las celdas donde ya se ha atacado. Si el usuario 
+selecciona una celda donde se encuentra un barco del oponente, esa celda se 
+marcará en rojo; si no hay ningún barco, se marcará en verde, si después de atacar 
+una celda se vuelve hacer clic sobre la misma en otro turno el sistema no hará nada 
+porque esa celda ya fue atacada. 
+La dinámica del juego será la siguiente: 
+Paso 
+Descripción 
+1 
+El usuario hace clic sobre una celda para atacar. 
+2 
+El sistema valida si en esa celda el oponente tiene un barco. Si 
+hay un barco, la celda se marca en rojo; si no hay un barco, la 
+celda se marca en verde. 
+3 
+Independientemente del resultado, una vez realizado el ataque, 
+finaliza el turno del jugador y comienza el turno del oponente. 
+4 
+El oponente repite el mismo proceso desde su tablero: 
+selecciona una celda, el sistema verifica si hay un barco, y la 
+celda se marca de acuerdo con el resultado. 
+5 
+Luego, su turno termina y vuelve a ser el turno del primer 
+jugador. 
+Este ciclo se repite de forma alterna. Cuando un usuario haya acertado en todas las 
+posiciones de un mismo barco, ese barco se considera hundido. La partida termina 
+cuando un jugador ha hundido todos los barcos del oponente, siendo declarado el 
+ganador. 
+A continuación, se muestra un ejemplo de cómo los jugadores verán su tablero de 
+ataque y cómo éste irá cambiando visualmente a medida que realicen ataques 
+acertados o fallidos: 
+
+--- PAGE 75 ---
+ 
+ 
+Esta sería la primera ronda( lo ronda inicial) donde el jugador 1 le toca atacar, como 
+no es turno del jugador 2 de atacar, aunque este haga clic sobre la celda no 
+sucederá nada y se le mostrará un mensaje siempre debajo del tablero que diga “Es 
+turno del jugador 1 de atacar”, supongamos ahora volviendo al jugador 1 que hizo 
+click en una celda se significa quiere atacar esa celda, pero no hay barco en esa 
+pues entonces ahora se verian asi los tableros:​
+​
+ 
+ 
+En este punto, el Jugador 1 no podrá realizar ninguna acción hasta que el Jugador 2 
+haya realizado su ataque. Para saber si ya es su turno nuevamente, debe haber un 
+
+--- PAGE 76 ---
+ 
+botón con el texto de "Refrescar pantalla", que al hacer clic recargue la misma 
+vista. 
+Si al actualizar la pantalla ya no aparece el mensaje indicando que el oponente está 
+atacando, eso significa que es su turno de atacar. 
+Es importante aclarar que el sistema debe mantener un control estricto del turno en 
+curso, el turno siempre se irá alternando entre un jugador y otro, en una partida 
+nunca ambos puede poder atacar, toda solicitud de ataque debe validarse para 
+garantizar que el jugador que la realiza es el que tiene el turno activo. 
+Supongamos que el Jugador 2 ya ha realizado su ataque y ha acertado en una 
+posición donde se encontraba un barco del Jugador 1; en ese caso, los tableros se 
+vería de la siguiente manera: 
+ 
+ 
+Cada jugador solo podrá visualizar su tablero de ataque en todo momento. Es decir, 
+el Jugador 1 verá únicamente su tablero de ataque, y el Jugador 2 verá únicamente 
+el suyo. Ningún jugador podrá acceder ni visualizar el tablero de ataque del 
+oponente. 
+Esta aclaración es importante ya que, aunque en la imagen superior se muestran 
+ambos tableros simultáneamente, esto se hace únicamente con fines explicativos 
+para ilustrar la dinámica del juego. 
+
+--- PAGE 77 ---
+ 
+Resumiendo la dinámica del juego cada jugador irá atacando posiciones del 
+oponente, y en su tablero de ataque se marcará si el ataque fue acertado o fallado, 
+hasta que uno de los dos logre hundir todos los barcos del otro. 
+En esta pantalla del tablero de ataque, además del poder visualizar el tablero, 
+deben estar disponibles los siguientes botones: 
+●​ Refrescar pantalla: permite actualizar manualmente la vista para verificar si 
+ya es el turno del jugador logueado. 
+●​ Volver atrás: redirige a la pantalla principal del juego de Battleship, donde 
+se encuentran los listados de partidas activas y el historial de partidas. 
+●​ Ver mi tablero: redirige al usuario a una pantalla donde se muestra un 
+tablero pero en este puede ver cómo fue que el posiciono sus barcos el 
+usuario logueado para esa partida. 
+●​ Rendirse: al hacer clic en este botón, el usuario será enviado a una pantalla 
+con el siguiente mensaje:​
+ “¿Está seguro que desea rendirse?”​
+ Debajo del mensaje se mostrarán dos botones:​
+ 
+○​ Cancelar: lleva de vuelta al tablero de ataque del jugador logueado.​
+ 
+○​ Aceptar: al presionar este botón, la partida se marcará como 
+finalizada, y el ganador será el otro jugador (el que no se rindió). El 
+usuario será redirigido nuevamente a la pantalla principal, y la partida 
+dejará de aparecer en el listado de partidas activas para pasar a 
+mostrarse en el historial como partida perdida. 
+Es importante realizar algunas aclaraciones sobre el flujo del juego: 
+Cuando se inicia una nueva partida, el usuario que la creó es redirigido 
+automáticamente a la pantalla de selección de barcos para comenzar con el 
+posicionamiento de los barcos. 
+Pero, ¿cómo accede el usuario invitado (el amigo) a esa fase de posicionamiento?​
+Cuando el usuario invitado inicia sesión y accede a la sección de Battleship, podrá 
+ver el listado de sus partidas activas, hay estará listada la partida que inició su 
+amigo. Al hacer clic en el botón correspondiente para entrar a una partida, si el 
+usuario logueado aún no ha configurado sus barcos, el sistema lo redirigirá 
+
+--- PAGE 78 ---
+ 
+automáticamente a la pantalla de selección de barcos para completar el proceso de 
+posicionamiento. 
+Otro escenario importante es cuando le corresponde atacar a un jugador, 
+supongamos le toca al Jugador 1, pero este abandona la partida sin realizar su 
+jugada. En ese caso, la partida quedará en espera hasta que el jugador regrese a la 
+red social, acceda a su listado de partidas activas y entre a la partida pendiente para 
+realizar su ataque. 
+Si transcurren 48 horas completas desde la fecha y hora en que se asignó el turno 
+actual sin que el jugador realice un ataque válido, la partida finalizará por abandono 
+y el oponente será declarado ganador. Esta validación se realizará al ingresar al 
+módulo, entrar a la partida, refrescar la pantalla o intentar una acción. La 
+configuración de barcos no tendrá vencimiento automático.  
+Volviendo a la pantalla inicial del juego de Battleship, donde se encuentran los 
+listados, hablemos del segundo listado: el historial de partidas, que muestra todas 
+las partidas finalizadas del usuario logueado. 
+En este listado se debe visualizar, por cada partida: 
+●​ El nombre de usuario del amigo con quien se jugó.​
+ 
+●​ La fecha de inicio de la partida.​
+ 
+●​ La fecha de finalización.​
+ 
+●​ La duración total de la partida en horas. 
+●​ El resultado de la partida (Si se ganó o perdió).​
+ 
+●​ El ganador de la partida: si fue el usuario logueado, debe mostrarse la 
+palabra "Yo"; si fue el amigo, debe mostrarse su nombre de usuario.​
+ 
+●​ Un botón para ver el resultado de la partida.​
+ 
+Además, encima del listado del historial debe mostrarse un resumen con la 
+siguiente información: 
+
+--- PAGE 79 ---
+ 
+●​ Cantidad total de partidas jugadas por el usuario logueado.​
+ 
+●​ Cantidad de partidas ganadas.​
+ 
+●​ Cantidad de partidas perdidas. 
+Al hacer clic en el botón "Ver resultado", el usuario debe ser redirigido a una 
+pantalla que muestre cómo quedó su tablero de ataque al finalizar la partida. 
+Además, debe incluirse un botón que permita visualizar el tablero de ataque del 
+otro jugador, para comparar ambos desempeños. 
+Por ejemplo, al ingresar a esta pantalla de resultados, el tablero del usuario 
+logueado se visualizará de la siguiente manera: 
+ 
+
+--- PAGE 80 ---
+ 
+Al hacer clic en el botón "Ver tablero del otro jugador", el usuario será redirigido a 
+una pantalla donde podrá visualizar el tablero de ataque del oponente. Este tablero 
+mostrará cómo y dónde el otro jugador realizó sus ataques. A continuación, se 
+presenta un ejemplo de cómo se visualizará dicha pantalla:​
+​
+ 
+En la pantalla de resultados del historial, además de visualizar el tablero de ataque 
+tanto del usuario logueado como del otro jugador, debe haber un botón que permite 
+ver el tablero de posicionamiento del usuario logueado en esa partida. Este 
+tablero mostrará cómo el usuario logueado colocó sus barcos durante esa partida. 
+También debe incluirse un botón "Volver atrás", que redirige a la pantalla principal 
+del juego de Battleship, donde se encuentran los listados de partidas activas y del 
+historial. 
+Cabe aclarar que en esta pantalla de resultados, al hacer clic sobre una celda del 
+tablero no ocurrirá ninguna acción, ya que se trata de una partida finalizada. 
+
+--- PAGE 81 ---
+ 
+ 
+Mi Perfil 
+Al ingresar a la opción Mi perfil desde el menú principal, el sistema debe enviar al 
+usuario a una pantalla donde pueda consultar y modificar la información asociada a 
+su cuenta. 
+Solo los usuarios autenticados, activos y con una sesión vigente podrán acceder a 
+esta funcionalidad. 
+El usuario únicamente podrá modificar su propio perfil. Conocer el identificador o la 
+URL de otro usuario no debe permitir editar información ajena. 
+Información del perfil 
+La pantalla debe mostrar: 
+Campo 
+Descripción 
+Foto de perfil 
+Imagen actual que identifica visualmente al usuario. 
+Nombre 
+Nombre o nombres del usuario registrado. 
+Apellido 
+Apellido o apellidos del usuario registrado. 
+Teléfono 
+Número telefónico de contacto del usuario. 
+Correo electrónico 
+Dirección de correo asociada a la cuenta (solo lectura). 
+Nombre de usuario 
+Identificador único utilizado para el acceso (solo lectura). 
+El correo electrónico y el nombre de usuario deben mostrarse únicamente como 
+información de consulta. No podrán modificarse desde este módulo. 
+Formulario de edición 
+El formulario debe contener los siguientes campos: 
+
+--- PAGE 82 ---
+ 
+Campo 
+Tipo de 
+dato 
+Requerido 
+Descripción 
+Nombre 
+Texto / 
+string 
+Sí 
+Nombre actual del usuario. 
+Apellido 
+Texto / 
+string 
+Sí 
+Apellido actual del usuario. 
+Teléfono 
+Texto / 
+string 
+Sí 
+Número telefónico con formato de 
+República Dominicana. 
+Foto de perfil 
+File / 
+imagen 
+No 
+Permite sustituir la foto actual. 
+Contraseña 
+actual 
+Password / 
+string 
+Condicional 
+Contraseña vigente, requerida 
+cuando se desea cambiar la 
+contraseña. 
+Nueva 
+contraseña 
+Password / 
+string 
+Condicional 
+Nueva contraseña que tendrá la 
+cuenta. 
+Confirmar 
+contraseña 
+Password / 
+string 
+Condicional 
+Confirmación de la nueva 
+contraseña. 
+Los campos Nombre, Apellido y Teléfono deben cargarse con los valores actuales. 
+La foto de perfil debe mostrarse como imagen, pero el campo File debe permanecer 
+vacío. Los navegadores no permiten cargar automáticamente un archivo anterior 
+dentro de este tipo de campo. 
+Los campos de contraseña siempre deben mostrarse vacíos. 
+Al final del formulario deben existir: 
+●​ Volver atrás: regresa al Home sin guardar cambios. 
+●​ Guardar cambios: valida y actualiza la información. 
+ 
+
+--- PAGE 83 ---
+ 
+Campo 
+Descripción detallada 
+Nombre 
+Obligatorio. No puede contener únicamente espacios y se 
+eliminan los espacios adicionales al inicio y al final. 
+Apellido 
+Obligatorio. No puede consistir solo en espacios; se limpian 
+los espacios sobrantes en los extremos. 
+Teléfono 
+Obligatorio. Debe seguir el formato de República 
+Dominicana (ej. 809-555-1234, 829-555-1234 o 
+849-555-1234). 
+Foto de perfil 
+Opcional. Debe ser un archivo de imagen válido (.jpg, .jpeg, 
+.png, .webp) con un tamaño máximo de 5 MB. 
+Contraseña actual 
+Requerida solo si se desea cambiar la contraseña. Debe 
+validarse contra la clave vigente del usuario. 
+Nueva contraseña 
+Opcional. Si se completa, debe tener al menos 8 caracteres, 
+una mayúscula, una minúscula, un número y un carácter 
+especial. 
+Confirmar 
+contraseña 
+Requerida si se ingresa una nueva contraseña. Debe 
+coincidir exactamente con el campo de Nueva contraseña. 
+ 
+Validaciones de la información personal 
+El formulario debe cumplir estas validaciones: 
+●​ El nombre es requerido. 
+●​ El apellido es requerido. 
+●​ El teléfono es requerido. 
+●​ El nombre no debe contener únicamente espacios. 
+●​ El apellido no debe contener únicamente espacios. 
+●​ El teléfono debe tener un formato válido de República Dominicana. 
+●​ Los espacios innecesarios al inicio y al final deben eliminarse. 
+●​ La fotografía es opcional. 
+●​ Si se carga una fotografía, debe ser una imagen válida. 
+●​ La imagen debe tener formato .jpg, .jpeg, .png o .webp. 
+●​ La imagen no debe superar los 5 MB. 
+Si el nombre está vacío, el sistema debe mostrar: 
+
+--- PAGE 84 ---
+ 
+“Debe ingresar su nombre.” 
+Si el apellido está vacío, debe mostrar: 
+“Debe ingresar su apellido.” 
+Si el teléfono no tiene un formato válido, debe mostrar: 
+“Debe ingresar un número telefónico válido de República Dominicana.” 
+Si el archivo no es una imagen válida, debe mostrar: 
+“El archivo seleccionado no tiene un formato de imagen válido.” 
+Si la imagen supera el tamaño permitido, debe mostrar: 
+“La imagen seleccionada no puede superar los 5 MB.”​
+ 
+Cambio de contraseña 
+Cambiar la contraseña debe ser opcional. 
+Si el usuario no desea cambiarla, debe dejar vacíos estos campos: 
+●​ Contraseña actual. 
+●​ Nueva contraseña. 
+●​ Confirmar contraseña. 
+Cuando los tres campos permanezcan vacíos, el sistema debe conservar la 
+contraseña existente. 
+Si el usuario completa cualquiera de los campos de contraseña, debe completar los 
+tres. 
+Mostrar u ocultar contraseñas 
+Cada campo de contraseña debe incluir un control independiente para mostrar u 
+ocultar temporalmente su contenido. 
+Los valores deben permanecer ocultos por defecto. 
+Mostrar u ocultar una contraseña no debe modificar su contenido. 
+Indicador de fortaleza 
+Debajo del campo Nueva contraseña debe mostrarse el mismo indicador de 
+
+--- PAGE 85 ---
+ 
+fortaleza utilizado durante el registro y el restablecimiento. 
+El indicador debe evaluar: 
+●​ Al menos ocho caracteres. 
+●​ Una letra mayúscula. 
+●​ Una letra minúscula. 
+●​ Un número. 
+●​ Un carácter especial. 
+La clasificación debe ser: 
+Nivel 
+Condición 
+Débil 
+Cumple dos criterios o menos. 
+Media 
+Cumple tres o cuatro criterios. 
+Fuerte 
+Cumple los cinco criterios. 
+El indicador es informativo. Las reglas también deben validarse en el servidor. 
+Validaciones para cambiar la contraseña 
+Cuando se intente cambiar la contraseña, el sistema debe validar: 
+●​ La contraseña actual es requerida. 
+●​ La contraseña actual debe ser correcta. 
+●​ La nueva contraseña es requerida. 
+●​ La confirmación es requerida. 
+●​ La nueva contraseña y su confirmación deben coincidir. 
+●​ La nueva contraseña debe cumplir las reglas de seguridad. 
+●​ La nueva contraseña debe ser diferente de la contraseña actual. 
+Si falta alguno de los tres campos, el sistema debe mostrar: 
+“Para cambiar su contraseña debe completar la contraseña actual, la 
+nueva contraseña y su confirmación.” 
+Si la contraseña actual es incorrecta, debe mostrar: 
+“La contraseña actual es incorrecta.” 
+Si la nueva contraseña y su confirmación no coinciden, debe mostrar: 
+
+--- PAGE 86 ---
+ 
+“La nueva contraseña y su confirmación no coinciden.” 
+Si la nueva contraseña no cumple las reglas, debe indicar cuáles criterios faltan. 
+Si la nueva contraseña es igual a la actual, debe mostrar: 
+“La nueva contraseña debe ser diferente de la contraseña actual.” 
+Actualización del perfil 
+Al presionar Guardar cambios, el sistema debe validar nuevamente que el usuario 
+autenticado sea el propietario del perfil. 
+Si los datos son válidos y no se solicitó un cambio de contraseña, el sistema debe: 
+1.​ Actualizar el nombre. 
+2.​ Actualizar el apellido. 
+3.​ Actualizar el teléfono. 
+4.​ Sustituir la fotografía cuando se haya seleccionado una nueva. 
+5.​ Conservar la fotografía actual cuando el campo permanezca vacío. 
+6.​ Registrar la fecha y hora de modificación. 
+7.​ Redirigir al Home. 
+Mensaje sugerido: 
+“Su perfil fue actualizado correctamente.” 
+La información actualizada debe reflejarse al volver a cargar las pantallas 
+relacionadas. No se requiere actualización en tiempo real. 
+Actualización de la foto 
+La fotografía anterior sólo debe eliminarse del almacenamiento después de que la 
+nueva imagen haya sido guardada correctamente. 
+Si ocurre un error al guardar la nueva imagen: 
+●​ No debe modificarse la información del perfil. 
+●​ No debe eliminarse la foto anterior. 
+●​ Debe mostrarse un mensaje de error. 
+Mensaje sugerido: 
+“No fue posible actualizar la foto de perfil. Inténtelo nuevamente.” 
+La actualización no debe dejar al usuario sin fotografía ni almacenar archivos sin 
+relación con un perfil. 
+
+--- PAGE 87 ---
+ 
+Actualización de la contraseña 
+Si el usuario modifica su contraseña correctamente, el sistema debe: 
+1.​ Actualizar los datos personales incluidos en el formulario. 
+2.​ Actualizar la fotografía cuando corresponda. 
+3.​ Cambiar la contraseña. 
+4.​ Invalidar las demás sesiones activas. 
+5.​ Invalidar cualquier sesión persistente creada mediante Mantener sesión 
+iniciada. 
+6.​ Cerrar la sesión actual. 
+7.​ Redirigir a la pantalla de inicio de sesión. 
+Mensaje sugerido: 
+“Su perfil y contraseña fueron actualizados correctamente. Inicie sesión 
+nuevamente.” 
+La actualización debe realizarse de forma consistente. Si el cambio de contraseña 
+falla, los demás cambios del formulario no deben guardarse parcialmente. 
+Campos que no pueden modificarse 
+Desde Mi perfil no debe permitirse modificar: 
+●​ Nombre de usuario. 
+●​ Correo electrónico. 
+●​ Estado de la cuenta. 
+●​ Fecha de registro. 
+●​ Relaciones de amistad. 
+●​ Publicaciones. 
+●​ Partidas. 
+Aunque un usuario manipule el formulario, el sistema debe ignorar cualquier dato 
+que intente modificar estos campos. 
+Efecto sobre otros módulos 
+Actualizar los datos personales debe producir los siguientes efectos: 
+●​ El nombre y apellido nuevos deben mostrarse en Amigos y Solicitudes. 
+●​ La fotografía nueva debe mostrarse en publicaciones, comentarios, 
+respuestas y notificaciones. 
+●​ Las partidas y resultados de Battleship no deben modificarse. 
+●​ Las amistades existentes deben conservarse. 
+
+--- PAGE 88 ---
+ 
+●​ Las solicitudes existentes deben conservarse. 
+●​ Las publicaciones, comentarios, respuestas y reacciones deben conservarse. 
+●​ La privacidad de las publicaciones no debe cambiar. 
+●​ Los contadores y listados deben actualizarse cuando se vuelva a cargar cada 
+pantalla. 
+Seguridad y autorización 
+El sistema debe garantizar que: 
+●​ El usuario solo puede editar su propio perfil. 
+●​ La contraseña actual nunca se muestra. 
+●​ Las contraseñas no se almacenan como texto plano. 
+●​ Los campos de contraseña no se carguen con valores anteriores. 
+●​ Las validaciones se ejecutan en el servidor. 
+●​ Los archivos se validan por formato y contenido. 
+●​ Los campos no permitidos no pueden modificarse manipulando la solicitud. 
+Si un usuario intenta modificar el perfil de otra persona, el sistema debe impedirlo y 
+mostrar: 
+“No posee permisos para modificar este perfil.” 
+Reglas de negocio de Mi perfil 
+●​ Solo los usuarios autenticados y activos pueden editar su perfil. 
+●​ Nombre, apellido y teléfono son obligatorios. 
+●​ La fotografía es opcional durante la edición. 
+●​ Si no se carga una nueva fotografía, debe conservarse la actual. 
+●​ Los campos de contraseña siempre deben mostrarse vacíos. 
+●​ Cambiar la contraseña requiere validar la contraseña actual. 
+●​ La nueva contraseña y su confirmación deben coincidir. 
+●​ La nueva contraseña debe cumplir todas las reglas de seguridad. 
+●​ Cambiar la contraseña debe invalidar las sesiones anteriores. 
+●​ El nombre de usuario y el correo no pueden modificarse desde esta sección. 
+●​ Los cambios deben reflejarse en todos los módulos que utilizan los datos 
+actuales del perfil. 
+●​ Ninguna actualización debe guardar cambios parciales si ocurre un error. 
+Seguridad 
+El sistema debe garantizar que únicamente los usuarios autenticados, activos y 
+autorizados puedan acceder a las funcionalidades internas de la aplicación. 
+
+--- PAGE 89 ---
+ 
+Las validaciones de seguridad deben realizarse en el servidor. Ocultar botones, 
+enlaces o elementos visuales no sustituye la autorización correspondiente. 
+Rutas protegidas 
+Un usuario que no haya iniciado sesión no debe acceder a las siguientes secciones, 
+aunque conozca directamente sus URLs: 
+●​ Home y Publicaciones. 
+●​ Amigos. 
+●​ Solicitudes de amistad. 
+●​ Notificaciones. 
+●​ Battleship. 
+●​ Mi perfil. 
+●​ Perfiles de amigos. 
+●​ Comentarios, respuestas y reacciones. 
+●​ Resultados e historial de partidas. 
+Esta restricción debe implementarse utilizando el atributo [Authorize] de ASP.NET 
+Core Identity en los controladores o acciones correspondientes. 
+Si un usuario no autenticado intenta acceder a una ruta protegida, el sistema debe 
+redirigirlo a la pantalla de inicio de sesión y mostrar: 
+“Debe iniciar sesión para acceder a esta sección.” 
+Rutas públicas 
+Las siguientes funcionalidades deben estar disponibles sin iniciar sesión: 
+●​ Inicio de sesión. 
+●​ Registro. 
+●​ Activación de cuenta. 
+●​ Reenvío del enlace de activación. 
+●​ Solicitud de restablecimiento de contraseña. 
+●​ Registro de la nueva contraseña mediante un token válido. 
+Estas acciones deben identificarse explícitamente mediante [AllowAnonymous]. 
+No debe aplicarse [AllowAnonymous] de manera general a un controlador que 
+también contenga acciones privadas. 
+
+--- PAGE 90 ---
+ 
+Si un usuario autenticado intenta acceder a las pantallas de inicio de sesión o 
+registro, el sistema debe redirigirlo al Home. 
+Validación del estado de la cuenta 
+Estar autenticado no es suficiente para acceder a la aplicación. La cuenta también 
+debe encontrarse activa. 
+Autorización sobre recursos 
+El sistema debe verificar no solo que el usuario esté autenticado, sino también que 
+tenga autorización sobre el recurso solicitado. 
+Publicaciones 
+El sistema debe validar: 
+●​ Que el usuario sea el autor para editar o eliminar. 
+●​ Que exista una amistad activa para visualizar publicaciones Solo amigos. 
+●​ Que las publicaciones Solo yo únicamente sean visibles para su autor. 
+●​ Que la publicación esté activa antes de interactuar. 
+Comentarios y respuestas 
+El sistema debe validar: 
+●​ Que el usuario sea el autor para editar o eliminar. 
+●​ Que tenga acceso a la publicación relacionada. 
+●​ Que la publicación permite comentarios antes de crear comentarios o 
+respuestas. 
+Amistades y solicitudes 
+El sistema debe validar: 
+●​ Que el usuario forme parte de la amistad. 
+●​ Que solo el receptor pueda aceptar o rechazar. 
+●​ Que solo el emisor pueda cancelar una solicitud. 
+●​ Que solo el emisor pueda eliminarla de su historial.​
+ 
+
+--- PAGE 91 ---
+ 
+Notificaciones 
+Cada usuario solo puede consultar y modificar sus propias notificaciones. 
+Conocer el identificador de una notificación no debe permitir visualizar notificaciones 
+de otro usuario. 
+Battleship 
+El sistema debe validar: 
+●​ Que el usuario sea uno de los dos participantes. 
+●​ Que sea el propietario del tablero consultado. 
+●​ Que tenga el turno antes de atacar. 
+●​ Que solo pueda visualizar resultados de partidas donde participó. 
+●​ Que no pueda consultar la posición de los barcos del oponente durante una 
+partida activa. 
+Mi perfil 
+El usuario únicamente puede modificar su propio perfil. 
+Si un usuario intenta acceder a un recurso sin autorización, el sistema debe 
+impedirlo y mostrar: 
+“No posee permisos para realizar esta acción.” 
+Acceso directo mediante URL 
+Todas las restricciones deben aplicarse aunque el usuario: 
+●​ Escriba directamente la URL. 
+●​ Modifique identificadores en la dirección. 
+●​ Manipule campos ocultos. 
+●​ Modifique el formulario enviado. 
+●​ Repita una solicitud anterior. 
+●​ Intente utilizar una URL guardada después de perder el permiso. 
+El sistema debe consultar nuevamente el estado actual del recurso antes de 
+ejecutar cualquier operación. 
+
+--- PAGE 92 ---
+ 
+Por ejemplo, si una amistad fue eliminada después de cargar una publicación, el 
+usuario no debe poder comentar utilizando el formulario que permanecía abierto. 
+Protección de formularios 
+Todas las operaciones que modifiquen información deben utilizar solicitudes HTTP 
+adecuadas y protección contra falsificación de solicitudes. 
+Debe utilizarse [ValidateAntiForgeryToken] en acciones como: 
+●​ Crear, editar o eliminar publicaciones. 
+●​ Crear, editar o eliminar comentarios. 
+●​ Registrar o eliminar reacciones. 
+●​ Enviar, aceptar, rechazar o cancelar solicitudes. 
+●​ Eliminar amistades. 
+●​ Modificar el perfil. 
+●​ Posicionar barcos. 
+●​ Realizar ataques. 
+●​ Rendirse. 
+●​ Cerrar sesión. 
+Las operaciones que modifican información no deben realizarse mediante 
+solicitudes GET. 
+Protección contra asignación indebida 
+Los formularios deben utilizar ViewModels específicos. 
+El sistema no debe enlazar directamente todas las propiedades de las entidades de 
+persistencia. 
+Aunque el usuario manipule la solicitud, no debe poder modificar campos como: 
+●​ Identificador del propietario. 
+●​ Estado de la cuenta. 
+●​ Autor de una publicación. 
+●​ Autor de un comentario. 
+●​ Estado de una solicitud. 
+●​ Ganador de una partida. 
+●​ Turno actual. 
+
+--- PAGE 93 ---
+ 
+●​ Resultado de un ataque. 
+●​ Fecha de creación. 
+●​ Privacidad de publicaciones ajenas. 
+Seguridad de contraseñas 
+Las contraseñas deben administrarse mediante ASP.NET Core Identity. 
+El sistema debe garantizar que: 
+●​ No se almacenan como texto plano. 
+●​ No se envíen por correo electrónico. 
+●​ No se muestran en formularios de edición. 
+●​ No se incluyan en los logs. 
+●​ No pueden recuperarse directamente desde la base de datos. 
+●​ Se almacenan utilizando el mecanismo de hashing de Identity. 
+Las contraseñas deben cumplir: 
+●​ Al menos ocho caracteres. 
+●​ Una letra mayúscula. 
+●​ Una letra minúscula. 
+●​ Un número. 
+●​ Un carácter especial. 
+Mostrar una contraseña en pantalla debe ser una acción temporal controlada por el 
+usuario. Los campos deben mostrarse ocultos por defecto. 
+Bloqueo por intentos fallidos 
+Una cuenta debe bloquearse temporalmente después de cinco intentos 
+consecutivos con una contraseña incorrecta. 
+El bloqueo debe durar 15 minutos. 
+Mientras permanezca bloqueada: 
+●​ No debe permitirse iniciar sesión. 
+●​ Los intentos adicionales no deben extender el bloqueo. 
+●​ El usuario podrá solicitar un restablecimiento de contraseña. 
+
+--- PAGE 94 ---
+ 
+Un inicio de sesión exitoso debe restablecer el contador. 
+Un restablecimiento correcto de contraseña debe eliminar el bloqueo y restablecer 
+los intentos fallidos. 
+Tokens de activación 
+Los tokens de activación deben: 
+●​ Ser generados mediante ASP.NET Core Identity. 
+●​ Estar asociados a un único usuario. 
+●​ Tiene una vigencia máxima de 24 horas. 
+●​ Poder utilizarse una sola vez. 
+●​ Invalidar después de activar la cuenta. 
+●​ Invalidar cuando se genere un nuevo enlace de activación. 
+Si el token está vencido, debe mostrarse: 
+“El enlace de activación ha vencido. Solicite uno nuevo.” 
+Si ya fue utilizado o no es válido, debe mostrarse: 
+“El enlace de activación no es válido o ya fue utilizado.” 
+Tokens de restablecimiento 
+Los tokens de restablecimiento de contraseña deben: 
+●​ Estar asociados a un único usuario. 
+●​ Tiene una vigencia máxima de una hora. 
+●​ Utilizarse una sola vez. 
+●​ Invalidar después de cambiar la contraseña. 
+●​ Invalidar cuando se genere un nuevo token para el mismo usuario. 
+Si el token está vencido, debe mostrarse: 
+“El enlace para restablecer la contraseña ha vencido. Solicite uno nuevo.” 
+Restablecer la contraseña no debe activar una cuenta inactiva. 
+Protección contra revelación de cuentas 
+
+--- PAGE 95 ---
+ 
+Las solicitudes de restablecimiento y reenvío de activación no deben revelar si un 
+nombre de usuario está registrado. 
+El sistema debe utilizar mensajes generales como: 
+“Si la cuenta existe y cumple las condiciones, recibirá un correo 
+electrónico con las instrucciones correspondientes.” 
+Sesiones 
+Si el usuario no selecciona Mantener sesión iniciada: 
+●​ La sesión debe cerrarse al cerrar el navegador. 
+●​ Debe finalizar después de 30 minutos consecutivos de inactividad. 
+Si selecciona Mantener sesión iniciada: 
+●​ La sesión podrá conservarse después de cerrar el navegador. 
+●​ Tendrá una duración máxima de siete días. 
+Cerrar sesión manualmente debe invalidar la sesión actual. 
+Cambiar o restablecer la contraseña debe invalidar todas las sesiones anteriores, 
+incluyendo las sesiones persistentes. 
+Después de una autenticación correcta, el sistema debe generar una nueva sesión 
+para evitar reutilizar identificadores anteriores. 
+Cookies de autenticación 
+Las cookies de autenticación deben configurarse con: 
+●​ HttpOnly, para impedir su lectura desde JavaScript. 
+●​ Secure, para enviarlas únicamente mediante HTTPS. 
+●​ Una política SameSite compatible con el flujo de autenticación. 
+●​ Una fecha de expiración acorde con la opción "Mantener sesión iniciada". 
+La aplicación debe utilizar HTTPS en los ambientes publicados. 
+Cierre de sesión 
+
+--- PAGE 96 ---
+ 
+La opción Cerrar sesión debe ejecutarse mediante una solicitud protegida y no 
+mediante un enlace GET. 
+Al cerrar sesión, el sistema debe: 
+1.​ Invalidar la cookie de autenticación. 
+2.​ Finalizar la sesión actual. 
+3.​ Redirigir a la pantalla de inicio de sesión. 
+Si el usuario intenta regresar mediante el navegador, las pantallas protegidas no 
+deben volver a estar disponibles sin autenticarse. 
+Protección del contenido textual 
+El contenido de publicaciones, comentarios, respuestas, nombres y demás campos 
+de texto debe mostrarse codificado para impedir la ejecución de código malicioso. 
+Los usuarios no deben poder insertar: 
+●​ JavaScript. 
+●​ Etiquetas HTML ejecutables. 
+●​ Eventos HTML. 
+●​ Iframes arbitrarios. 
+●​ Código que modifique la interfaz. 
+Las publicaciones y comentarios deben tratarse como texto plano. 
+Seguridad de archivos 
+Las imágenes cargadas deben validarse en el servidor. 
+La validación debe comprobar: 
+●​ Extensión permitida. 
+●​ Tipo real del archivo. 
+●​ Tamaño máximo de 5 MB. 
+●​ Que el contenido corresponda a una imagen válida. 
+Solo deben permitirse: 
+●​ .jpg 
+●​ .jpeg 
+
+--- PAGE 97 ---
+ 
+●​ .png 
+●​ .webp 
+Los nombres físicos de los archivos deben generarse internamente. No debe 
+utilizarse directamente el nombre enviado por el usuario. 
+No deben permitirse archivos ejecutables, rutas relativas ni nombres que permitan 
+acceder a ubicaciones no autorizadas. 
+Control de concurrencia 
+El sistema debe impedir que solicitudes simultáneas provoquen: 
+●​ Amistades duplicadas. 
+●​ Solicitudes pendientes duplicadas. 
+●​ Más de una partida activa entre los mismos usuarios. 
+●​ Barcos posicionados dos veces. 
+●​ Ataques duplicados. 
+●​ Dos jugadores atacando en el mismo turno. 
+●​ Una partida finaliza más de una vez. 
+Antes de guardar una operación, el sistema debe volver a validar el estado actual 
+de los datos. 
+Manejo de errores 
+Los errores internos no deben mostrar: 
+●​ Cadenas de conexión. 
+●​ Rutas físicas. 
+●​ Consultas SQL. 
+●​ Tokens. 
+●​ Contraseñas. 
+●​ Detalles de excepciones. 
+●​ Información de configuración. 
+El usuario debe recibir un mensaje general como: 
+“Ocurrió un error al procesar la solicitud. Inténtelo nuevamente.” 
+Los detalles técnicos deben registrarse de manera segura para diagnóstico. 
+
+--- PAGE 98 ---
+ 
+Reglas generales de seguridad 
+●​ Todas las funcionalidades internas requieren autenticación. 
+●​ Las cuentas autenticadas también deben estar activas. 
+●​ [Authorize] debe aplicarse a los controladores o acciones protegidas. 
+●​ [AllowAnonymous] debe limitarse a las acciones públicas necesarias. 
+●​ La autorización debe comprobar la propiedad y relación con cada recurso. 
+●​ Las acciones de modificación deben protegerse contra solicitudes falsificadas. 
+●​ Las contraseñas y tokens deben administrarse mediante Identity. 
+●​ Los tokens deben tener una vigencia limitada y uso único. 
+●​ Los archivos deben validarse en el servidor. 
+●​ Los textos deben mostrarse de manera segura. 
+●​ Las cookies deben protegerse y utilizar HTTPS. 
+●​ Las operaciones relacionadas deben mantener consistencia. 
+●​ Ningún permiso debe depender únicamente de elementos ocultos en la 
+interfaz. 
+Requerimientos técnicos 
+●​ Deben crear un proyecto ASP.NET Core MVC utilizando .NET 9. 
+●​ Deben utilizar ViewModels para manejar la información enviada entre las 
+vistas y los controladores. Las validaciones de los formularios deben 
+realizarse desde los ViewModels. 
+●​ Deben utilizar DTOs para transferir información entre los servicios y las 
+demás capas. 
+●​ Deben utilizar Entity Framework Core con el enfoque Code First para la 
+persistencia de los datos. El proyecto debe incluir sus migraciones 
+correspondientes. 
+●​ Deben utilizar AutoMapper para realizar los mapeos entre entidades, DTOs y 
+ViewModels. 
+●​ El proyecto debe implementar correctamente la arquitectura Onion. Si no se 
+respetan las responsabilidades y dependencias de sus capas, se considerará 
+incorrectamente aplicada. 
+●​ Deben utilizar repositorios genéricos aplicando Repository Pattern para 
+centralizar las operaciones comunes de acceso a datos. 
+●​ Deben utilizar servicios genéricos para las operaciones comunes y servicios 
+específicos para implementar las reglas de negocio de cada módulo. 
+
+--- PAGE 99 ---
+ 
+●​ Los controladores no deben contener lógica de negocio compleja ni acceder 
+directamente al DbContext. Deben validar los modelos, llamar a los servicios 
+y retornar las vistas correspondientes. 
+●​ Las vistas no deben acceder directamente a la base de datos ni utilizar 
+entidades de persistencia cuando corresponda trabajar con ViewModels. 
+●​ Deben utilizar ASP.NET Core Identity para el registro, autenticación, 
+almacenamiento seguro de contraseñas, bloqueo por intentos fallidos, tokens 
+y manejo de sesiones. 
+●​ Las funcionalidades internas deben protegerse mediante [Authorize]. Las 
+acciones públicas, como iniciar sesión, registrarse, activar la cuenta y 
+restablecer la contraseña, deben utilizar [AllowAnonymous]. 
+●​ Deben utilizar la capa Shared para implementar el servicio de correo 
+electrónico y el almacenamiento de imágenes. 
+●​ Las credenciales del correo, cadenas de conexión y demás valores sensibles 
+deben obtenerse desde la configuración. No deben escribirse directamente en 
+el código fuente. 
+●​ La aplicación debe validar en el servidor la propiedad, privacidad y 
+autorización de cada recurso. Ocultar botones en las vistas no sustituye estas 
+validaciones. 
+●​ Las operaciones que modifiquen varios registros relacionados deben 
+mantener la consistencia de los datos. Esto aplica especialmente a las 
+amistades, solicitudes, partidas, posicionamiento de barcos, ataques y 
+cambios de turno. 
+●​ Los archivos cargados deben validarse por formato, contenido y tamaño. Solo 
+deben permitirse imágenes .jpg, .jpeg, .png o .webp con un tamaño máximo 
+de 5 MB. 
+●​ Los textos ingresados por los usuarios deben mostrarse de forma segura para 
+impedir la ejecución de HTML o JavaScript malicioso. 
+●​ La aplicación debe ser visualmente clara, organizada y responsiva. Deben 
+utilizar Bootstrap u otro framework de CSS. 
+●​ Los tableros de Battleship deben visualizarse correctamente en formato 
+12x12 y diferenciar de manera clara las posiciones ocupadas, los ataques 
+acertados y los ataques fallidos. 
+●​ Las operaciones de acceso a datos, correo y archivos deben implementarse de 
+manera asíncrona cuando corresponda. 
+●​ Las fechas deben almacenarse de forma consistente. Se recomienda utilizar 
+UTC y convertirlas al mostrarlas. 
+
+--- PAGE 100 ---
+ 
+●​ La aplicación debe manejar los errores sin revelar contraseñas, tokens, 
+cadenas de conexión, consultas o detalles internos. 
+ 
+

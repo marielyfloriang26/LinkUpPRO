@@ -10,5 +10,6 @@ public static class ServiceRegistration
     {
         services.AddTransient<IAmigoService, AmigoService>();
         services.AddTransient<ISolicitudAmistadService, SolicitudAmistadService>();
+        services.AddTransient<IBattleshipService, BattleshipService>();
     }
 }

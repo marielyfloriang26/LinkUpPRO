@@ -28,7 +28,7 @@ public class AmigoService : IAmigoService
         {
             var amigoEntity = amistad.UsuarioId1 == usuarioId ? amistad.Usuario2 : amistad.Usuario1;
             
-            if (amigoEntity != null && amigoEntity.EmailConfirmed)
+            if (amigoEntity != null && amigoEntity.EmailConfirmed && amigoEntity.EsActivo)
             {
                 amigos.Add(new UsuarioDto
                 {
@@ -66,13 +66,13 @@ public class AmigoService : IAmigoService
 
         var amigosU1 = amistadesU1
             .Select(a => a.UsuarioId1 == usuarioId1 ? a.Usuario2 : a.Usuario1)
-            .Where(u => u != null && u.EmailConfirmed)
+            .Where(u => u != null && u.EmailConfirmed && u.EsActivo)
             .Select(u => u.Id)
             .ToList();
             
         var amigosU2 = amistadesU2
             .Select(a => a.UsuarioId1 == usuarioId2 ? a.Usuario2 : a.Usuario1)
-            .Where(u => u != null && u.EmailConfirmed)
+            .Where(u => u != null && u.EmailConfirmed && u.EsActivo)
             .Select(u => u.Id)
             .ToList();
 
@@ -86,12 +86,12 @@ public class AmigoService : IAmigoService
 
         var amigosU1 = amistadesU1
             .Select(a => a.UsuarioId1 == usuarioId1 ? a.Usuario2 : a.Usuario1)
-            .Where(u => u != null && u.EmailConfirmed)
+            .Where(u => u != null && u.EmailConfirmed && u.EsActivo)
             .ToList();
             
         var amigosU2Ids = amistadesU2
             .Select(a => a.UsuarioId1 == usuarioId2 ? a.Usuario2 : a.Usuario1)
-            .Where(u => u != null && u.EmailConfirmed)
+            .Where(u => u != null && u.EmailConfirmed && u.EsActivo)
             .Select(u => u.Id)
             .ToHashSet();
 

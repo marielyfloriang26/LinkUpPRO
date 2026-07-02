@@ -1,0 +1,35 @@
+@model LinkUpPro.Application.ViewModels.Battleship.PosicionarBarcoFormViewModel
+
+@{
+    ViewData["Title"] = "Elegir Dirección";
+}
+
+<div class="container mt-4">
+    <h2>Elegir dirección del barco</h2>
+    
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <form asp-action="GuardarPosicionBarco" method="post" style="max-width: 300px;">
+        <input type="hidden" asp-for="PartidaId" />
+        <input type="hidden" asp-for="TamañoBarco" />
+        <input type="hidden" asp-for="Fila" />
+        <input type="hidden" asp-for="Columna" />
+
+        <div class="mb-3">
+            <label asp-for="Direccion" class="form-label">Dirección a partir de celda (@Model.Fila, @Model.Columna):</label>
+            <select asp-for="Direccion" class="form-select" required>
+                <option value="">Seleccione...</option>
+                <option value="arriba">Hacia arriba</option>
+                <option value="abajo">Hacia abajo</option>
+                <option value="derecha">Hacia la derecha</option>
+                <option value="izquierda">Hacia la izquierda</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-success">Posicionar</button>
+        <a asp-action="ElegirDireccionBarco" asp-route-partidaId="@Model.PartidaId" asp-route-barcoSize="@Model.TamañoBarco" class="btn btn-secondary">Volver atrás</a>
+    </form>
+</div>

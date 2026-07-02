@@ -1,0 +1,101 @@
+@model LinkUpPro.Application.ViewModels.Battleship.BattleshipIndexViewModel
+
+@{
+    ViewData["Title"] = "Battleship";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Battleship</h2>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Partidas Activas</h4>
+        <a asp-action="IniciarPartida" class="btn btn-primary">Iniciar una nueva partida</a>
+    </div>
+    @if (Model.PartidasActivas.Any())
+    {
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Nombre de usuario del amigo</th>
+                    <th>Fecha en que se inició la partida</th>
+                    <th>Tiempo en horas que lleva la partida</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model.PartidasActivas)
+                {
+                    <tr>
+                        <td>@(p.Jugador1Id == ViewBag.UsuarioId ? p.Jugador2Nombre : p.Jugador1Nombre)</td>
+                        <td>@p.FechaInicio.ToLocalTime().ToString("g")</td>
+                        <td>@p.DuracionHoras.ToString("0.0")</td>
+                        <td>
+                            <a asp-action="Jugar" asp-route-partidaId="@p.Id" class="btn btn-success btn-sm">Entrar a la partida en curso</a>
+                            <a asp-action="RendirseConfirmacion" asp-route-partidaId="@p.Id" class="btn btn-danger btn-sm">
+                                Finalizar la partida
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No tienes partidas activas.</p>
+    }
+
+    <hr class="my-5" />
+
+    <h4>Historial de Partidas</h4>
+    <div class="alert alert-info">
+        <ul>
+            <li>Cantidad total de partidas jugadas por el usuario logueado: @Model.TotalJugadas</li>
+            <li>Cantidad de partidas ganadas: @Model.TotalGanadas</li>
+            <li>Cantidad de partidas perdidas: @Model.TotalPerdidas</li>
+        </ul>
+    </div>
+
+    @if (Model.HistorialPartidas.Any())
+    {
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Nombre de usuario del amigo</th>
+                    <th>Fecha de inicio de la partida</th>
+                    <th>Fecha de finalización</th>
+                    <th>Duración total de la partida en horas</th>
+                    <th>Resultado de la partida</th>
+                    <th>Ganador de la partida</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model.HistorialPartidas)
+                {
+                    bool isWinner = p.GanadorId != null && p.GanadorId == ViewBag.UsuarioId;
+                    <tr>
+                        <td>@(p.Jugador1Id == ViewBag.UsuarioId ? p.Jugador2Nombre : p.Jugador1Nombre)</td>
+                        <td>@p.FechaInicio.ToLocalTime().ToString("g")</td>
+                        <td>@p.UltimoMovimiento.ToLocalTime().ToString("g")</td>
+                        <td>@p.DuracionHoras.ToString("0.0")</td>
+                        <td>@(p.GanadorId == null ? "Empate" : (isWinner ? "Ganada" : "Perdida"))</td>
+                        <td>@(p.GanadorId == null ? "Empate" : (isWinner ? "Yo" : p.GanadorNombre))</td>
+                        <td>
+                            <a asp-action="Resultado" asp-route-partidaId="@p.Id" class="btn btn-info btn-sm">Ver resultado</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No tienes partidas en el historial.</p>
+    }
+</div>
