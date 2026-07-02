@@ -79,6 +79,17 @@ public class SolicitudAmistadService : ISolicitudAmistadService
             throw new ApiException("Esta solicitud ya no se encuentra disponible para ser aceptada.");
         }
 
+        if (solicitud.EmisorId == solicitud.ReceptorId)
+        {
+            throw new ApiException("Esta solicitud ya no se encuentra disponible para ser aceptada.");
+        }
+
+        var amistadExistente = await _amistadRepository.GetAmistadEntreUsuariosAsync(solicitud.EmisorId, solicitud.ReceptorId);
+        if (amistadExistente != null && amistadExistente.Estado == "Activa")
+        {
+            throw new ApiException("Esta solicitud ya no se encuentra disponible para ser aceptada.");
+        }
+
         var emisor = await _usuarioRepository.GetByIdAsync(solicitud.EmisorId);
         var receptor = await _usuarioRepository.GetByIdAsync(solicitud.ReceptorId);
         if (emisor == null || !emisor.EmailConfirmed || receptor == null || !receptor.EmailConfirmed)
@@ -94,11 +105,10 @@ public class SolicitudAmistadService : ISolicitudAmistadService
             solicitud.FechaRespuesta = DateTime.UtcNow;
             await _solicitudRepository.UpdateAsync(solicitud);
 
-            var amistadInactiva = await _amistadRepository.GetAmistadEntreUsuariosAsync(solicitud.EmisorId, solicitud.ReceptorId);
-            if (amistadInactiva != null)
+            if (amistadExistente != null)
             {
-                amistadInactiva.Estado = "Activa";
-                await _amistadRepository.UpdateAsync(amistadInactiva);
+                amistadExistente.Estado = "Activa";
+                await _amistadRepository.UpdateAsync(amistadExistente);
             }
             else
             {
@@ -128,7 +138,7 @@ public class SolicitudAmistadService : ISolicitudAmistadService
         {
             throw new ApiException("No posee permisos para realizar esta acción sobre la solicitud.");
         }
-        if (solicitud.Estado != "En espera de respuesta") throw new ApiException("La solicitud no está en espera de respuesta.");
+        if (solicitud.Estado != "En espera de respuesta") throw new ApiException("Esta solicitud ya no se encuentra disponible para ser rechazada.");
 
         var emisor = await _usuarioRepository.GetByIdAsync(solicitud.EmisorId);
         var receptor = await _usuarioRepository.GetByIdAsync(solicitud.ReceptorId);
@@ -149,13 +159,13 @@ public class SolicitudAmistadService : ISolicitudAmistadService
         {
             throw new ApiException("No posee permisos para realizar esta acción sobre la solicitud.");
         }
-        if (solicitud.Estado != "En espera de respuesta") throw new ApiException("La solicitud no está en espera de respuesta.");
+        if (solicitud.Estado != "En espera de respuesta") throw new ApiException("Esta solicitud ya no se encuentra disponible para ser cancelada.");
 
         var emisor = await _usuarioRepository.GetByIdAsync(solicitud.EmisorId);
         var receptor = await _usuarioRepository.GetByIdAsync(solicitud.ReceptorId);
         if (emisor == null || !emisor.EmailConfirmed || receptor == null || !receptor.EmailConfirmed)
         {
-            throw new ApiException("Ambas cuentas deben estar activas para cancelar.");
+            throw new ApiException("No se puede cancelar la solicitud porque uno de los usuarios se encuentra inactivo.");
         }
 
         solicitud.Estado = "Cancelada";
@@ -166,11 +176,16 @@ public class SolicitudAmistadService : ISolicitudAmistadService
     public async Task RemoveSolicitudFromHistoryAsync(int solicitudId, int usuarioId)
     {
         var solicitud = await _solicitudRepository.GetByIdAsync(solicitudId);
-        if (solicitud == null) throw new ApiException("Solicitud no encontrada.");
-        
-        if (solicitud.EmisorId != usuarioId)
+        if (solicitud == null || solicitud.EmisorId != usuarioId)
         {
-            throw new ApiException("Solo el emisor puede eliminar la solicitud del historial.");
+            throw new ApiException("No posee permisos para realizar esta acción sobre la solicitud.");
+        }
+
+        var emisor = await _usuarioRepository.GetByIdAsync(solicitud.EmisorId);
+        var receptor = await _usuarioRepository.GetByIdAsync(solicitud.ReceptorId);
+        if (emisor == null || !emisor.EmailConfirmed || receptor == null || !receptor.EmailConfirmed)
+        {
+            throw new ApiException("No se puede eliminar la solicitud porque uno de los usuarios se encuentra inactivo.");
         }
 
         if (solicitud.Estado == "Aceptada" || solicitud.Estado == "Rechazada")

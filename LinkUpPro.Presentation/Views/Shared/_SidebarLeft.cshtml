@@ -1,16 +1,23 @@
 @using LinkUpPro.Domain.Entities
 @using LinkUpPro.Application.Interfaces.Repositories
+@using LinkUpPro.Application.Interfaces.Services
 @inject IRepositoryAsync<Publicacion> PublicacionRepo
+@inject ISolicitudAmistadService SolicitudService
 @{
     var currentUserIdString = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
     int currentUserId = string.IsNullOrEmpty(currentUserIdString) ? 0 : Convert.ToInt32(currentUserIdString);
     
     int cantPublicaciones = 0;
+    int cantSolicitudes = 0;
     if (currentUserId > 0)
     {
         // Cuenta solo publicaciones que no hayan sido eliminadas
         var todas = PublicacionRepo.GetAllAsync().GetAwaiter().GetResult();
         cantPublicaciones = todas.Count(p => p.UsuarioId == currentUserId && p.Estado == "Activa");
+        try {
+            var recibidas = SolicitudService.GetSolicitudesRecibidasAsync(currentUserId).GetAwaiter().GetResult();
+            cantSolicitudes = recibidas.Count;
+        } catch { }
     }
         // Detecta controlador y accion actual para aplicar la clase active
         var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
@@ -54,11 +61,11 @@
             </a>
             
             <a asp-controller="Solicitudes" asp-action="Index" class="lup-quick-nav__item position-relative @(isSolicitudes ? "lup-quick-nav__item--active" : "")">
-                <i class="bi bi-person-plus-fill"></i> Solicitudes
-                @if (ViewBag.CantidadSolicitudes != null && ViewBag.CantidadSolicitudes > 0)
+                <i class="bi bi-person-plus-fill"></i> Solicitudes de amistad
+                @if (cantSolicitudes > 0)
                 {
                     <span class="badge rounded-pill bg-danger text-xs align-middle ms-1" style="font-size: 0.65rem;">
-                        @ViewBag.CantidadSolicitudes
+                        @cantSolicitudes
                     </span>
                 }
             </a>

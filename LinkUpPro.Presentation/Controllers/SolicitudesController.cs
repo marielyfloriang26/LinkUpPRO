@@ -192,7 +192,11 @@ namespace LinkUpPro.Presentation.Controllers
                 var userId = GetCurrentUserId();
                 var pendientes = await _solicitudService.GetSolicitudesRecibidasAsync(userId);
                 var sol = pendientes.FirstOrDefault(s => s.Id == id);
-                if (sol == null) return RedirectToAction(nameof(Index));
+                if (sol == null)
+                {
+                    TempData["ErrorMessage"] = "Esta solicitud ya no se encuentra disponible para ser rechazada.";
+                    return RedirectToAction(nameof(Index));
+                }
                 var vm = new LinkUpPro.Presentation.ViewModels.Solicitud.SolicitudAmistadViewModel { Id = sol.Id, NombreUsuario = sol.Emisor.NombreUsuario };
                 return View(vm);
             }
@@ -231,7 +235,11 @@ namespace LinkUpPro.Presentation.Controllers
                 var userId = GetCurrentUserId();
                 var enviadas = await _solicitudService.GetSolicitudesEnviadasAsync(userId);
                 var sol = enviadas.FirstOrDefault(s => s.Id == id);
-                if (sol == null) return RedirectToAction(nameof(Index));
+                if (sol == null)
+                {
+                    TempData["ErrorMessage"] = "Esta solicitud ya no se encuentra disponible para ser cancelada.";
+                    return RedirectToAction(nameof(Index));
+                }
                 var vm = new LinkUpPro.Presentation.ViewModels.Solicitud.SolicitudAmistadViewModel { Id = sol.Id, NombreUsuario = sol.Receptor.NombreUsuario };
                 return View(vm);
             }
@@ -270,7 +278,11 @@ namespace LinkUpPro.Presentation.Controllers
                 var userId = GetCurrentUserId();
                 var enviadas = await _solicitudService.GetSolicitudesEnviadasAsync(userId);
                 var sol = enviadas.FirstOrDefault(s => s.Id == id);
-                if (sol == null) return RedirectToAction(nameof(Index));
+                if (sol == null)
+                {
+                    TempData["ErrorMessage"] = "Esta solicitud ya no se encuentra disponible.";
+                    return RedirectToAction(nameof(Index));
+                }
                 var vm = new LinkUpPro.Presentation.ViewModels.Solicitud.SolicitudAmistadViewModel { Id = sol.Id, NombreUsuario = sol.Receptor.NombreUsuario };
                 return View(vm);
             }

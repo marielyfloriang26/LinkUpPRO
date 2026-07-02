@@ -25,7 +25,8 @@ public class SolicitudAmistadRepository : RepositoryAsync<SolicitudAmistad>, ISo
             .Where(s => s.ReceptorId == receptorId 
                      && s.Estado == "En espera de respuesta" 
                      && s.Emisor.EmailConfirmed 
-                     && s.Receptor.EmailConfirmed)
+                     && s.Receptor.EmailConfirmed
+                     && !_dbContext.Set<Amistad>().Any(a => a.Estado == "Activa" && ((a.UsuarioId1 == s.EmisorId && a.UsuarioId2 == s.ReceptorId) || (a.UsuarioId1 == s.ReceptorId && a.UsuarioId2 == s.EmisorId))))
             .OrderByDescending(s => s.FechaEnvio)
             .ToListAsync();
     }

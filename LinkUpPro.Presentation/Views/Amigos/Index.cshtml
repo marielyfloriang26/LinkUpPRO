@@ -7,12 +7,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="~/css/publicaciones.css" asp-append-version="true" />
 
 <div class="lup-layout">
     <!-- SIDEBAR IZQUIERDO -->
     <partial name="_SidebarLeft" />
 
-    <!-- ZONA CENTRAL: LISTADO DE AMIGOS -->
+    <!-- ZONA CENTRAL: FEED Y LISTADO DE AMIGOS -->
     <main class="lup-feed">
         
         @if (TempData["SuccessMessage"] != null)
@@ -30,6 +31,40 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         }
+
+        <!-- RESUMEN DE AMISTADES (En la parte superior de la pantalla según PDF pág 32) -->
+        <div class="lup-composer mb-4 p-3" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fe 100%); border: 1px solid rgba(91,76,255,0.15); box-shadow: 0 4px 20px rgba(91,76,255,0.06);">
+            <div class="d-flex align-items-center mb-3">
+                <div class="d-flex align-items-center justify-content-center rounded-circle me-2" style="width: 32px; height: 32px; background: rgba(91,76,255,0.1); color: var(--lup-accent);">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <h6 class="fw-bold mb-0 text-dark" style="letter-spacing: -0.3px;">Resumen de amistades</h6>
+            </div>
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <div class="p-3 rounded-3 d-flex align-items-center justify-content-between" style="background: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: transform 0.2s;">
+                        <div>
+                            <span class="d-block text-muted fw-semibold" style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px;">Total de amigos</span>
+                            <span class="d-block fw-bold text-dark mt-1" style="font-size: 1.4rem;">@Model.TotalAmigos</span>
+                        </div>
+                        <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; background: rgba(16, 185, 129, 0.1); color: #10B981; font-size: 1.2rem;">
+                            <i class="bi bi-person-check-fill"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="p-3 rounded-3 d-flex align-items-center justify-content-between" style="background: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: transform 0.2s;">
+                        <div>
+                            <span class="d-block text-muted fw-semibold" style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px;">Publicaciones disponibles</span>
+                            <span class="d-block fw-bold text-dark mt-1" style="font-size: 1.4rem;">@Model.PublicacionesDisponibles</span>
+                        </div>
+                        <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; background: rgba(91, 76, 255, 0.1); color: var(--lup-accent); font-size: 1.2rem;">
+                            <i class="bi bi-journal-richtext"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- BUSCADOR DE PUBLICACIONES -->
         <div class="lup-composer mb-4">
@@ -95,41 +130,52 @@
         {
             foreach (var pub in Model.Publicaciones)
             {
-                <div class="lup-post mb-4 p-3">
-                    <div class="d-flex align-items-center mb-2">
-                        <img src="@(string.IsNullOrEmpty(pub.AutorFotoPerfilUrl) ? "https://cdn-icons-png.flaticon.com/512/149/149071.png" : pub.AutorFotoPerfilUrl)" class="lup-avatar lup-avatar--md me-2">
-                        <div>
-                            <h6 class="mb-0 fw-bold">@pub.AutorNombreCompleto</h6>
-                            <small class="text-muted"><a asp-controller="Perfil" asp-action="Ver" asp-route-username="@pub.AutorNombreUsuario">@@@pub.AutorNombreUsuario</a> • @pub.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</small>
-                            @if(pub.FechaModificacion.HasValue)
-                            {
-                                <small class="text-muted"> • (Editada)</small>
-                            }
+                var isOwner = pub.UsuarioId.ToString() == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                <article id="post-@pub.Id" class="lup-post mb-4 @(isOwner ? "lup-post--own" : "")">
+                    <div class="lup-post__header">
+                        <a asp-controller="Perfil" asp-action="Ver" asp-route-username="@pub.AutorNombreUsuario" class="lup-post__author-link">
+                            <img src="@(string.IsNullOrEmpty(pub.AutorFotoPerfilUrl) ? "https://cdn-icons-png.flaticon.com/512/149/149071.png" : pub.AutorFotoPerfilUrl)" class="lup-avatar lup-avatar--md">
+                        </a>
+                        <div class="lup-post__author-info">
+                            <a asp-controller="Perfil" asp-action="Ver" asp-route-username="@pub.AutorNombreUsuario" class="lup-post__author-name">@pub.AutorNombreCompleto</a>
+                            <div class="lup-post__meta">
+                                <span>@pub.FechaCreacion.ToLocalTime().ToString("dd MMM · HH:mm")</span>
+                                <span class="lup-post__privacy" title="Solo amigos">👥</span>
+                                @if(pub.FechaModificacion.HasValue)
+                                {
+                                    <span class="badge bg-light text-muted border ms-1 fw-normal" style="font-size: 0.65rem; padding: 1px 5px; vertical-align: middle;">
+                                        <i class="bi bi-pencil-fill" style="font-size: 0.55rem;"></i> Editada
+                                    </span>
+                                }
+                            </div>
                         </div>
                     </div>
-                    <p class="mb-2" style="font-size: 0.95rem;">@pub.ContenidoTexto</p>
-                    @if (!string.IsNullOrEmpty(pub.ImagenUrl))
-                    {
-                        <img src="@pub.ImagenUrl" class="img-fluid rounded mb-2 w-100" style="max-height: 400px; object-fit: cover;">
-                    }
-                    @if (!string.IsNullOrEmpty(pub.YouTubeVideoUrl))
-                    {
-                        <div class="ratio ratio-16x9 mb-2 rounded overflow-hidden">
-                            <iframe src="@pub.YouTubeVideoUrl" allowfullscreen></iframe>
-                        </div>
-                    }
-                    <div class="mt-2 border-top pt-2">
-                        <span class="text-muted" style="font-size: 0.8rem;">
-                            <i class="bi bi-hand-thumbs-up-fill me-1 text-primary"></i> @pub.CantidadMeGusta
-                            <i class="bi bi-hand-thumbs-down-fill ms-2 me-1 text-danger"></i> @pub.CantidadNoMeGusta
-                            <i class="bi bi-chat-fill ms-2 me-1"></i> @pub.Comentarios.Count
-                        </span>
-                        @if(!pub.PermiteComentarios)
+
+                    <div class="lup-post__body">
+                        <p class="lup-post__text">@pub.ContenidoTexto</p>
+                        @if (!string.IsNullOrEmpty(pub.ImagenUrl))
                         {
-                            <span class="badge bg-secondary ms-2" style="font-size: 0.7rem;">Comentarios desactivados</span>
+                            <div class="lup-post__media">
+                                <img src="@pub.ImagenUrl" class="lup-post__img" alt="Contenido multimedia">
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(pub.YouTubeVideoUrl))
+                        {
+                            var videoId = pub.YouTubeVideoUrl.Contains("v=")
+                                ? pub.YouTubeVideoUrl.Split("v=")[1].Split("&")[0]
+                                : pub.YouTubeVideoUrl.Split("/").Last();
+                            <div class="lup-post__video">
+                                <div class="ratio ratio-16x9">
+                                    <iframe src="https://www.youtube.com/embed/@videoId" title="Video" allowfullscreen loading="lazy"></iframe>
+                                </div>
+                            </div>
                         }
                     </div>
-                </div>
+
+                    <!-- REACCIONES Y COMENTARIOS CON PARTIALS INTERACTIVAS -->
+                    @await Html.PartialAsync("~/Views/Publicacion/Reacciones.cshtml", pub)
+                    @await Html.PartialAsync("~/Views/Publicacion/Comentarios.cshtml", pub)
+                </article>
             }
         }
         else if (Model.Amigos.Count > 0 && (!string.IsNullOrEmpty(Model.TextoBusquedaPub) || Model.AmigoIdPub.HasValue || Model.TipoContenidoPub != "Todos" || Model.FechaDesdePub.HasValue || Model.FechaHastaPub.HasValue || Model.EstadoEdicionPub != "Todas"))
@@ -144,6 +190,14 @@
             <div class="lup-empty mb-4">
                 <div class="lup-empty__icon"><i class="bi bi-journal-text"></i></div>
                 <h4 class="lup-empty__title">Sus amigos todavía no han realizado publicaciones disponibles para usted.</h4>
+            </div>
+        }
+        else
+        {
+            <!-- Si no tiene amistades activas (PDF Línea 1144) -->
+            <div class="lup-empty mb-4">
+                <div class="lup-empty__icon"><i class="bi bi-people"></i></div>
+                <h4 class="lup-empty__title">Todavía no tiene amigos agregados.</h4>
             </div>
         }
 
@@ -195,7 +249,7 @@
                             </div>
                             <div class="d-flex gap-2 mt-auto pt-2 border-top">
                                 <a asp-controller="Perfil" asp-action="Ver" asp-route-username="@amigo.NombreUsuario" class="lup-btn lup-btn--outline lup-btn--sm flex-grow-1 justify-content-center">Ver Perfil</a>
-                                <a asp-action="Eliminar" asp-route-id="@amigo.Id" class="lup-btn lup-btn--sm flex-grow-1 justify-content-center" style="background: var(--lup-dislike); color: #fff;">Eliminar</a>
+                                <a asp-action="Eliminar" asp-route-id="@amigo.Id" class="lup-btn lup-btn--sm flex-grow-1 justify-content-center" style="background: var(--lup-dislike); color: #fff;">Eliminar amigo</a>
                             </div>
                         </div>
                     </div>
@@ -222,7 +276,7 @@
         }
     </main>
 
-    <!-- SIDEBAR DERECHO: Resumen de amistades -->
+    <!-- SIDEBAR DERECHO: Resumen de amistades secundario para desktop -->
     <aside class="lup-sidebar lup-sidebar--right">
         <div class="lup-widget">
             <h6 class="lup-widget__title"><i class="bi bi-bar-chart-fill me-2 text-primary"></i>Resumen de amistades</h6>
@@ -337,3 +391,4 @@
     .lup-avatar--sm { width: 36px; height: 36px; }
 </style>
 
+<script src="~/js/publicaciones.js" asp-append-version="true"></script>
